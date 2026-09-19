@@ -1,32 +1,12 @@
 {
   "info": {
-    "_postman_id": "7f8b91a2-3456-4cde-8901-brasaswokapi",
+    "_postman_id": "d7c149cf-6b67-45a4-a48e-0cdd944f6a81",
     "name": "Brasas & Wok - API Delivery",
     "description": "Colección completa de pruebas para el ecosistema de delivery Brasas & Wok (Auth JWT, Roles, Catálogo, Pedidos y Auditoría).",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49876836",
+    "_collection_link": "https://go.postman.co/collection/49876836-d7c149cf-6b67-45a4-a48e-0cdd944f6a81?source=collection_link"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080",
-      "type": "string"
-    },
-    {
-      "key": "adminToken",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "customerToken",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "orderId",
-      "value": "1",
-      "type": "string"
-    }
-  ],
   "item": [
     {
       "name": "1. Autenticación (Auth)",
@@ -47,8 +27,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
             }
           },
           "response": []
@@ -69,8 +55,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
             }
           },
           "response": []
@@ -106,8 +98,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -125,7 +123,9 @@
                   "    console.log('Token Cliente guardado');",
                   "}"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -139,12 +139,18 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"carlos_m\",\n  \"password\": \"cliente123\"\n}"
+              "raw": "{\n  \"username\": \"cliente@gmail.com\",\n  \"password\": \"cliente123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -161,8 +167,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "me"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
             }
           },
           "response": []
@@ -179,8 +191,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/test/public",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "test", "public"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "test",
+                "public"
+              ]
             }
           },
           "response": []
@@ -197,8 +215,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/test/customer",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "test", "customer"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "test",
+                "customer"
+              ]
             }
           },
           "response": []
@@ -215,8 +239,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/test/admin",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "test", "admin"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "test",
+                "admin"
+              ]
             }
           },
           "response": []
@@ -233,8 +263,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/test/admin",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "test", "admin"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "test",
+                "admin"
+              ]
             }
           },
           "response": []
@@ -251,8 +287,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/categories",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "categories"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
             }
           },
           "response": []
@@ -264,8 +305,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/products",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "products"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
             }
           },
           "response": []
@@ -277,8 +323,15 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/products/category/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "products", "category", "1"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "category",
+                "1"
+              ]
             }
           },
           "response": []
@@ -308,8 +361,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
             }
           },
           "response": []
@@ -326,8 +384,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/orders/my-orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders", "my-orders"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "my-orders"
+              ]
             }
           },
           "response": []
@@ -344,8 +408,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/orders/{{orderId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders", "{{orderId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
             }
           },
           "response": []
@@ -362,8 +432,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ]
             }
           },
           "response": []
@@ -388,13 +464,39 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
             }
           },
           "response": []
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "customerToken",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": "1"
     }
   ]
 }
