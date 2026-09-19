@@ -1,0 +1,30 @@
+# Maven
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+
+# Node / Angular
+**/node_modules/
+**/.angular/
+**/dist/
+
+# IDEs and Editors
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and environment
+*.log
+.env
+.env.*.local
