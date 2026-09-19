@@ -17,6 +17,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,6 +29,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     @Id
@@ -83,9 +91,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderStatusLog> statusLogs = new ArrayList<>();
 
-    public Order() {
-    }
-
     public Order(String orderNumber, User customer, PaymentMethod paymentMethod,
                  String deliveryAddress, String deliveryPhone, String deliveryNotes,
                  BigDecimal subtotal, BigDecimal deliveryFee, BigDecimal totalAmount) {
@@ -131,142 +136,10 @@ public class Order {
         log.setOrder(this);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public User getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(User customer) {
-        this.customer = customer;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getDeliveryPhone() {
-        return deliveryPhone;
-    }
-
-    public void setDeliveryPhone(String deliveryPhone) {
-        this.deliveryPhone = deliveryPhone;
-    }
-
-    public String getDeliveryNotes() {
-        return deliveryNotes;
-    }
-
-    public void setDeliveryNotes(String deliveryNotes) {
-        this.deliveryNotes = deliveryNotes;
-    }
-
-    public BigDecimal getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
-    }
-
-    public BigDecimal getDeliveryFee() {
-        return deliveryFee;
-    }
-
-    public void setDeliveryFee(BigDecimal deliveryFee) {
-        this.deliveryFee = deliveryFee;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public Integer getEstimatedDeliveryMinutes() {
-        return estimatedDeliveryMinutes;
-    }
-
-    public void setEstimatedDeliveryMinutes(Integer estimatedDeliveryMinutes) {
-        this.estimatedDeliveryMinutes = estimatedDeliveryMinutes;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<OrderItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
-    }
-
-    public Payment getPayment() {
-        return payment;
-    }
-
     public void setPayment(Payment payment) {
         this.payment = payment;
         if (payment != null) {
             payment.setOrder(this);
         }
-    }
-
-    public List<OrderStatusLog> getStatusLogs() {
-        return statusLogs;
-    }
-
-    public void setStatusLogs(List<OrderStatusLog> statusLogs) {
-        this.statusLogs = statusLogs;
     }
 }

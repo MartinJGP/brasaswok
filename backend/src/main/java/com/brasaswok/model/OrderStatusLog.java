@@ -14,11 +14,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order_status_logs")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderStatusLog {
 
     @Id
@@ -49,9 +57,6 @@ public class OrderStatusLog {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public OrderStatusLog() {
-    }
-
     public OrderStatusLog(Order order, OrderStatus previousStatus, OrderStatus newStatus, User changedByUser, String comment) {
         this.order = order;
         this.previousStatus = previousStatus;
@@ -63,61 +68,5 @@ public class OrderStatusLog {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public OrderStatus getPreviousStatus() {
-        return previousStatus;
-    }
-
-    public void setPreviousStatus(OrderStatus previousStatus) {
-        this.previousStatus = previousStatus;
-    }
-
-    public OrderStatus getNewStatus() {
-        return newStatus;
-    }
-
-    public void setNewStatus(OrderStatus newStatus) {
-        this.newStatus = newStatus;
-    }
-
-    public User getChangedByUser() {
-        return changedByUser;
-    }
-
-    public void setChangedByUser(User changedByUser) {
-        this.changedByUser = changedByUser;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }
