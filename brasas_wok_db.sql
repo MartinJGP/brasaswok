@@ -45,3 +45,13 @@ ON DUPLICATE KEY UPDATE id=id;
 INSERT INTO order_status_logs (id, order_id, previous_status, new_status, changed_by_user_id, comment) VALUES
 (1, 1, NULL, 'PENDIENTE', 2, 'Orden generada exitosamente por el cliente desde la tienda web')
 ON DUPLICATE KEY UPDATE id=id;
+
+
+-- En caso de que el código no ejecute y tenga problemas con la base de datos, ejecutar el query a continuación
+
+ALTER TABLE categories        ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+ALTER TABLE products          ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+ALTER TABLE order_status_logs ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+ALTER TABLE orders            ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+ALTER TABLE payments          ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+ALTER TABLE users             ADD COLUMN created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
