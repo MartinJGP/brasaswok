@@ -1,0 +1,173 @@
+<div class="min-h-screen flex bg-brand-bg text-brand-text-primary">
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div
+    *ngIf="isMobileMenuOpen"
+    class="fixed inset-0 z-40 bg-brand-secondary/60 backdrop-blur-sm lg:hidden transition-opacity"
+    (click)="closeMobileMenu()"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Sidebar (Desktop & Mobile Drawer) -->
+  <aside
+    class="fixed inset-y-0 left-0 z-50 w-64 bg-brand-secondary text-brand-surface flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0"
+    [class.translate-x-0]="isMobileMenuOpen"
+    [class.-translate-x-full]="!isMobileMenuOpen"
+    aria-label="Navegación Principal"
+  >
+    <!-- Brand Header -->
+    <div class="h-16 flex items-center justify-between px-6 border-b border-white/10">
+      <a routerLink="/admin/dashboard" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-lg p-1">
+        <!-- Logo Isotype -->
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white shadow-card group-hover:scale-105 transition-transform">
+          <app-icon name="flame" [size]="20" customClass="text-white animate-pulse"></app-icon>
+        </div>
+        <div>
+          <span class="block text-sm font-bold tracking-wider uppercase text-white font-sans">Brasas a Wok</span>
+          <span class="block text-[10px] tracking-widest uppercase text-white/50 font-medium">Panel Gastronómico</span>
+        </div>
+      </a>
+
+      <!-- Mobile Close Button -->
+      <button
+        type="button"
+        class="lg:hidden p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+        (click)="closeMobileMenu()"
+        aria-label="Cerrar menú lateral"
+      >
+        <app-icon name="x" [size]="20"></app-icon>
+      </button>
+    </div>
+
+    <!-- Navigation Menu Items -->
+    <nav class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+      <div *ngFor="let group of menuGroups">
+        <h3 class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2">
+          {{ group.section }}
+        </h3>
+        <ul class="space-y-1">
+          <li *ngFor="let item of group.items">
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="bg-brand-primary text-white font-semibold shadow-subtle"
+              [routerLinkActiveOptions]="{ exact: item.path === '/admin/dashboard' }"
+              (click)="closeMobileMenu()"
+              class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-white/75 hover:bg-white/10 hover:text-white transition-all group focus:outline-none focus:ring-2 focus:ring-brand-primary"
+            >
+              <div class="flex items-center gap-3">
+                <app-icon
+                  [name]="item.icon"
+                  [size]="18"
+                  customClass="transition-transform group-hover:scale-110"
+                ></app-icon>
+                <span>{{ item.label }}</span>
+              </div>
+              <span
+                *ngIf="item.badge"
+                class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                [ngClass]="{
+                  'bg-brand-accent text-white': item.badgeVariant === 'warning',
+                  'bg-brand-status-success text-white': item.badgeVariant === 'success',
+                  'bg-white/20 text-white': !item.badgeVariant
+                }"
+              >
+                {{ item.badge }}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Sidebar Footer / Kitchen Live Pulse -->
+    <div class="p-4 border-t border-white/10 bg-black/20">
+      <div class="flex items-center justify-between p-2.5 rounded-lg bg-white/5 border border-white/5">
+        <div class="flex items-center gap-2.5">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-status-success opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-status-success"></span>
+          </span>
+          <div>
+            <p class="text-xs font-semibold text-white">Cocina en Servicio</p>
+            <p class="text-[10px] text-white/50">Turno Almuerzo / Cena</p>
+          </div>
+        </div>
+        <span class="text-[11px] font-mono font-medium text-brand-accent">Sede 01</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Area (Header + Routed Page) -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Top Header -->
+    <header class="h-16 bg-brand-surface border-b border-brand-border flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20">
+      <!-- Left: Mobile Toggle & Page Context -->
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="lg:hidden p-2 rounded-lg text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-alt focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          (click)="toggleMobileMenu()"
+          aria-label="Abrir menú de navegación"
+        >
+          <app-icon name="menu-toggle" [size]="22"></app-icon>
+        </button>
+
+        <div class="hidden sm:block">
+          <h1 class="text-base font-bold text-brand-text-primary font-sans">Panel Administrativo</h1>
+          <p class="text-xs text-brand-text-secondary">Brasas & Wok • Gestión de Operaciones</p>
+        </div>
+      </div>
+
+      <!-- Center: Global Quick Search -->
+      <div class="hidden md:flex items-center flex-1 max-w-md mx-6">
+        <div class="relative w-full">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-text-muted">
+            <app-icon name="search" [size]="16"></app-icon>
+          </span>
+          <input
+            type="text"
+            placeholder="Buscar pedido, plato o cliente... (Ctrl + K)"
+            class="w-full pl-9 pr-4 py-1.5 text-xs bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary placeholder-brand-text-muted transition-colors focus:bg-brand-surface focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+          />
+        </div>
+      </div>
+
+      <!-- Right: Live Indicator, Notifications & User Profile -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Live Status Pill (Desktop) -->
+        <div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-brand-status-success-bg border border-brand-status-success/20">
+          <span class="w-2 h-2 rounded-full bg-brand-status-success"></span>
+          <span class="text-xs font-medium text-brand-status-success">Conexión WebSocket Activa</span>
+        </div>
+
+        <!-- Notifications Button -->
+        <button
+          type="button"
+          class="relative p-2 rounded-lg text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-alt transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          aria-label="Notificaciones del sistema"
+        >
+          <app-icon name="bell" [size]="20"></app-icon>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-primary rounded-full ring-2 ring-brand-surface"></span>
+        </button>
+
+        <!-- Divider -->
+        <div class="h-6 w-px bg-brand-border"></div>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-3 pl-1">
+          <div class="w-8 h-8 rounded-full bg-brand-secondary text-brand-surface flex items-center justify-center text-xs font-bold ring-2 ring-brand-primary/30">
+            AD
+          </div>
+          <div class="hidden sm:block text-left">
+            <span class="block text-xs font-bold text-brand-text-primary leading-tight">Administrador</span>
+            <span class="block text-[11px] text-brand-text-secondary leading-tight">admin&#64;brasaswok.pe</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Routed View -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-brand-bg focus:outline-none" tabindex="-1">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

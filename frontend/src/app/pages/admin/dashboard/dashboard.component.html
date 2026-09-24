@@ -1,0 +1,242 @@
+<div class="space-y-6 max-w-7xl mx-auto">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-brand-border pb-5">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold text-brand-text-primary tracking-tight font-sans">
+        Tablero de Operaciones
+      </h2>
+      <p class="text-xs sm:text-sm text-brand-text-secondary mt-1">
+        Monitoreo en tiempo real del salón, cocina a fuego vivo y pedidos delivery.
+      </p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Period Selector -->
+      <div class="hidden sm:inline-flex bg-brand-surface border border-brand-border rounded-lg p-1 text-xs">
+        <button
+          type="button"
+          *ngFor="let p of periods"
+          (click)="selectedPeriod = p.id"
+          [class.bg-brand-secondary]="selectedPeriod === p.id"
+          [class.text-white]="selectedPeriod === p.id"
+          [class.text-brand-text-secondary]="selectedPeriod !== p.id"
+          class="px-3 py-1.5 rounded-md font-medium transition-colors hover:text-brand-text-primary"
+        >
+          {{ p.label }}
+        </button>
+      </div>
+
+      <!-- Action Button -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-semibold rounded-lg shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+      >
+        <app-icon name="flame" [size]="16"></app-icon>
+        <span>Nuevo Pedido</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Key Metrics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+    <div
+      *ngFor="let metric of metrics"
+      class="bg-brand-surface rounded-xl p-5 border border-brand-border shadow-card hover:border-brand-primary/40 transition-colors"
+    >
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-medium text-brand-text-secondary uppercase tracking-wider">
+          {{ metric.title }}
+        </span>
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" [ngClass]="metric.iconBg">
+          <app-icon [name]="metric.icon" [size]="18" [customClass]="metric.iconColor"></app-icon>
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-baseline justify-between">
+        <p class="text-2xl font-bold text-brand-text-primary tracking-tight">
+          {{ metric.value }}
+        </p>
+        <span
+          class="inline-flex items-center gap-0.5 text-xs font-semibold"
+          [ngClass]="metric.isPositive ? 'text-brand-status-success' : 'text-brand-status-error'"
+        >
+          <app-icon *ngIf="metric.isPositive" name="arrow-up-right" [size]="14"></app-icon>
+          {{ metric.change }}
+        </span>
+      </div>
+
+      <p class="mt-1 text-xs text-brand-text-muted">
+        {{ metric.caption }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Content Grid: Live Orders Table + Kitchen Top Dishes -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <!-- Active Orders in Kitchen (2 Cols on XL) -->
+    <div class="xl:col-span-2 bg-brand-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
+      <!-- Section Header -->
+      <div class="p-5 border-b border-brand-border flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-2.5 h-2.5 rounded-full bg-brand-accent animate-ping"></div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-brand-text-primary">
+              Comandas Activas en Cocina & Delivery
+            </h3>
+            <p class="text-xs text-brand-text-secondary">
+              Transiciones directas según el flujo de preparación.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="text-xs font-semibold text-brand-primary hover:text-brand-primary-hover transition-colors"
+        >
+          Ver todas ({{ recentOrders.length }}) →
+        </button>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-brand-surface-alt/60 text-brand-text-secondary text-[11px] uppercase tracking-wider font-semibold border-b border-brand-border">
+              <th scope="col" class="py-3 px-4">Pedido / ID</th>
+              <th scope="col" class="py-3 px-4">Cliente / Destino</th>
+              <th scope="col" class="py-3 px-4">Detalle de Comanda</th>
+              <th scope="col" class="py-3 px-4">Total</th>
+              <th scope="col" class="py-3 px-4">Estado</th>
+              <th scope="col" class="py-3 px-4 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-brand-border">
+            <tr
+              *ngFor="let order of recentOrders"
+              class="hover:bg-brand-bg/50 transition-colors group"
+            >
+              <!-- Order Number & Time -->
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-brand-text-primary font-mono block">{{ order.orderNumber }}</span>
+                <span class="text-[11px] text-brand-text-muted flex items-center gap-1 mt-0.5">
+                  <app-icon name="clock" [size]="12"></app-icon>
+                  hace {{ order.timeAgo }}
+                </span>
+              </td>
+
+              <!-- Customer -->
+              <td class="py-3.5 px-4">
+                <span class="font-medium text-brand-text-primary block">{{ order.customer }}</span>
+                <span class="text-[11px] text-brand-text-secondary truncate max-w-[140px] block">
+                  {{ order.destination }}
+                </span>
+              </td>
+
+              <!-- Items Summary -->
+              <td class="py-3.5 px-4 text-xs text-brand-text-secondary">
+                <span class="line-clamp-1 font-medium text-brand-text-primary">{{ order.itemsSummary }}</span>
+                <span class="text-[11px] text-brand-text-muted">{{ order.itemsCount }} items</span>
+              </td>
+
+              <!-- Total & Payment Method -->
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-brand-text-primary block">S/ {{ order.total.toFixed(2) }}</span>
+                <span class="text-[10px] uppercase font-semibold text-brand-text-muted tracking-wider">
+                  {{ order.paymentMethod }}
+                </span>
+              </td>
+
+              <!-- Status Badge -->
+              <td class="py-3.5 px-4">
+                <app-badge [variant]="order.statusVariant">
+                  {{ order.statusLabel }}
+                </app-badge>
+              </td>
+
+              <!-- Quick Action -->
+              <td class="py-3.5 px-4 text-right">
+                <button
+                  type="button"
+                  class="px-2.5 py-1 text-xs font-semibold rounded-md border border-brand-border bg-brand-surface hover:bg-brand-surface-alt hover:border-brand-primary/50 text-brand-text-primary transition-all focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                >
+                  Gestionar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Dishes / Kitchen Performance (1 Col on XL) -->
+    <div class="space-y-6">
+      <!-- Most Requested Dishes -->
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-5 shadow-card">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-brand-border">
+          <div>
+            <h3 class="text-sm font-bold text-brand-text-primary font-sans">
+              Platos Estrella de la Carta
+            </h3>
+            <p class="text-xs text-brand-text-secondary">Más solicitados durante el turno</p>
+          </div>
+          <span class="text-xs font-bold text-brand-accent uppercase">Hoy</span>
+        </div>
+
+        <ul class="space-y-4">
+          <li *ngFor="let dish of topDishes" class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-medium">
+              <span class="text-brand-text-primary font-semibold flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="dish.category === 'Brasas' ? 'bg-brand-primary' : 'bg-brand-accent'"></span>
+                {{ dish.name }}
+              </span>
+              <span class="text-brand-text-secondary font-mono">{{ dish.count }} ped.</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-brand-surface-alt rounded-full h-2 overflow-hidden">
+              <div
+                class="h-2 rounded-full transition-all duration-500"
+                [ngClass]="dish.category === 'Brasas' ? 'bg-brand-primary' : 'bg-brand-accent'"
+                [style.width.%]="dish.percentage"
+              ></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Station Status Widget -->
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-5 shadow-card">
+        <h3 class="text-sm font-bold text-brand-text-primary mb-3">
+          Estaciones de Cocina
+        </h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 rounded-lg bg-brand-surface-alt/70 border border-brand-border">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-xs">
+                PO
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-text-primary">Horno de Brasas</p>
+                <p class="text-[11px] text-brand-text-secondary">Capacidad al 80%</p>
+              </div>
+            </div>
+            <app-badge variant="success">Óptimo</app-badge>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-lg bg-brand-surface-alt/70 border border-brand-border">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold text-xs">
+                WK
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-text-primary">Woks Salteadores</p>
+                <p class="text-[11px] text-brand-text-secondary">3 fuegos en uso</p>
+              </div>
+            </div>
+            <app-badge variant="warning">Alta Demanda</app-badge>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

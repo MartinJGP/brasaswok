@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text-primary font-sans antialiased selection:bg-brand-primary-light selection:text-brand-primary;
+  }
+
+  input:focus, select:focus, textarea:focus, button:focus-visible {
+    @apply outline-none ring-2 ring-brand-primary ring-offset-2 ring-offset-brand-surface;
+  }
+}
