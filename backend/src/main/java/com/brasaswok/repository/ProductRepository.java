@@ -2,10 +2,17 @@ package com.brasaswok.repository;
 
 import com.brasaswok.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+import java.util.Optional;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // findById(Long id) heredado de JpaRepository es suficiente para
-    // validar existencia, disponibilidad y obtener el precio real.
+
+    List<Product> findByIsAvailableTrue();
+
+    List<Product> findByCategoryIdAndIsAvailableTrue(Long categoryId);
+
+    Optional<Product> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
 }
