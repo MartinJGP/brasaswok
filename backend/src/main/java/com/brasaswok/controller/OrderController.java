@@ -28,10 +28,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    /**
-     * POST /api/orders
-     * Crea un nuevo pedido para el cliente autenticado.
-     */
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<OrderResponse> createOrder(
@@ -41,10 +37,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * GET /api/orders/my-orders
-     * Devuelve los pedidos del cliente autenticado, ordenados por fecha desc.
-     */
     @GetMapping("/my-orders")
     @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<List<OrderResponse>> getMyOrders(
@@ -52,10 +44,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getMyOrders(userDetails));
     }
 
-    /**
-     * GET /api/orders/{id}
-     * Devuelve un pedido por ID. Verifica que pertenezca al cliente autenticado.
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<OrderResponse> getOrderById(

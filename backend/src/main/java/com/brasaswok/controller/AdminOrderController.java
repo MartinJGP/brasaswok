@@ -19,10 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Controller de administración para gestión de pedidos.
- * Toda la clase requiere ROLE_ADMIN (también reforzado a nivel HTTP en SecurityConfig).
- */
 @RestController
 @RequestMapping("/api/admin/orders")
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -34,20 +30,12 @@ public class AdminOrderController {
         this.orderService = orderService;
     }
 
-    /**
-     * GET /api/admin/orders
-     * Lista todos los pedidos. Filtrado opcional por estado: ?status=PENDIENTE
-     */
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getAllOrders(
             @RequestParam(required = false) String status) {
         return ResponseEntity.ok(orderService.getAllOrders(status));
     }
 
-    /**
-     * PUT /api/admin/orders/{id}/status
-     * Cambia el estado de un pedido y registra el log con el admin autenticado.
-     */
     @PutMapping("/{id}/status")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,
@@ -56,10 +44,6 @@ public class AdminOrderController {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, request, userDetails));
     }
 
-    /**
-     * GET /api/admin/orders/{id}/logs
-     * Devuelve el historial de cambios de estado de un pedido, ordenado cronológicamente.
-     */
     @GetMapping("/{id}/logs")
     public ResponseEntity<List<OrderStatusLogResponse>> getOrderLogs(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderLogs(id));

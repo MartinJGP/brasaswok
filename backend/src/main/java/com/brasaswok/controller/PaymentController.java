@@ -25,10 +25,6 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    /**
-     * GET /api/payments/order/{orderId}
-     * Devuelve el pago de un pedido. El cliente solo puede ver el pago de sus propios pedidos.
-     */
     @GetMapping("/order/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PaymentResponse> getPaymentByOrderId(
@@ -37,11 +33,6 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentByOrderId(orderId, userDetails));
     }
 
-    /**
-     * POST /api/payments/process
-     * Procesa (confirma internamente) el pago PENDIENTE de un pedido.
-     * Solo el propietario del pedido puede procesar el pago.
-     */
     @PostMapping("/process")
     @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<PaymentResponse> processPayment(

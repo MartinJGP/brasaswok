@@ -2,10 +2,8 @@
   "info": {
     "_postman_id": "d7c149cf-6b67-45a4-a48e-0cdd944f6a81",
     "name": "Brasas & Wok - API Delivery",
-    "description": "Colección completa de pruebas para el ecosistema de delivery Brasas & Wok (Auth JWT, Roles, Catálogo, Pedidos y Auditoría).",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "49876836",
-    "_collection_link": "https://go.postman.co/collection/49876836-d7c149cf-6b67-45a4-a48e-0cdd944f6a81?source=collection_link"
+    "description": "Colección completa de pruebas para el ecosistema de delivery Brasas & Wok (Auth JWT, Roles, Catálogo y Menú Admin/Público, Pedidos, Pagos y WebSocket).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
@@ -76,8 +74,8 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    var data = pm.response.json();",
-                  "    pm.collectionVariables.set('adminToken', data.token);",
-                  "    console.log('Token Administrador guardado');",
+                  "    pm.collectionVariables.set(\"adminToken\", data.token);",
+                  "    console.log(\"Token Administrador guardado con éxito\");",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -119,13 +117,11 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    var data = pm.response.json();",
-                  "    pm.collectionVariables.set('customerToken', data.token);",
-                  "    console.log('Token Cliente guardado');",
+                  "    pm.collectionVariables.set(\"customerToken\", data.token);",
+                  "    console.log(\"Token Cliente guardado con éxito\");",
                   "}"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -139,7 +135,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"cliente@gmail.com\",\n  \"password\": \"cliente123\"\n}"
+              "raw": "{\n  \"username\": \"carlos_m\",\n  \"password\": \"cliente123\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
@@ -299,6 +295,25 @@
           "response": []
         },
         {
+          "name": "Consultar Categoría por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Listar Platos Disponibles",
           "request": {
             "method": "GET",
@@ -335,14 +350,230 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Consultar Plato por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
-      "name": "4. Gestión de Órdenes & Checkout",
+      "name": "4. Administración de Menú (Admin)",
       "item": [
         {
-          "name": "Crear Pedido (Checkout Cliente)",
+          "name": "Crear Categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Guarniciones & Extras\",\n  \"slug\": \"guarniciones-y-extras\",\n  \"description\": \"Porciones adicionales de papas, arroz y salsas artesanales\",\n  \"imageUrl\": \"/assets/categories/extras.jpg\",\n  \"displayOrder\": 6,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Brasas & Pollos Clásicos\",\n  \"slug\": \"brasas-y-pollos\",\n  \"description\": \"Nuestros clásicos pollos a la brasa marinados con la receta secreta\",\n  \"imageUrl\": \"/assets/categories/brasas.jpg\",\n  \"displayOrder\": 1,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alternar Estado de Categoría (Toggle Status)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/1/toggle-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "1",
+                "toggle-status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Plato",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1,\n  \"name\": \"Pollo a la Brasa Familiar Supremo\",\n  \"slug\": \"pollo-a-la-brasa-familiar-supremo\",\n  \"description\": \"1 Pollo entero + papas familiares + ensalada + tequeños wok de regalo\",\n  \"price\": 89.9,\n  \"imageUrl\": \"/assets/products/pollo-familiar-supremo.jpg\",\n  \"isAvailable\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Plato",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1,\n  \"name\": \"1 Pollo a la Brasa Tradicional\",\n  \"slug\": \"1-pollo-a-la-brasa-tradicional\",\n  \"description\": \"1 Pollo entero a la brasa + papas fritas familiares + ensalada clásica + cremas de la casa\",\n  \"price\": 74.9,\n  \"imageUrl\": \"/assets/products/pollo-entero.jpg\",\n  \"isAvailable\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alternar Disponibilidad de Plato (Toggle Availability)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1/toggle-availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1",
+                "toggle-availability"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Pedidos - Cliente",
+      "item": [
+        {
+          "name": "Crear Pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    pm.collectionVariables.set(\"orderId\", data.id);",
+                  "    pm.collectionVariables.set(\"orderAmount\", data.totalAmount);",
+                  "    console.log(\"Pedido guardado con éxito. ID:\", data.id, \"Total:\", data.totalAmount);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -357,7 +588,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"deliveryAddress\": \"Av. Benavides 1940, Miraflores\",\n  \"deliveryPhone\": \"991234567\",\n  \"deliveryNotes\": \"Edificio Mirador, piso 5 dpto 502\",\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1,\n      \"notes\": \"Papas crocantes y ají extra\"\n    },\n    {\n      \"productId\": 10,\n      \"quantity\": 2,\n      \"notes\": \"Chicha helada\"\n    }\n  ]\n}"
+              "raw": "{\n  \"deliveryAddress\": \"Av. Benavides 1940, Miraflores\",\n  \"deliveryPhone\": \"991234567\",\n  \"deliveryNotes\": \"Edificio Mirador, piso 5 dpto 502\",\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1,\n      \"notes\": \"Papas crocantes y crema de ají\"\n    },\n    {\n      \"productId\": 10,\n      \"quantity\": 1,\n      \"notes\": \"Chicha helada\"\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/orders",
@@ -373,7 +604,7 @@
           "response": []
         },
         {
-          "name": "Mis Pedidos (Historial Cliente)",
+          "name": "Mis Pedidos",
           "request": {
             "method": "GET",
             "header": [
@@ -397,7 +628,7 @@
           "response": []
         },
         {
-          "name": "Consultar Pedido por ID (Seguimiento Cliente)",
+          "name": "Pedido por ID",
           "request": {
             "method": "GET",
             "header": [
@@ -419,9 +650,14 @@
             }
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "6. Admin - Gestión de Pedidos",
+      "item": [
         {
-          "name": "Listar Todos los Pedidos (Panel Admin)",
+          "name": "Listar Todos los Pedidos",
           "request": {
             "method": "GET",
             "header": [
@@ -445,7 +681,37 @@
           "response": []
         },
         {
-          "name": "Actualizar Estado del Pedido (Admin)",
+          "name": "Listar Pedidos por Estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders?status=PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDIENTE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado - PENDIENTE → EN_COCINA",
           "request": {
             "method": "PUT",
             "header": [
@@ -460,7 +726,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"EN_COCINA\",\n  \"comment\": \"Pedido derivado al chef del Wok y parrillero\"\n}"
+              "raw": "{\n  \"status\": \"EN_COCINA\",\n  \"comment\": \"Pedido derivado a estación de cocina y wok\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
@@ -477,149 +743,37 @@
             }
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "5. Pedidos - Cliente",
-      "item": [
-        {
-          "name": "Crear Pedido",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 201) {",
-                  "    var data = pm.response.json();",
-                  "    pm.collectionVariables.set('orderId', data.id);",
-                  "    console.log('Order ID guardado:', data.id);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deliveryAddress\": \"Av. Benavides 1940, Miraflores\",\n  \"deliveryPhone\": \"991234567\",\n  \"deliveryNotes\": \"Edificio Mirador, piso 5 dpto 502\",\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2,\n      \"notes\": \"Sin ají extra\"\n    }\n  ]\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Mis Pedidos",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/orders/my-orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders", "my-orders"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Pedido por ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "orders", "{{orderId}}"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "6. Admin - Gestión de Pedidos",
-      "item": [
-        {
-          "name": "Listar Todos los Pedidos",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/admin/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Listar Pedidos por Estado",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/admin/orders?status=PENDIENTE",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders"],
-              "query": [{ "key": "status", "value": "PENDIENTE" }]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Cambiar Estado - PENDIENTE → EN_COCINA",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"EN_COCINA\",\n  \"comment\": \"Pedido derivado al chef\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
-            }
-          },
-          "response": []
         },
         {
           "name": "Cambiar Estado - EN_COCINA → EN_CAMINO",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"EN_CAMINO\",\n  \"comment\": \"Repartidor asignado - Carlos Ramos\"\n}"
+              "raw": "{\n  \"status\": \"EN_CAMINO\",\n  \"comment\": \"Pedido empaquetado y en ruta con motorizado\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
             }
           },
           "response": []
@@ -629,17 +783,65 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"ENTREGADO\",\n  \"comment\": \"Entregado al cliente satisfactoriamente\"\n}"
+              "raw": "{\n  \"status\": \"ENTREGADO\",\n  \"comment\": \"Pedido entregado en domicilio del cliente\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado - Cancelar Pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELADO\",\n  \"comment\": \"Pedido cancelado a solicitud del cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
             }
           },
           "response": []
@@ -649,12 +851,23 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/logs",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "admin", "orders", "{{orderId}}", "logs"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "orders",
+                "{{orderId}}",
+                "logs"
+              ]
             }
           },
           "response": []
@@ -669,12 +882,22 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/payments/order/{{orderId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "payments", "order", "{{orderId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "order",
+                "{{orderId}}"
+              ]
             }
           },
           "response": []
@@ -684,17 +907,29 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"amount\": 70.00,\n  \"transactionReference\": \"BCP-TXN-20260922-001\"\n}"
+              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"amount\": {{orderAmount}},\n  \"transactionReference\": \"BCP-TRANSF-982145\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/payments/process",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "payments", "process"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "process"
+              ]
             }
           },
           "response": []
@@ -704,17 +939,29 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customerToken}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"YAPE_PLIN\",\n  \"amount\": 70.00,\n  \"transactionReference\": \"YAPE-20260922-ABC\"\n}"
+              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"YAPE_PLIN\",\n  \"amount\": {{orderAmount}},\n  \"transactionReference\": \"YAPE-982145\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/payments/process",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "payments", "process"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "process"
+              ]
             }
           },
           "response": []
@@ -738,6 +985,10 @@
     {
       "key": "orderId",
       "value": "1"
+    },
+    {
+      "key": "orderAmount",
+      "value": "91.90"
     }
   ]
-}
+}

@@ -9,8 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    /**
-     * Consulta el pago asociado a una orden.
-     */
     Optional<Payment> findByOrderId(Long orderId);
 }

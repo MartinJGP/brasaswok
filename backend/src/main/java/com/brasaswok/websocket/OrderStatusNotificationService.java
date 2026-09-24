@@ -7,18 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-/**
- * Servicio auxiliar para notificar cambios de estado de pedidos vía WebSocket.
- *
- * <p>Completamente desacoplado del flujo REST/transaccional. Si el envío falla,
- * solo se registra un warning; la transacción ya habrá commiteado correctamente.
- *
- * <p>El frontend se suscribe a:
- * <pre>
- *   /topic/orders/{orderId}/status
- * </pre>
- * y recibe un objeto con {@code orderId}, {@code orderNumber} y {@code status}.
- */
 @Service
 public class OrderStatusNotificationService {
 
@@ -30,22 +18,38 @@ public class OrderStatusNotificationService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    /**
-     * Publica una notificación de cambio de estado para el pedido indicado.
-     *
-     * @param order  pedido cuyo estado cambió
-     * @param status nuevo estado
-     */
+    public void notifyNewOrder(Order order) {
+        try {
+            record NewOrderPayload(Long orderId, String orderNumber, String customerName, String totalAmount, String message) {}
+            Object payload = new NewOrderPayload(
+                    order.getId(),
+                    order.getOrderNumber(),
+                    order.getCustomer() != null ? order.getCustomer().getFullName() : "",
+                    order.getTotalAmount() != null ? order.getTotalAmount().toString() : "0.00",
+                    "¡Nuevo pedido entrante! - Ticket #" + order.getOrderNumber()
+            );
+            messagingTemplate.convertAndSend("/topic/admin", payload);
+            log.debug("WS notification sent to /topic/admin for ticket {}", order.getOrderNumber());
+        } catch (Exception e) {
+            log.warn("WebSocket notification to /topic/admin failed for order {}: {}", order.getId(), e.getMessage());
+        }
+    }
+
     public void notifyStatusChange(Order order, OrderStatus status) {
         try {
-            String destination = "/topic/orders/" + order.getId() + "/status";
-            // Usamos un record anónimo para evitar ambigüedad con Map en convertAndSend
-            record StatusPayload(Long orderId, String orderNumber, String status) {}
-            Object payload = new StatusPayload(order.getId(), order.getOrderNumber(), status.name());
-            messagingTemplate.convertAndSend(destination, payload);
-            log.debug("WS notification sent to {} → {}", destination, status);
+            record StatusPayload(Long orderId, String orderNumber, String status, String message) {}
+            String message = switch (status) {
+                case EN_COCINA -> "Tu pedido ya está siendo preparado";
+                case EN_CAMINO -> "Tu pedido ya está en camino";
+                case ENTREGADO -> "Tu pedido ha sido entregado";
+                case CANCELADO -> "Tu pedido ha sido cancelado";
+                default -> "Estado actualizado: " + status.name();
+            };
+            Object payload = new StatusPayload(order.getId(), order.getOrderNumber(), status.name(), message);
+            messagingTemplate.convertAndSend("/topic/orders/" + order.getId() + "/status", payload);
+            messagingTemplate.convertAndSend("/topic/pedido/" + order.getId(), payload);
+            log.debug("WS notification sent for order {} → {}", order.getId(), status);
         } catch (Exception e) {
-            // El fallo WebSocket NO debe romper la operación REST ya commiteada
             log.warn("WebSocket notification failed for order {}: {}", order.getId(), e.getMessage());
         }
     }

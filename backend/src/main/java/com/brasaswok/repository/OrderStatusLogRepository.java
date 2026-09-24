@@ -9,8 +9,5 @@ import java.util.List;
 @Repository
 public interface OrderStatusLogRepository extends JpaRepository<OrderStatusLog, Long> {
 
-    /**
-     * Recupera los logs de una orden ordenados cronológicamente (ascendente).
-     */
     List<OrderStatusLog> findByOrderIdOrderByCreatedAtAsc(Long orderId);
 }
