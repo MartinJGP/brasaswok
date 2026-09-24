@@ -479,6 +479,247 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "5. Pedidos - Cliente",
+      "item": [
+        {
+          "name": "Crear Pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    pm.collectionVariables.set('orderId', data.id);",
+                  "    console.log('Order ID guardado:', data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAddress\": \"Av. Benavides 1940, Miraflores\",\n  \"deliveryPhone\": \"991234567\",\n  \"deliveryNotes\": \"Edificio Mirador, piso 5 dpto 502\",\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2,\n      \"notes\": \"Sin ají extra\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mis Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/my-orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "my-orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pedido por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{{orderId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Admin - Gestión de Pedidos",
+      "item": [
+        {
+          "name": "Listar Todos los Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Pedidos por Estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders?status=PENDIENTE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders"],
+              "query": [{ "key": "status", "value": "PENDIENTE" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado - PENDIENTE → EN_COCINA",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EN_COCINA\",\n  \"comment\": \"Pedido derivado al chef\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado - EN_COCINA → EN_CAMINO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EN_CAMINO\",\n  \"comment\": \"Repartidor asignado - Carlos Ramos\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Estado - EN_CAMINO → ENTREGADO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ENTREGADO\",\n  \"comment\": \"Entregado al cliente satisfactoriamente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders", "{{orderId}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Logs de Pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/orders/{{orderId}}/logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "orders", "{{orderId}}", "logs"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Pagos",
+      "item": [
+        {
+          "name": "Consultar Pago de Pedido",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/order/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "order", "{{orderId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Procesar Pago (TRANSFERENCIA)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"TRANSFERENCIA\",\n  \"amount\": 70.00,\n  \"transactionReference\": \"BCP-TXN-20260922-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "process"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Procesar Pago (YAPE_PLIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": {{orderId}},\n  \"paymentMethod\": \"YAPE_PLIN\",\n  \"amount\": 70.00,\n  \"transactionReference\": \"YAPE-20260922-ABC\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/process",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "process"]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -499,4 +740,4 @@
       "value": "1"
     }
   ]
-}
+}

@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 
 public class PaymentRequest {
 
+    @NotNull(message = "Order ID is required")
+    private Long orderId;
+
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;
 
@@ -22,10 +25,19 @@ public class PaymentRequest {
     public PaymentRequest() {
     }
 
-    public PaymentRequest(PaymentMethod paymentMethod, BigDecimal amount, String transactionReference) {
+    public PaymentRequest(Long orderId, PaymentMethod paymentMethod, BigDecimal amount, String transactionReference) {
+        this.orderId = orderId;
         this.paymentMethod = paymentMethod;
         this.amount = amount;
         this.transactionReference = transactionReference;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public PaymentMethod getPaymentMethod() {
