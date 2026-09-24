@@ -1,0 +1,213 @@
+<div class="min-h-screen flex flex-col bg-brand-bg text-brand-text-primary">
+  <!-- Public Sticky Navbar -->
+  <header class="sticky top-0 z-50 bg-brand-secondary/95 backdrop-blur-md border-b border-white/10 text-white transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a routerLink="/" class="flex items-center gap-3.5 group focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-xl p-1">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white shadow-card group-hover:scale-105 transition-transform">
+          <app-icon name="flame" [size]="22" customClass="text-white animate-pulse"></app-icon>
+        </div>
+        <div>
+          <span class="block text-base font-extrabold tracking-wider uppercase text-white font-sans">Brasas a Wok</span>
+          <span class="block text-[10px] tracking-widest uppercase text-brand-accent font-semibold">Sabor a Fuego Vivo</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
+        <a href="#inicio" class="hover:text-white transition-colors">Inicio</a>
+        <a href="#especialidades" class="hover:text-white transition-colors">Especialidades</a>
+        <a href="#filosofia" class="hover:text-white transition-colors">Nuestra Cocina</a>
+        <a href="#contacto" class="hover:text-white transition-colors">Horarios & Sede</a>
+      </nav>
+
+      <!-- Desktop CTA & Admin Link -->
+      <div class="hidden lg:flex items-center gap-4">
+        <!-- Direct Phone -->
+        <a
+          href="tel:017192020"
+          class="flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors"
+        >
+          <app-icon name="phone" [size]="16" customClass="text-brand-accent"></app-icon>
+          <span>(01) 719-2020</span>
+        </a>
+
+        <!-- Order Online Button -->
+        <a
+          href="#especialidades"
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+        >
+          <app-icon name="orders" [size]="16"></app-icon>
+          <span>Pedir Delivery</span>
+        </a>
+
+        <!-- Admin Access Button -->
+        <a
+          routerLink="/admin/dashboard"
+          class="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          title="Acceso al Panel de Administración"
+          aria-label="Panel de Administración"
+        >
+          <app-icon name="dashboard" [size]="18"></app-icon>
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        type="button"
+        class="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+        (click)="isMobileMenuOpen = !isMobileMenuOpen"
+        aria-label="Abrir menú de navegación"
+      >
+        <app-icon [name]="isMobileMenuOpen ? 'x' : 'menu-toggle'" [size]="24"></app-icon>
+      </button>
+    </div>
+
+    <!-- Mobile Nav Dropdown -->
+    <div
+      *ngIf="isMobileMenuOpen"
+      class="md:hidden border-t border-white/10 bg-brand-secondary px-4 pt-3 pb-6 space-y-3"
+    >
+      <a
+        href="#inicio"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Inicio
+      </a>
+      <a
+        href="#especialidades"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Especialidades
+      </a>
+      <a
+        href="#filosofia"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Nuestra Cocina
+      </a>
+      <a
+        href="#contacto"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Horarios & Sede
+      </a>
+
+      <div class="pt-3 border-t border-white/10 flex flex-col gap-3">
+        <a
+          href="#especialidades"
+          (click)="isMobileMenuOpen = false"
+          class="w-full text-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-lg shadow-card"
+        >
+          Pedir Delivery
+        </a>
+        <a
+          routerLink="/admin/dashboard"
+          (click)="isMobileMenuOpen = false"
+          class="w-full text-center py-2 text-white/70 hover:text-white text-xs font-semibold"
+        >
+          Acceso Panel Admin →
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Routed Page (Landing / Home) -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Public Footer -->
+  <footer class="bg-brand-secondary text-white border-t border-white/10 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+        <!-- Col 1: Brand Info -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white">
+              <app-icon name="flame" [size]="20"></app-icon>
+            </div>
+            <span class="text-lg font-bold tracking-wider uppercase text-white font-sans">Brasas a Wok</span>
+          </div>
+          <p class="text-xs text-white/60 leading-relaxed">
+            La unión magistral del pollo a la brasa tradicional peruano y el fuego vivo del wok oriental. Cocina sincera, preparada al momento con ingredientes seleccionados.
+          </p>
+          <div class="flex items-center gap-2 pt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-status-success"></span>
+              Sede San Borja • Abierto
+            </span>
+          </div>
+        </div>
+
+        <!-- Col 2: Horarios -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Horarios de Atención</h4>
+          <ul class="space-y-2 text-xs text-white/70">
+            <li class="flex justify-between">
+              <span>Lunes a Jueves:</span>
+              <span class="text-white font-medium">12:00 PM - 10:30 PM</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Viernes y Sábados:</span>
+              <span class="text-white font-medium">12:00 PM - 11:30 PM</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Domingos y Feriados:</span>
+              <span class="text-white font-medium">12:00 PM - 10:00 PM</span>
+            </li>
+          </ul>
+          <p class="text-[11px] text-white/50 pt-1">Atención continua en salón y delivery.</p>
+        </div>
+
+        <!-- Col 3: Ubicación & Contacto -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Ubicación & Contacto</h4>
+          <ul class="space-y-2.5 text-xs text-white/70">
+            <li class="flex items-start gap-2.5">
+              <app-icon name="map-pin" [size]="16" customClass="text-brand-accent shrink-0 mt-0.5"></app-icon>
+              <span>Av. Javier Prado Este 1234, San Borja, Lima - Perú</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <app-icon name="phone" [size]="16" customClass="text-brand-accent shrink-0"></app-icon>
+              <span>Central: (01) 719-2020</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <app-icon name="phone" [size]="16" customClass="text-brand-accent shrink-0"></app-icon>
+              <span>WhatsApp Delivery: 987 654 321</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Accesos Rápidos -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Plataforma</h4>
+          <ul class="space-y-2 text-xs text-white/70">
+            <li><a href="#especialidades" class="hover:text-white transition-colors">Carta Digital</a></li>
+            <li><a href="#filosofia" class="hover:text-white transition-colors">Nuestra Cocina</a></li>
+            <li><a href="#contacto" class="hover:text-white transition-colors">Zonas de Reparto</a></li>
+            <li class="pt-2">
+              <a
+                routerLink="/admin/dashboard"
+                class="inline-flex items-center gap-2 text-brand-primary hover:text-brand-primary-hover font-semibold transition-colors"
+              >
+                <span>Acceso Administrativo</span>
+                <app-icon name="arrow-right" [size]="14"></app-icon>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
+        <p>© 2026 Brasas a Wok. Todos los derechos reservados.</p>
+        <p class="text-[11px]">Diseño y desarrollo con pasión gastronómica.</p>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -21,7 +21,12 @@ export type IconName =
   | 'dollar'
   | 'flame'
   | 'check'
-  | 'alert';
+  | 'alert'
+  | 'phone'
+  | 'map-pin'
+  | 'arrow-right'
+  | 'truck'
+  | 'shopping-bag';
 
 @Component({
   selector: 'app-icon',
@@ -50,6 +55,12 @@ export type IconName =
         </g>
 
         <g *ngSwitchCase="'orders'">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+          <path d="M3 6h18" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </g>
+
+        <g *ngSwitchCase="'shopping-bag'">
           <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
           <path d="M3 6h18" />
           <path d="M16 10a4 4 0 0 1-8 0" />
@@ -149,6 +160,28 @@ export type IconName =
           <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
           <line x1="12" x2="12" y1="9" y2="13" />
           <line x1="12" x2="12.01" y1="17" y2="17" />
+        </g>
+
+        <g *ngSwitchCase="'phone'">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </g>
+
+        <g *ngSwitchCase="'map-pin'">
+          <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+          <circle cx="12" cy="10" r="3" />
+        </g>
+
+        <g *ngSwitchCase="'arrow-right'">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </g>
+
+        <g *ngSwitchCase="'truck'">
+          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+          <path d="M15 18H9" />
+          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+          <circle cx="17" cy="18.5" r="2.5" />
+          <circle cx="7" cy="18.5" r="2.5" />
         </g>
       </ng-container>
     </svg>

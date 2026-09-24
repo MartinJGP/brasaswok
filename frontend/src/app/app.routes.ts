@@ -1,12 +1,20 @@
 import { Routes } from '@angular/router';
+import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+import { HomeComponent } from './pages/home/home.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'admin/dashboard',
-    pathMatch: 'full'
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: HomeComponent,
+        title: 'Brasas a Wok | Pollos a la Brasa & Cocina al Wok'
+      }
+    ]
   },
   {
     path: 'admin',
@@ -20,7 +28,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
-        title: 'Tablero de Operaciones | Brasas a Wok'
+        title: 'Panel Administrativo | Brasas a Wok'
       },
       {
         path: '**',
@@ -30,6 +38,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'admin/dashboard'
+    redirectTo: ''
   }
 ];

@@ -1,0 +1,287 @@
+<div class="space-y-20 lg:space-y-28">
+  <!-- Hero Section -->
+  <section id="inicio" class="relative bg-brand-secondary text-white py-20 lg:py-28 overflow-hidden">
+    <!-- Subtle Background Ambient Warm Glow -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl space-y-6">
+        <!-- Eyebrow Badge -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold tracking-wider uppercase text-brand-accent">
+          <app-icon name="flame" [size]="14" customClass="text-brand-accent"></app-icon>
+          <span>Fusión de Pollo a la Brasa & Cocina al Wok</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-sans leading-tight text-white">
+          El fuego de la brasa.<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-accent to-amber-400">
+            La energía viva del wok.
+          </span>
+        </h1>
+
+        <!-- Subheading -->
+        <p class="text-sm sm:text-base lg:text-lg text-white/75 font-normal leading-relaxed max-w-2xl">
+          Pollo a la brasa dorado con carbón seleccionado y macerado con nuestra receta secreta, junto a salteados criollo-orientales preparados al segundo al fuego vivo. Tradición, sabor intenso y cocina sincera.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <a
+            href="#especialidades"
+            class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-brand-secondary"
+          >
+            <span>Explorar Especialidades</span>
+            <app-icon name="arrow-right" [size]="18"></app-icon>
+          </a>
+
+          <a
+            href="#contacto"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold rounded-xl border border-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-white/40"
+          >
+            <app-icon name="map-pin" [size]="16"></app-icon>
+            <span>Horarios & Ubicación</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Feature Badges Trio -->
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 border-t border-white/10">
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+          <div class="w-10 h-10 rounded-lg bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0">
+            <app-icon name="flame" [size]="20"></app-icon>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white font-sans">100% Carbón & Leña</h2>
+            <p class="text-xs text-white/60 mt-1 leading-relaxed">
+              Maceración de 24 horas y cocción lenta para lograr piel crocante y carne sumamente jugosa.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+          <div class="w-10 h-10 rounded-lg bg-brand-accent/20 text-brand-accent flex items-center justify-center shrink-0">
+            <app-icon name="menu" [size]="20"></app-icon>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white font-sans">Wok Hei al Instante</h2>
+            <p class="text-xs text-white/60 mt-1 leading-relaxed">
+              Salteados a fuego extremo que sellan los jugos del lomo y conservan los vegetales crujientes.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <app-icon name="truck" [size]="20"></app-icon>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white font-sans">Delivery Caliente</h2>
+            <p class="text-xs text-white/60 mt-1 leading-relaxed">
+              Empaque térmico especial que mantiene la temperatura y textura como recién salido de cocina.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Specialties Section -->
+  <section id="especialidades" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
+    <!-- Section Header -->
+    <div class="text-center max-w-2xl mx-auto space-y-3 mb-12">
+      <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Nuestra Selección</span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary tracking-tight font-sans">
+        Especialidades de la Casa
+      </h2>
+      <p class="text-xs sm:text-sm text-brand-text-secondary">
+        Los clásicos que nos definen: la maestría del pollo a la brasa tradicional y la sazón ahumada de nuestros woks.
+      </p>
+
+      <!-- Category Filter Buttons -->
+      <div class="inline-flex flex-wrap justify-center gap-2 pt-4">
+        <button
+          type="button"
+          *ngFor="let cat of categories"
+          (click)="selectedCategory = cat"
+          [class.bg-brand-primary]="selectedCategory === cat"
+          [class.text-white]="selectedCategory === cat"
+          [class.bg-brand-surface]="selectedCategory !== cat"
+          [class.text-brand-text-secondary]="selectedCategory !== cat"
+          class="px-4 py-2 rounded-lg text-xs font-semibold border border-brand-border shadow-subtle transition-all hover:text-brand-text-primary"
+        >
+          {{ cat }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Dishes Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <article
+        *ngFor="let dish of filteredDishes"
+        class="bg-brand-surface rounded-xl border border-brand-border p-6 shadow-card hover:border-brand-primary/40 transition-all flex flex-col justify-between group"
+      >
+        <div class="space-y-3">
+          <!-- Category & Tag -->
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
+              [ngClass]="{
+                'bg-brand-primary-light text-brand-primary': dish.category === 'Brasas',
+                'bg-brand-accent-light text-brand-accent': dish.category === 'Wok',
+                'bg-emerald-50 text-emerald-700': dish.category === 'Entradas',
+                'bg-purple-50 text-purple-700': dish.category === 'Bebidas'
+              }"
+            >
+              {{ dish.category }}
+            </span>
+            <span *ngIf="dish.isStar" class="text-[11px] font-semibold text-brand-accent flex items-center gap-1">
+              <app-icon name="flame" [size]="12"></app-icon>
+              Plato Estrella
+            </span>
+          </div>
+
+          <!-- Dish Name -->
+          <h3 class="text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans">
+            {{ dish.name }}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-xs text-brand-text-secondary leading-relaxed line-clamp-3">
+            {{ dish.description }}
+          </p>
+        </div>
+
+        <!-- Footer: Price & Order Action -->
+        <div class="mt-6 pt-4 border-t border-brand-border flex items-center justify-between">
+          <div>
+            <span class="text-[10px] text-brand-text-muted uppercase font-medium block">Precio</span>
+            <span class="text-base font-bold text-brand-text-primary font-mono">
+              S/ {{ dish.price.toFixed(2) }}
+            </span>
+          </div>
+
+          <a
+            href="tel:017192020"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-surface-alt hover:bg-brand-primary hover:text-white text-brand-text-primary border border-brand-border transition-all"
+          >
+            <app-icon name="shopping-bag" [size]="14"></app-icon>
+            <span>Pedir</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Philosophy & Kitchen Section -->
+  <section id="filosofia" class="bg-brand-surface border-y border-brand-border py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Text Column -->
+        <div class="space-y-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Filosofía Gastronómica</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-text-primary font-sans leading-tight">
+            Dos fuegos ancestrales unidos en un solo concepto.
+          </h2>
+          <p class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
+            En Brasas a Wok creemos que la comida sabe mejor cuando se respeta el fuego. No usamos calentadores industriales ni ingredientes precocidos. Cada plato salteado se elabora al momento en woks curados con carbón, y cada pollo a la brasa pasa por un proceso de asado meticuloso a temperatura constante.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4">
+            <div class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border">
+              <h3 class="text-sm font-bold text-brand-text-primary">El Secreto de la Brasa</h3>
+              <p class="text-xs text-brand-text-secondary mt-1 leading-relaxed">
+                Maceración balanceada con cerveza negra, ají panca, ajo y romero silvestre.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border">
+              <h3 class="text-sm font-bold text-brand-text-primary">El Salteado Wok Hei</h3>
+              <p class="text-xs text-brand-text-secondary mt-1 leading-relaxed">
+                Fuego envolvente a 300°C que carameliza las salsas y otorga el auténtico ahumado.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Info Box -->
+        <div class="bg-brand-secondary text-white rounded-2xl p-8 sm:p-10 shadow-card border border-white/10 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white">
+              <app-icon name="check" [size]="20"></app-icon>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">Compromiso con el Cliente</h3>
+              <p class="text-xs text-white/60">Garantía de calidad en cada comanda</p>
+            </div>
+          </div>
+
+          <ul class="space-y-4 text-xs text-white/80">
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
+              <span><strong>Papas 100% Peruanas:</strong> Fritas al instante con doble cocción para asegurar textura exterior crocante e interior cremoso.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
+              <span><strong>Cremas de la Casa:</strong> Ají pollero artesanal, vinagreta fresca de pollería, tártara de hierbas y salsa de tamarindo casera.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
+              <span><strong>Cocina Abierta:</strong> Transparencia total. Puedes observar la destreza de nuestros parrilleros y maestros del wok desde el salón.</span>
+            </li>
+          </ul>
+
+          <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+            <span class="text-white/60">Tiempo estimado en salón:</span>
+            <span class="font-bold text-brand-accent">15 - 20 minutos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location & Operating Hours Section -->
+  <section id="contacto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 scroll-mt-24">
+    <div class="bg-brand-surface rounded-2xl border border-brand-border p-8 sm:p-12 shadow-card">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
+        <!-- Col 1: Sede Principal -->
+        <div class="space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-primary-light text-brand-primary flex items-center justify-center">
+            <app-icon name="map-pin" [size]="20"></app-icon>
+          </div>
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">Sede Principal San Borja</h3>
+          <p class="text-xs text-brand-text-secondary leading-relaxed">
+            Av. Javier Prado Este 1234, San Borja, Lima.<br>
+            A 2 cuadras de la estación La Cultura. Contamos con estacionamiento vigilado y rampa de acceso.
+          </p>
+        </div>
+
+        <!-- Col 2: Horarios -->
+        <div class="space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-accent-light text-brand-accent flex items-center justify-center">
+            <app-icon name="clock" [size]="20"></app-icon>
+          </div>
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">Horario de Cocina</h3>
+          <div class="text-xs text-brand-text-secondary space-y-1">
+            <p><strong>Lunes a Sábado:</strong> 12:00 PM - 11:30 PM</p>
+            <p><strong>Domingos & Feriados:</strong> 12:00 PM - 10:00 PM</p>
+            <p class="text-brand-status-success font-medium pt-1">Atención continua sin interrupción.</p>
+          </div>
+        </div>
+
+        <!-- Col 3: Canales de Atención -->
+        <div class="space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+            <app-icon name="phone" [size]="20"></app-icon>
+          </div>
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">Pedidos & Reservas</h3>
+          <p class="text-xs text-brand-text-secondary leading-relaxed">
+            Teléfono: <strong>(01) 719-2020</strong><br>
+            WhatsApp Delivery: <strong>987 654 321</strong><br>
+            Cobertura: San Borja, Surco, San Isidro, Miraflores y La Victoria.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
