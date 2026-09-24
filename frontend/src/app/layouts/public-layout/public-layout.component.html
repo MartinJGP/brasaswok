@@ -16,51 +16,113 @@
       <!-- Desktop Nav Links -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
         <a href="#inicio" class="hover:text-white transition-colors">Inicio</a>
-        <a href="#especialidades" class="hover:text-white transition-colors">Especialidades</a>
+        <a href="#carta" class="hover:text-white transition-colors">La Carta</a>
         <a href="#filosofia" class="hover:text-white transition-colors">Nuestra Cocina</a>
         <a href="#contacto" class="hover:text-white transition-colors">Horarios & Sede</a>
       </nav>
 
-      <!-- Desktop CTA & Admin Link -->
-      <div class="hidden lg:flex items-center gap-4">
+      <!-- Desktop CTA, Cart & Auth -->
+      <div class="hidden lg:flex items-center gap-3">
         <!-- Direct Phone -->
         <a
           href="tel:017192020"
-          class="flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors"
+          class="flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors px-2 py-1.5"
         >
-          <app-icon name="phone" [size]="16" customClass="text-brand-accent"></app-icon>
+          <app-icon name="phone" [size]="15" customClass="text-brand-accent"></app-icon>
           <span>(01) 719-2020</span>
         </a>
 
-        <!-- Order Online Button -->
-        <a
-          href="#especialidades"
-          class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+        <!-- Cart Button -->
+        <button
+          type="button"
+          (click)="cartService.openDrawer()"
+          class="relative p-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white transition-all flex items-center gap-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          aria-label="Ver carrito de compras"
         >
-          <app-icon name="orders" [size]="16"></app-icon>
-          <span>Pedir Delivery</span>
-        </a>
+          <app-icon name="shopping-bag" [size]="18"></app-icon>
+          <span *ngIf="cartService.totalCount() > 0" class="font-mono text-brand-accent">
+            S/ {{ cartService.subtotal().toFixed(2) }}
+          </span>
+          <span
+            *ngIf="cartService.totalCount() > 0"
+            class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-brand-primary text-white text-[10px] font-extrabold rounded-full flex items-center justify-center ring-2 ring-brand-secondary"
+          >
+            {{ cartService.totalCount() }}
+          </span>
+        </button>
+
+        <!-- Divider -->
+        <div class="h-6 w-px bg-white/15"></div>
+
+        <!-- Auth Section (Login / Profile) -->
+        <ng-container *ngIf="authService.isLoggedIn(); else loginBtnTpl">
+          <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-xs">
+            <app-icon name="user" [size]="14" customClass="text-brand-accent"></app-icon>
+            <span class="font-semibold text-white max-w-[120px] truncate">
+              {{ authService.currentUser()?.fullName }}
+            </span>
+            <button
+              type="button"
+              (click)="logout()"
+              class="text-white/50 hover:text-brand-primary ml-1 transition-colors"
+              title="Cerrar Sesión"
+              aria-label="Cerrar sesión"
+            >
+              <app-icon name="log-out" [size]="14"></app-icon>
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-template #loginBtnTpl>
+          <button
+            type="button"
+            (click)="openAuthModal()"
+            class="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white px-3 py-2 rounded-xl hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          >
+            <app-icon name="user" [size]="16"></app-icon>
+            <span>Iniciar Sesión</span>
+          </button>
+        </ng-template>
 
         <!-- Admin Access Button -->
         <a
           routerLink="/admin/dashboard"
-          class="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
-          title="Acceso al Panel de Administración"
+          class="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          title="Panel de Administración"
           aria-label="Panel de Administración"
         >
           <app-icon name="dashboard" [size]="18"></app-icon>
         </a>
       </div>
 
-      <!-- Mobile Hamburger Button -->
-      <button
-        type="button"
-        class="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
-        (click)="isMobileMenuOpen = !isMobileMenuOpen"
-        aria-label="Abrir menú de navegación"
-      >
-        <app-icon [name]="isMobileMenuOpen ? 'x' : 'menu-toggle'" [size]="24"></app-icon>
-      </button>
+      <!-- Mobile Right Section (Cart & Hamburger) -->
+      <div class="flex items-center gap-2 md:hidden">
+        <!-- Mobile Cart Button -->
+        <button
+          type="button"
+          (click)="cartService.openDrawer()"
+          class="relative p-2 text-white/80 hover:text-white rounded-lg focus:outline-none"
+          aria-label="Ver carrito"
+        >
+          <app-icon name="shopping-bag" [size]="22"></app-icon>
+          <span
+            *ngIf="cartService.totalCount() > 0"
+            class="absolute top-0 right-0 w-4 h-4 bg-brand-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-brand-secondary"
+          >
+            {{ cartService.totalCount() }}
+          </span>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          type="button"
+          class="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          (click)="isMobileMenuOpen = !isMobileMenuOpen"
+          aria-label="Abrir menú de navegación"
+        >
+          <app-icon [name]="isMobileMenuOpen ? 'x' : 'menu-toggle'" [size]="24"></app-icon>
+        </button>
+      </div>
     </div>
 
     <!-- Mobile Nav Dropdown -->
@@ -76,11 +138,11 @@
         Inicio
       </a>
       <a
-        href="#especialidades"
+        href="#carta"
         (click)="isMobileMenuOpen = false"
         class="block py-2 text-sm font-medium text-white/80 hover:text-white"
       >
-        Especialidades
+        La Carta
       </a>
       <a
         href="#filosofia"
@@ -97,18 +159,37 @@
         Horarios & Sede
       </a>
 
-      <div class="pt-3 border-t border-white/10 flex flex-col gap-3">
-        <a
-          href="#especialidades"
-          (click)="isMobileMenuOpen = false"
-          class="w-full text-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-lg shadow-card"
+      <!-- Mobile User Session -->
+      <div class="pt-3 border-t border-white/10 flex flex-col gap-2.5">
+        <ng-container *ngIf="authService.isLoggedIn(); else mobileLoginTpl">
+          <div class="flex items-center justify-between p-2.5 bg-white/5 rounded-xl border border-white/10 text-xs">
+            <span class="text-white font-semibold">{{ authService.currentUser()?.fullName }}</span>
+            <button (click)="logout()" class="text-xs text-brand-primary font-bold">Cerrar Sesión</button>
+          </div>
+        </ng-container>
+        <ng-template #mobileLoginTpl>
+          <button
+            type="button"
+            (click)="openAuthModal()"
+            class="w-full text-center py-2.5 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-xl"
+          >
+            Iniciar Sesión / Registro
+          </button>
+        </ng-template>
+
+        <button
+          type="button"
+          (click)="cartService.openDrawer(); isMobileMenuOpen = false"
+          class="w-full text-center py-2.5 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-card flex items-center justify-center gap-2"
         >
-          Pedir Delivery
-        </a>
+          <app-icon name="shopping-bag" [size]="16"></app-icon>
+          <span>Mi Pedido ({{ cartService.totalCount() }})</span>
+        </button>
+
         <a
           routerLink="/admin/dashboard"
           (click)="isMobileMenuOpen = false"
-          class="w-full text-center py-2 text-white/70 hover:text-white text-xs font-semibold"
+          class="w-full text-center py-2 text-white/50 hover:text-white text-xs font-semibold"
         >
           Acceso Panel Admin →
         </a>
@@ -187,7 +268,7 @@
         <div class="space-y-3">
           <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Plataforma</h4>
           <ul class="space-y-2 text-xs text-white/70">
-            <li><a href="#especialidades" class="hover:text-white transition-colors">Carta Digital</a></li>
+            <li><a href="#carta" class="hover:text-white transition-colors">Carta Digital</a></li>
             <li><a href="#filosofia" class="hover:text-white transition-colors">Nuestra Cocina</a></li>
             <li><a href="#contacto" class="hover:text-white transition-colors">Zonas de Reparto</a></li>
             <li class="pt-2">
@@ -210,4 +291,10 @@
       </div>
     </div>
   </footer>
+
+  <!-- Slide-Over Cart Drawer -->
+  <app-cart-drawer (requestAuth)="openAuthModal()"></app-cart-drawer>
+
+  <!-- Login & Register Modal -->
+  <app-auth-modal *ngIf="showAuthModal" (closeEvent)="closeAuthModal()"></app-auth-modal>
 </div>

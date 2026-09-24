@@ -1,4 +1,4 @@
-<div class="space-y-20 lg:space-y-28">
+<div class="space-y-20 lg:space-y-28 pb-20">
   <!-- Hero Section -->
   <section id="inicio" class="relative bg-brand-secondary text-white py-20 lg:py-28 overflow-hidden">
     <!-- Subtle Background Ambient Warm Glow -->
@@ -10,7 +10,7 @@
         <!-- Eyebrow Badge -->
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold tracking-wider uppercase text-brand-accent">
           <app-icon name="flame" [size]="14" customClass="text-brand-accent"></app-icon>
-          <span>Fusión de Pollo a la Brasa & Cocina al Wok</span>
+          <span>Delivery & Salón • Brasas & Wok</span>
         </div>
 
         <!-- Main Headline -->
@@ -23,16 +23,16 @@
 
         <!-- Subheading -->
         <p class="text-sm sm:text-base lg:text-lg text-white/75 font-normal leading-relaxed max-w-2xl">
-          Pollo a la brasa dorado con carbón seleccionado y macerado con nuestra receta secreta, junto a salteados criollo-orientales preparados al segundo al fuego vivo. Tradición, sabor intenso y cocina sincera.
+          Pollo a la brasa dorado a fuego lento con receta secreta, y salteados criollo-orientales preparados al segundo al fuego vivo. Selecciona tus platos y recíbelos calientes en tu domicilio.
         </p>
 
         <!-- CTA Action Buttons -->
         <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <a
-            href="#especialidades"
+            href="#carta"
             class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-brand-secondary"
           >
-            <span>Explorar Especialidades</span>
+            <span>Pedir para Delivery</span>
             <app-icon name="arrow-right" [size]="18"></app-icon>
           </a>
 
@@ -41,7 +41,7 @@
             class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold rounded-xl border border-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-white/40"
           >
             <app-icon name="map-pin" [size]="16"></app-icon>
-            <span>Horarios & Ubicación</span>
+            <span>Horarios & Sede</span>
           </a>
         </div>
       </div>
@@ -79,7 +79,7 @@
           <div>
             <h2 class="text-sm font-bold text-white font-sans">Delivery Caliente</h2>
             <p class="text-xs text-white/60 mt-1 leading-relaxed">
-              Empaque térmico especial que mantiene la temperatura y textura como recién salido de cocina.
+              Empaque térmico hermético para que la comida llegue en su punto óptimo a tu mesa.
             </p>
           </div>
         </div>
@@ -87,50 +87,53 @@
     </div>
   </section>
 
-  <!-- Specialties Section -->
-  <section id="especialidades" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
+  <!-- Interactive Delivery Catalog Section -->
+  <section id="carta" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
     <!-- Section Header -->
-    <div class="text-center max-w-2xl mx-auto space-y-3 mb-12">
-      <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Nuestra Selección</span>
+    <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
+      <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Carta de Delivery & Salón</span>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary tracking-tight font-sans">
-        Especialidades de la Casa
+        Elige tu Comida y Arma tu Pedido
       </h2>
       <p class="text-xs sm:text-sm text-brand-text-secondary">
-        Los clásicos que nos definen: la maestría del pollo a la brasa tradicional y la sazón ahumada de nuestros woks.
+        Haz clic en cualquier plato para personalizar tu orden o agrégalo directamente.
       </p>
 
-      <!-- Category Filter Buttons -->
-      <div class="inline-flex flex-wrap justify-center gap-2 pt-4">
+      <!-- Category Filter Tabs -->
+      <div class="flex items-center justify-center overflow-x-auto gap-2 pt-4 pb-2 px-2 no-scrollbar">
         <button
           type="button"
           *ngFor="let cat of categories"
           (click)="selectedCategory = cat"
           [class.bg-brand-primary]="selectedCategory === cat"
           [class.text-white]="selectedCategory === cat"
+          [class.border-brand-primary]="selectedCategory === cat"
           [class.bg-brand-surface]="selectedCategory !== cat"
           [class.text-brand-text-secondary]="selectedCategory !== cat"
-          class="px-4 py-2 rounded-lg text-xs font-semibold border border-brand-border shadow-subtle transition-all hover:text-brand-text-primary"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-brand-border shadow-subtle transition-all whitespace-nowrap hover:text-brand-text-primary active:scale-95"
         >
           {{ cat }}
         </button>
       </div>
     </div>
 
-    <!-- Dishes Grid -->
+    <!-- Dishes Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <article
         *ngFor="let dish of filteredDishes"
-        class="bg-brand-surface rounded-xl border border-brand-border p-6 shadow-card hover:border-brand-primary/40 transition-all flex flex-col justify-between group"
+        (click)="openDishModal(dish)"
+        class="bg-brand-surface rounded-2xl border border-brand-border p-6 shadow-card hover:border-brand-primary/40 hover:shadow-dropdown transition-all flex flex-col justify-between cursor-pointer group relative"
       >
         <div class="space-y-3">
-          <!-- Category & Tag -->
+          <!-- Category & Star Badge -->
           <div class="flex items-center justify-between">
             <span
-              class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
+              class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
               [ngClass]="{
-                'bg-brand-primary-light text-brand-primary': dish.category === 'Brasas',
-                'bg-brand-accent-light text-brand-accent': dish.category === 'Wok',
-                'bg-emerald-50 text-emerald-700': dish.category === 'Entradas',
+                'bg-brand-primary-light text-brand-primary': dish.category === 'Brasas & Pollos',
+                'bg-brand-accent-light text-brand-accent': dish.category === 'Wok & Salteados',
+                'bg-amber-50 text-amber-800': dish.category === 'Chaufas & Aeropuertos',
+                'bg-emerald-50 text-emerald-700': dish.category === 'Entradas & Piques',
                 'bg-purple-50 text-purple-700': dish.category === 'Bebidas'
               }"
             >
@@ -143,7 +146,7 @@
           </div>
 
           <!-- Dish Name -->
-          <h3 class="text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans">
+          <h3 class="text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans leading-snug">
             {{ dish.name }}
           </h3>
 
@@ -153,26 +156,63 @@
           </p>
         </div>
 
-        <!-- Footer: Price & Order Action -->
+        <!-- Footer: Price & Direct Add Button -->
         <div class="mt-6 pt-4 border-t border-brand-border flex items-center justify-between">
           <div>
-            <span class="text-[10px] text-brand-text-muted uppercase font-medium block">Precio</span>
-            <span class="text-base font-bold text-brand-text-primary font-mono">
+            <span class="text-[10px] text-brand-text-muted uppercase font-semibold block">Precio</span>
+            <span class="text-lg font-bold text-brand-text-primary font-mono">
               S/ {{ dish.price.toFixed(2) }}
             </span>
           </div>
 
-          <a
-            href="tel:017192020"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-surface-alt hover:bg-brand-primary hover:text-white text-brand-text-primary border border-brand-border transition-all"
+          <!-- Add / In Cart Button -->
+          <button
+            type="button"
+            (click)="quickAdd(dish, $event)"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-subtle active:scale-95"
+            [ngClass]="
+              getQuantityInCart(dish.id) > 0
+                ? 'bg-brand-secondary text-white hover:bg-brand-secondary-hover'
+                : 'bg-brand-primary hover:bg-brand-primary-hover text-white shadow-card'
+            "
           >
-            <app-icon name="shopping-bag" [size]="14"></app-icon>
-            <span>Pedir</span>
-          </a>
+            <app-icon [name]="getQuantityInCart(dish.id) > 0 ? 'check' : 'plus'" [size]="14"></app-icon>
+            <span>
+              {{ getQuantityInCart(dish.id) > 0 ? getQuantityInCart(dish.id) + ' en pedido' : 'Agregar' }}
+            </span>
+          </button>
         </div>
       </article>
     </div>
   </section>
+
+  <!-- Sticky Floating Order Bar (appears when cart has items) -->
+  <aside
+    *ngIf="cartService.totalCount() > 0"
+    class="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 max-w-md w-full animate-in fade-in slide-in-from-bottom-5 duration-300"
+    aria-label="Resumen de pedido"
+  >
+    <div class="bg-brand-secondary text-white p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white shrink-0 font-bold">
+          {{ cartService.totalCount() }}
+        </div>
+        <div>
+          <span class="text-xs text-white/70 block">Total con delivery:</span>
+          <span class="text-base font-bold text-white font-mono">S/ {{ cartService.total().toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="cartService.openDrawer()"
+        class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+      >
+        <span>Ver Pedido</span>
+        <app-icon name="arrow-right" [size]="16"></app-icon>
+      </button>
+    </div>
+  </aside>
 
   <!-- Philosophy & Kitchen Section -->
   <section id="filosofia" class="bg-brand-surface border-y border-brand-border py-16 lg:py-24">
@@ -211,15 +251,15 @@
               <app-icon name="check" [size]="20"></app-icon>
             </div>
             <div>
-              <h3 class="text-base font-bold text-white">Compromiso con el Cliente</h3>
-              <p class="text-xs text-white/60">Garantía de calidad en cada comanda</p>
+              <h3 class="text-base font-bold text-white">Garantía de Calidad</h3>
+              <p class="text-xs text-white/60">Compromiso en cada plato</p>
             </div>
           </div>
 
           <ul class="space-y-4 text-xs text-white/80">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
-              <span><strong>Papas 100% Peruanas:</strong> Fritas al instante con doble cocción para asegurar textura exterior crocante e interior cremoso.</span>
+              <span><strong>Papas 100% Peruanas:</strong> Fritas al instante con doble cocción para textura crocante exterior y puré cremoso interior.</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
@@ -227,13 +267,13 @@
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5 shrink-0"></span>
-              <span><strong>Cocina Abierta:</strong> Transparencia total. Puedes observar la destreza de nuestros parrilleros y maestros del wok desde el salón.</span>
+              <span><strong>Cocina Abierta:</strong> Transparencia total. Puedes observar la destreza de nuestros parrilleros y maestros del wok.</span>
             </li>
           </ul>
 
           <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-            <span class="text-white/60">Tiempo estimado en salón:</span>
-            <span class="font-bold text-brand-accent">15 - 20 minutos</span>
+            <span class="text-white/60">Tiempo promedio de entrega:</span>
+            <span class="font-bold text-brand-accent">30 - 40 minutos</span>
           </div>
         </div>
       </div>
@@ -241,7 +281,7 @@
   </section>
 
   <!-- Location & Operating Hours Section -->
-  <section id="contacto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 scroll-mt-24">
+  <section id="contacto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
     <div class="bg-brand-surface rounded-2xl border border-brand-border p-8 sm:p-12 shadow-card">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
         <!-- Col 1: Sede Principal -->
@@ -252,7 +292,7 @@
           <h3 class="text-base font-bold text-brand-text-primary font-sans">Sede Principal San Borja</h3>
           <p class="text-xs text-brand-text-secondary leading-relaxed">
             Av. Javier Prado Este 1234, San Borja, Lima.<br>
-            A 2 cuadras de la estación La Cultura. Contamos con estacionamiento vigilado y rampa de acceso.
+            A 2 cuadras de la estación La Cultura. Estacionamiento vigilado y rampa de acceso.
           </p>
         </div>
 
@@ -261,11 +301,11 @@
           <div class="w-10 h-10 rounded-xl bg-brand-accent-light text-brand-accent flex items-center justify-center">
             <app-icon name="clock" [size]="20"></app-icon>
           </div>
-          <h3 class="text-base font-bold text-brand-text-primary font-sans">Horario de Cocina</h3>
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">Horario de Atención</h3>
           <div class="text-xs text-brand-text-secondary space-y-1">
             <p><strong>Lunes a Sábado:</strong> 12:00 PM - 11:30 PM</p>
             <p><strong>Domingos & Feriados:</strong> 12:00 PM - 10:00 PM</p>
-            <p class="text-brand-status-success font-medium pt-1">Atención continua sin interrupción.</p>
+            <p class="text-brand-status-success font-medium pt-1">Atención continua en salón y delivery.</p>
           </div>
         </div>
 
@@ -274,14 +314,21 @@
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
             <app-icon name="phone" [size]="20"></app-icon>
           </div>
-          <h3 class="text-base font-bold text-brand-text-primary font-sans">Pedidos & Reservas</h3>
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">Pedidos & Delivery</h3>
           <p class="text-xs text-brand-text-secondary leading-relaxed">
-            Teléfono: <strong>(01) 719-2020</strong><br>
+            Central Telefónica: <strong>(01) 719-2020</strong><br>
             WhatsApp Delivery: <strong>987 654 321</strong><br>
-            Cobertura: San Borja, Surco, San Isidro, Miraflores y La Victoria.
+            Zonas: San Borja, Surco, San Isidro, Miraflores y La Victoria.
           </p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Dish Customization Modal -->
+  <app-dish-modal
+    [dish]="activeDishForModal"
+    (closeEvent)="closeDishModal()"
+    (addDish)="onAddFromModal($event)"
+  ></app-dish-modal>
 </div>

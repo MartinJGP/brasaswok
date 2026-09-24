@@ -26,7 +26,14 @@ export type IconName =
   | 'map-pin'
   | 'arrow-right'
   | 'truck'
-  | 'shopping-bag';
+  | 'shopping-bag'
+  | 'trash'
+  | 'plus'
+  | 'minus'
+  | 'user'
+  | 'log-out'
+  | 'lock'
+  | 'mail';
 
 @Component({
   selector: 'app-icon',
@@ -182,6 +189,44 @@ export type IconName =
           <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
           <circle cx="17" cy="18.5" r="2.5" />
           <circle cx="7" cy="18.5" r="2.5" />
+        </g>
+
+        <g *ngSwitchCase="'trash'">
+          <path d="M3 6h18" />
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+          <line x1="10" x2="10" y1="11" y2="17" />
+          <line x1="14" x2="14" y1="11" y2="17" />
+        </g>
+
+        <g *ngSwitchCase="'plus'">
+          <path d="M5 12h14" />
+          <path d="M12 5v14" />
+        </g>
+
+        <g *ngSwitchCase="'minus'">
+          <path d="M5 12h14" />
+        </g>
+
+        <g *ngSwitchCase="'user'">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </g>
+
+        <g *ngSwitchCase="'log-out'">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" x2="9" y1="12" y2="12" />
+        </g>
+
+        <g *ngSwitchCase="'lock'">
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </g>
+
+        <g *ngSwitchCase="'mail'">
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </g>
       </ng-container>
     </svg>
