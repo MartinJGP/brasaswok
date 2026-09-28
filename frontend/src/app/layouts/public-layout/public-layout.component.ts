@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -10,7 +10,7 @@ import { CartDrawerComponent } from '../../shared/components/cart-drawer/cart-dr
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, IconComponent, AuthModalComponent, CartDrawerComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, IconComponent, AuthModalComponent, CartDrawerComponent],
   templateUrl: './public-layout.component.html'
 })
 export class PublicLayoutComponent {

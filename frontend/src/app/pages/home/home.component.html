@@ -1,19 +1,15 @@
 <div class="space-y-20 lg:space-y-28 pb-20">
-  <!-- Hero Section -->
   <section id="inicio" class="relative bg-brand-secondary text-white py-20 lg:py-28 overflow-hidden">
-    <!-- Subtle Background Ambient Warm Glow -->
     <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="max-w-3xl space-y-6">
-        <!-- Eyebrow Badge -->
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold tracking-wider uppercase text-brand-accent">
           <app-icon name="flame" [size]="14" customClass="text-brand-accent"></app-icon>
           <span>Delivery & Salón • Brasas & Wok</span>
         </div>
 
-        <!-- Main Headline -->
         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-sans leading-tight text-white">
           El fuego de la brasa.<br>
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-accent to-amber-400">
@@ -21,23 +17,22 @@
           </span>
         </h1>
 
-        <!-- Subheading -->
         <p class="text-sm sm:text-base lg:text-lg text-white/75 font-normal leading-relaxed max-w-2xl">
           Pollo a la brasa dorado a fuego lento con receta secreta, y salteados criollo-orientales preparados al segundo al fuego vivo. Selecciona tus platos y recíbelos calientes en tu domicilio.
         </p>
 
-        <!-- CTA Action Buttons -->
         <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <a
-            href="#carta"
+            routerLink="/carta"
             class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-brand-secondary"
           >
-            <span>Pedir para Delivery</span>
+            <span>Explorar la Carta Completa</span>
             <app-icon name="arrow-right" [size]="18"></app-icon>
           </a>
 
           <a
-            href="#contacto"
+            routerLink="/"
+            [fragment]="'contacto'"
             class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold rounded-xl border border-white/15 transition-colors focus:outline-none focus:ring-2 focus:ring-white/40"
           >
             <app-icon name="map-pin" [size]="16"></app-icon>
@@ -46,7 +41,6 @@
         </div>
       </div>
 
-      <!-- Feature Badges Trio -->
       <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 border-t border-white/10">
         <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
           <div class="w-10 h-10 rounded-lg bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0">
@@ -87,9 +81,7 @@
     </div>
   </section>
 
-  <!-- Interactive Delivery Catalog Section -->
   <section id="carta" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-    <!-- Section Header -->
     <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
       <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Carta de Delivery & Salón</span>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary tracking-tight font-sans">
@@ -99,7 +91,6 @@
         Haz clic en cualquier plato para personalizar tu orden o agrégalo directamente.
       </p>
 
-      <!-- Category Filter Tabs -->
       <div class="flex items-center justify-center overflow-x-auto gap-2 pt-4 pb-2 px-2 no-scrollbar">
         <button
           type="button"
@@ -117,7 +108,6 @@
       </div>
     </div>
 
-    <!-- Dishes Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <article
         *ngFor="let dish of filteredDishes"
@@ -125,7 +115,6 @@
         class="bg-brand-surface rounded-2xl border border-brand-border p-6 shadow-card hover:border-brand-primary/40 hover:shadow-dropdown transition-all flex flex-col justify-between cursor-pointer group relative"
       >
         <div class="space-y-3">
-          <!-- Category & Star Badge -->
           <div class="flex items-center justify-between">
             <span
               class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
@@ -145,18 +134,15 @@
             </span>
           </div>
 
-          <!-- Dish Name -->
           <h3 class="text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans leading-snug">
             {{ dish.name }}
           </h3>
 
-          <!-- Description -->
           <p class="text-xs text-brand-text-secondary leading-relaxed line-clamp-3">
             {{ dish.description }}
           </p>
         </div>
 
-        <!-- Footer: Price & Direct Add Button -->
         <div class="mt-6 pt-4 border-t border-brand-border flex items-center justify-between">
           <div>
             <span class="text-[10px] text-brand-text-muted uppercase font-semibold block">Precio</span>
@@ -165,7 +151,6 @@
             </span>
           </div>
 
-          <!-- Add / In Cart Button -->
           <button
             type="button"
             (click)="quickAdd(dish, $event)"
@@ -184,9 +169,18 @@
         </div>
       </article>
     </div>
+
+    <div class="mt-12 text-center">
+      <a
+        routerLink="/carta"
+        class="inline-flex items-center gap-2 px-6 py-3.5 bg-brand-surface-alt hover:bg-brand-border/60 border border-brand-border text-brand-text-primary text-xs sm:text-sm font-bold rounded-2xl shadow-subtle transition-all active:scale-95"
+      >
+        <span>Ver Carta Fotográfica Completa con Filtros y Buscador</span>
+        <app-icon name="arrow-right" [size]="16" customClass="text-brand-primary"></app-icon>
+      </a>
+    </div>
   </section>
 
-  <!-- Sticky Floating Order Bar (appears when cart has items) -->
   <aside
     *ngIf="cartService.totalCount() > 0"
     class="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 max-w-md w-full animate-in fade-in slide-in-from-bottom-5 duration-300"
@@ -214,11 +208,9 @@
     </div>
   </aside>
 
-  <!-- Philosophy & Kitchen Section -->
   <section id="filosofia" class="bg-brand-surface border-y border-brand-border py-16 lg:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <!-- Text Column -->
         <div class="space-y-6">
           <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Filosofía Gastronómica</span>
           <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-text-primary font-sans leading-tight">
@@ -244,7 +236,6 @@
           </div>
         </div>
 
-        <!-- Visual Info Box -->
         <div class="bg-brand-secondary text-white rounded-2xl p-8 sm:p-10 shadow-card border border-white/10 space-y-6">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white">
@@ -280,11 +271,9 @@
     </div>
   </section>
 
-  <!-- Location & Operating Hours Section -->
   <section id="contacto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
     <div class="bg-brand-surface rounded-2xl border border-brand-border p-8 sm:p-12 shadow-card">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
-        <!-- Col 1: Sede Principal -->
         <div class="space-y-3">
           <div class="w-10 h-10 rounded-xl bg-brand-primary-light text-brand-primary flex items-center justify-center">
             <app-icon name="map-pin" [size]="20"></app-icon>
@@ -296,7 +285,6 @@
           </p>
         </div>
 
-        <!-- Col 2: Horarios -->
         <div class="space-y-3">
           <div class="w-10 h-10 rounded-xl bg-brand-accent-light text-brand-accent flex items-center justify-center">
             <app-icon name="clock" [size]="20"></app-icon>
@@ -309,7 +297,6 @@
           </div>
         </div>
 
-        <!-- Col 3: Canales de Atención -->
         <div class="space-y-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
             <app-icon name="phone" [size]="20"></app-icon>
@@ -325,7 +312,6 @@
     </div>
   </section>
 
-  <!-- Dish Customization Modal -->
   <app-dish-modal
     [dish]="activeDishForModal"
     (closeEvent)="closeDishModal()"

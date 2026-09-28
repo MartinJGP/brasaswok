@@ -13,6 +13,11 @@ export const routes: Routes = [
         path: '',
         component: HomeComponent,
         title: 'Brasas a Wok | Pollos a la Brasa & Cocina al Wok'
+      },
+      {
+        path: 'carta',
+        loadComponent: () => import('./pages/carta/carta.component').then(m => m.CartaComponent),
+        title: 'La Carta Gastronómica | Brasas a Wok'
       }
     ]
   },

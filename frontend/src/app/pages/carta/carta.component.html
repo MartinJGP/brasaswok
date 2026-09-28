@@ -1,0 +1,177 @@
+<div class="min-h-screen pb-24 sm:pb-16 bg-brand-bg text-brand-text-primary">
+  <section class="relative bg-brand-secondary text-white py-12 lg:py-16 overflow-hidden">
+    <div class="absolute -top-20 -right-20 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex items-center gap-2 text-xs text-white/60 mb-4">
+        <a routerLink="/" class="hover:text-white transition-colors">Inicio</a>
+        <span>/</span>
+        <span class="text-brand-accent font-semibold">Carta Gastronómica</span>
+      </div>
+
+      <div class="max-w-3xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold uppercase tracking-wider text-brand-accent">
+          <app-icon name="flame" [size]="14" customClass="text-brand-accent"></app-icon>
+          <span>Delivery & Salón • Brasas a Wok</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-sans text-white">
+          Nuestra Carta Gastronómica
+        </h1>
+
+        <p class="text-sm sm:text-base text-white/75 leading-relaxed max-w-2xl font-normal">
+          Pollo a la brasa dorado al carbón con receta secreta de la casa y salteados criollo-orientales con el auténtico fuego del wok. Elige tus platos y personaliza las notas de preparación a tu gusto.
+        </p>
+      </div>
+
+      <div class="mt-8 max-w-2xl">
+        <div class="relative flex items-center">
+          <div class="absolute left-4 text-white/50 pointer-events-none">
+            <app-icon name="search" [size]="20"></app-icon>
+          </div>
+
+          <input
+            type="text"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Buscar por plato, especialidad o ingrediente..."
+            class="w-full pl-12 pr-10 py-3.5 bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/20 focus:border-brand-primary rounded-2xl text-white placeholder-white/50 text-sm focus:outline-none transition-all"
+            aria-label="Buscar en la carta"
+          />
+
+          <button
+            *ngIf="searchTerm()"
+            type="button"
+            (click)="clearSearch()"
+            class="absolute right-3.5 p-1 text-white/60 hover:text-white rounded-lg transition-colors"
+            aria-label="Limpiar búsqueda"
+          >
+            <app-icon name="x" [size]="18"></app-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-white/70 pt-6 border-t border-white/10">
+        <div class="flex items-center gap-2">
+          <app-icon name="flame" [size]="15" customClass="text-brand-primary"></app-icon>
+          <span>Carbón de algarrobo y leña</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <app-icon name="menu" [size]="15" customClass="text-brand-accent"></app-icon>
+          <span>Wok Hei preparado al instante</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <app-icon name="truck" [size]="15" customClass="text-emerald-400"></app-icon>
+          <span>Empaque térmico hermético</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <app-category-bar
+    [categories]="categories"
+    [activeCategory]="selectedCategory()"
+    [counts]="categoryCounts()"
+    (categorySelect)="onCategorySelect($event)"
+  ></app-category-bar>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-brand-border">
+      <div class="flex items-baseline gap-2.5">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans">
+          {{ selectedCategory() === 'Todos' ? 'Todos los Platos' : selectedCategory() }}
+        </h2>
+        <span class="text-xs font-bold text-brand-text-muted font-mono">
+          ({{ filteredDishes().length }} {{ filteredDishes().length === 1 ? 'plato' : 'platos' }})
+        </span>
+      </div>
+
+      <div *ngIf="searchTerm()" class="flex items-center gap-2">
+        <span class="text-xs text-brand-text-secondary">
+          Búsqueda: <strong class="text-brand-primary">"{{ searchTerm() }}"</strong>
+        </span>
+        <button
+          type="button"
+          (click)="clearSearch()"
+          class="text-xs font-semibold text-brand-text-muted hover:text-brand-primary transition-colors underline"
+        >
+          Borrar
+        </button>
+      </div>
+    </div>
+
+    <div
+      *ngIf="filteredDishes().length > 0; else emptyStateTpl"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+    >
+      <app-product-card
+        *ngFor="let dish of filteredDishes()"
+        [dish]="dish"
+        [inCartQuantity]="getDishCartQuantity(dish.id)"
+        (selectDish)="openDishModal($event)"
+        (quickAdd)="onQuickAdd($event)"
+        (updateQuantity)="onUpdateQuantity($event)"
+      ></app-product-card>
+    </div>
+
+    <ng-template #emptyStateTpl>
+      <div class="py-16 text-center max-w-md mx-auto space-y-4">
+        <div class="w-16 h-16 rounded-2xl bg-brand-surface-alt border border-brand-border flex items-center justify-center mx-auto text-brand-text-muted">
+          <app-icon name="search" [size]="28"></app-icon>
+        </div>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-brand-text-primary">No encontramos platos</h3>
+          <p class="text-xs sm:text-sm text-brand-text-secondary">
+            No hay productos que coincidan con "{{ searchTerm() }}" en la categoría seleccionada.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="clearAllFilters()"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl transition-all shadow-card"
+        >
+          <span>Ver toda la carta</span>
+        </button>
+      </div>
+    </ng-template>
+  </main>
+
+  <aside
+    *ngIf="cartService.totalCount() > 0"
+    class="sm:hidden fixed bottom-4 left-4 right-4 z-40 bg-brand-secondary/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-dropdown border border-white/10 flex items-center justify-between animate-in fade-in slide-in-from-bottom-4 duration-300"
+    aria-label="Resumen de pedido flotante"
+  >
+    <div class="flex items-center gap-3">
+      <div class="relative w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white">
+        <app-icon name="shopping-bag" [size]="20"></app-icon>
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-white text-brand-secondary text-[9px] font-extrabold rounded-full flex items-center justify-center ring-2 ring-brand-secondary">
+          {{ cartService.totalCount() }}
+        </span>
+      </div>
+      <div>
+        <span class="block text-[11px] text-white/70 font-semibold uppercase tracking-wider">Tu Pedido</span>
+        <span class="block text-sm font-bold font-mono text-brand-accent">
+          S/ {{ cartService.subtotal().toFixed(2) }}
+        </span>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="cartService.openDrawer()"
+      class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center gap-1.5"
+    >
+      <span>Ver Pedido</span>
+      <app-icon name="arrow-right" [size]="14"></app-icon>
+    </button>
+  </aside>
+
+  <app-dish-modal
+    [dish]="activeDishForModal()"
+    (closeEvent)="closeDishModal()"
+    (addDish)="onAddDishWithCustomization($event)"
+  ></app-dish-modal>
+</div>
