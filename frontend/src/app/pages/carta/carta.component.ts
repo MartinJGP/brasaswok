@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -24,19 +24,22 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
   ],
   templateUrl: './carta.component.html'
 })
-export class CartaComponent {
+export class CartaComponent implements OnInit {
   private readonly menuService = inject(MenuService);
   readonly cartService = inject(CartService);
 
   readonly categories = this.menuService.categories;
+  readonly isLoading = this.menuService.isLoading;
+  readonly error = this.menuService.error;
+
   readonly selectedCategory = signal<DishCategory>('Todos');
   readonly searchTerm = signal<string>('');
-
   readonly activeDishForModal = signal<Dish | null>(null);
 
   readonly categoryCounts = computed(() => {
     const counts: Record<string, number> = {};
-    for (const cat of this.categories) {
+    const cats = this.categories();
+    for (const cat of cats) {
       counts[cat] = this.menuService.getCategoryCount(cat);
     }
     return counts;
@@ -48,7 +51,7 @@ export class CartaComponent {
     const dishes = this.menuService.dishes();
 
     return dishes.filter(dish => {
-      const matchesCategory = category === 'Todos' || dish.category === category;
+      const matchesCategory = category === 'Todos' || dish.category.toLowerCase() === category.toLowerCase();
       const matchesSearch =
         query === '' ||
         dish.name.toLowerCase().includes(query) ||
@@ -58,6 +61,14 @@ export class CartaComponent {
       return matchesCategory && matchesSearch;
     });
   });
+
+  ngOnInit(): void {
+    this.reloadDishes();
+  }
+
+  reloadDishes(): void {
+    this.menuService.loadDishes();
+  }
 
   onCategorySelect(category: DishCategory): void {
     this.selectedCategory.set(category);

@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminProduct, AdminCategory } from '../../../core/services/admin.service';
 
@@ -22,7 +23,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
 
         <button
           type="button"
-          (click)="showCreateModal = true"
+          (click)="openCreateModal()"
           class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 self-start sm:self-auto"
         >
           <app-icon name="plus" [size]="16"></app-icon>
@@ -30,11 +31,28 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
         </button>
       </div>
 
-      <div *ngIf="isLoading" class="p-12 text-center text-xs text-brand-text-secondary">
-        Cargando catálogo...
+      <div *ngIf="isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
+        <div class="w-8 h-8 mx-auto mb-3 rounded-full border-2 border-brand-primary border-t-transparent animate-spin"></div>
+        <span>Cargando catálogo desde el servidor...</span>
       </div>
 
-      <div *ngIf="!isLoading" class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
+      <div *ngIf="errorMessage()" class="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center space-y-3">
+        <p class="text-xs font-bold text-rose-500">{{ errorMessage() }}</p>
+        <button
+          type="button"
+          (click)="loadData()"
+          class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow-card transition-all"
+        >
+          Reintentar Carga
+        </button>
+      </div>
+
+      <div *ngIf="!isLoading() && !errorMessage() && products().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-3">
+        <p class="text-sm font-bold text-brand-text-primary">No hay platos registrados en el menú</p>
+        <p class="text-xs text-brand-text-secondary">Comienza registrando tu primer plato con el botón "Nuevo Plato".</p>
+      </div>
+
+      <div *ngIf="!isLoading() && !errorMessage() && products().length > 0" class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-brand-surface-alt/70 text-brand-text-muted border-b border-brand-border uppercase font-semibold text-[10px] tracking-wider">
@@ -47,7 +65,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
               </tr>
             </thead>
             <tbody class="divide-y divide-brand-border/60 text-brand-text-primary">
-              <tr *ngFor="let product of products" class="hover:bg-brand-surface-alt/40 transition-colors">
+              <tr *ngFor="let product of products()" class="hover:bg-brand-surface-alt/40 transition-colors">
                 <td class="px-5 py-4">
                   <div class="flex items-center gap-3">
                     <img
@@ -107,11 +125,11 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
         </div>
       </div>
 
-      <div *ngIf="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
+      <div *ngIf="showCreateModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
         <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 max-w-lg w-full shadow-dropdown space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-brand-border">
             <h3 class="text-base font-bold text-brand-text-primary">Registrar Nuevo Plato</h3>
-            <button (click)="showCreateModal = false" class="text-brand-text-muted hover:text-brand-text-primary">
+            <button (click)="closeCreateModal()" class="text-brand-text-muted hover:text-brand-text-primary">
               <app-icon name="x" [size]="18"></app-icon>
             </button>
           </div>
@@ -137,7 +155,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                   name="categoryId"
                   class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary"
                 >
-                  <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+                  <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
                 </select>
               </div>
 
@@ -176,7 +194,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                     accept="image/png,image/jpeg,image/webp"
                     class="text-xs text-brand-text-muted file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-primary-hover file:cursor-pointer"
                   />
-                  <span *ngIf="isUploadingImage" class="text-[11px] text-brand-primary animate-pulse font-semibold">Subiendo...</span>
+                  <span *ngIf="isUploadingImage()" class="text-[11px] text-brand-primary animate-pulse font-semibold">Subiendo...</span>
                 </div>
                 <input
                   type="url"
@@ -195,14 +213,14 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
             <div class="pt-2 flex justify-end gap-2">
               <button
                 type="button"
-                (click)="showCreateModal = false"
+                (click)="closeCreateModal()"
                 class="px-4 py-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-alt"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                [disabled]="!newProduct.name || !newProduct.price || isUploadingImage"
+                [disabled]="!newProduct.name || !newProduct.price || isUploadingImage()"
                 class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white font-bold rounded-xl shadow-card"
               >
                 Guardar Plato
@@ -217,11 +235,12 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
 export class AdminMenuComponent implements OnInit {
   private readonly adminService = inject(AdminService);
 
-  products: AdminProduct[] = [];
-  categories: AdminCategory[] = [];
-  isLoading = false;
-  showCreateModal = false;
-  isUploadingImage = false;
+  readonly products = signal<AdminProduct[]>([]);
+  readonly categories = signal<AdminCategory[]>([]);
+  readonly isLoading = signal<boolean>(true);
+  readonly errorMessage = signal<string | null>(null);
+  readonly showCreateModal = signal<boolean>(false);
+  readonly isUploadingImage = signal<boolean>(false);
 
   newProduct: Partial<AdminProduct> = {
     name: '',
@@ -237,23 +256,46 @@ export class AdminMenuComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoading = true;
-    this.adminService.getProducts().subscribe(products => {
-      this.products = products;
-      this.isLoading = false;
-    });
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    this.adminService.getCategories().subscribe(categories => {
-      this.categories = categories;
-      if (categories.length > 0) {
-        this.newProduct.categoryId = categories[0].id;
+    forkJoin({
+      products: this.adminService.getProducts(),
+      categories: this.adminService.getCategories()
+    }).subscribe({
+      next: ({ products, categories }) => {
+        this.products.set(products);
+        this.categories.set(categories);
+        if (categories.length > 0) {
+          this.newProduct.categoryId = categories[0].id;
+        }
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('No se pudo cargar el catálogo de platos. Por favor verifica la conexión con el servidor.');
+        this.isLoading.set(false);
       }
     });
   }
 
+  openCreateModal(): void {
+    this.showCreateModal.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal.set(false);
+  }
+
   toggleAvailability(product: AdminProduct): void {
-    this.adminService.toggleProductAvailability(product.id).subscribe(() => {
-      product.isAvailable = !product.isAvailable;
+    this.adminService.toggleProductAvailability(product.id).subscribe({
+      next: () => {
+        this.products.update(list =>
+          list.map(p => p.id === product.id ? { ...p, isAvailable: !p.isAvailable } : p)
+        );
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo cambiar la disponibilidad del plato');
+      }
     });
   }
 
@@ -261,14 +303,14 @@ export class AdminMenuComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      this.isUploadingImage = true;
+      this.isUploadingImage.set(true);
       this.adminService.uploadImage(file).subscribe({
         next: (res) => {
           this.newProduct.imageUrl = 'http://localhost:8080' + res.url;
-          this.isUploadingImage = false;
+          this.isUploadingImage.set(false);
         },
         error: (err) => {
-          this.isUploadingImage = false;
+          this.isUploadingImage.set(false);
           alert(err?.error?.message || 'Error al subir la imagen');
         }
       });
@@ -281,7 +323,7 @@ export class AdminMenuComponent implements OnInit {
     }
     this.adminService.deleteProduct(product.id).subscribe({
       next: () => {
-        this.products = this.products.filter(p => p.id !== product.id);
+        this.products.update(list => list.filter(p => p.id !== product.id));
       },
       error: (err) => {
         alert(err?.error?.message || 'No se pudo eliminar el plato');
@@ -290,17 +332,22 @@ export class AdminMenuComponent implements OnInit {
   }
 
   handleCreateProduct(): void {
-    this.adminService.createProduct(this.newProduct).subscribe(created => {
-      this.products.unshift(created);
-      this.showCreateModal = false;
-      this.newProduct = {
-        name: '',
-        description: '',
-        price: 0,
-        categoryId: this.categories[0]?.id || 1,
-        imageUrl: '',
-        isAvailable: true
-      };
+    this.adminService.createProduct(this.newProduct).subscribe({
+      next: (created) => {
+        this.products.update(list => [created, ...list]);
+        this.showCreateModal.set(false);
+        this.newProduct = {
+          name: '',
+          description: '',
+          price: 0,
+          categoryId: this.categories()[0]?.id || 1,
+          imageUrl: '',
+          isAvailable: true
+        };
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo registrar el plato');
+      }
     });
   }
 }

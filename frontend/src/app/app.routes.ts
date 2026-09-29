@@ -16,9 +16,23 @@ export const routes: Routes = [
         title: 'Brasas a Wok | Pollos a la Brasa & Cocina al Wok'
       },
       {
+        path: 'inicio',
+        redirectTo: ''
+      },
+      {
         path: 'carta',
         loadComponent: () => import('./pages/carta/carta.component').then(m => m.CartaComponent),
         title: 'La Carta Gastronómica | Brasas a Wok'
+      },
+      {
+        path: 'horarios',
+        loadComponent: () => import('./pages/horarios/horarios.component').then(m => m.HorariosComponent),
+        title: 'Horarios de Atención | Brasas a Wok'
+      },
+      {
+        path: 'sedes',
+        loadComponent: () => import('./pages/sedes/sedes.component').then(m => m.SedesComponent),
+        title: 'Nuestras Sedes | Brasas a Wok'
       },
       {
         path: 'mis-pedidos',
@@ -56,9 +70,14 @@ export const routes: Routes = [
         title: 'Panel Administrativo | Brasas a Wok'
       },
       {
+        path: 'kitchen',
+        loadComponent: () => import('./pages/admin/kitchen/kitchen.component').then(m => m.AdminKitchenComponent),
+        title: 'Cocina & KDS | Brasas a Wok'
+      },
+      {
         path: 'orders',
         loadComponent: () => import('./pages/admin/orders/orders.component').then(m => m.AdminOrdersComponent),
-        title: 'Cocina & Pedidos | Brasas a Wok'
+        title: 'Pedidos & Comandas | Brasas a Wok'
       },
       {
         path: 'menu',

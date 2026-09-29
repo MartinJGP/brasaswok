@@ -70,8 +70,8 @@ describe('MyOrdersComponent', () => {
 
   it('should create the component and load orders for logged in user', () => {
     expect(component).toBeTruthy();
-    expect(component.orders.length).toBe(1);
-    expect(component.orders[0].orderNumber).toBe('BW-1001');
+    expect(component.orders().length).toBe(1);
+    expect(component.orders()[0].orderNumber).toBe('BW-1001');
   });
 
   it('should correctly calculate order progress step', () => {
@@ -85,7 +85,7 @@ describe('MyOrdersComponent', () => {
   it('should track order by ticket', () => {
     component.searchQuery = 'BW-1001';
     component.handleSearchTicket();
-    expect(component.searchResult).toBeTruthy();
-    expect(component.searchResult?.orderNumber).toBe('BW-1001');
+    expect(component.searchResult()).toBeTruthy();
+    expect(component.searchResult()?.orderNumber).toBe('BW-1001');
   });
 });

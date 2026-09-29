@@ -11,10 +11,4 @@ export interface Dish {
   isStar?: boolean;
 }
 
-export type DishCategory = 
-  | 'Todos'
-  | 'Brasas & Pollos'
-  | 'Wok & Salteados'
-  | 'Chaufas & Aeropuertos'
-  | 'Entradas & Piques'
-  | 'Bebidas';
+export type DishCategory = 'Todos' | string;

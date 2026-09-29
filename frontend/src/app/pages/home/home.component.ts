@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -13,25 +13,23 @@ import { DishModalComponent, DishData } from '../../shared/components/dish-modal
   imports: [CommonModule, RouterLink, IconComponent, DishModalComponent],
   templateUrl: './home.component.html'
 })
-export class HomeComponent {
-  private readonly menuService = inject(MenuService);
+export class HomeComponent implements OnInit {
+  public readonly menuService = inject(MenuService);
   public readonly cartService = inject(CartService);
   public readonly authService = inject(AuthService);
 
-  selectedCategory = 'Todos';
   activeDishForModal: DishData | null = null;
 
-  readonly categories = this.menuService.categories;
+  readonly starDishes = computed<DishData[]>(() => {
+    const list = this.menuService.dishes();
+    const stars = list.filter(d => d.isStar);
+    return stars.length >= 3 ? stars.slice(0, 3) : list.slice(0, 3);
+  });
 
-  get dishes(): DishData[] {
-    return this.menuService.dishes();
-  }
-
-  get filteredDishes(): DishData[] {
-    if (this.selectedCategory === 'Todos') {
-      return this.dishes;
+  ngOnInit(): void {
+    if (this.menuService.dishes().length === 0) {
+      this.menuService.loadDishes();
     }
-    return this.dishes.filter(d => d.category === this.selectedCategory);
   }
 
   getQuantityInCart(productId: number): number {

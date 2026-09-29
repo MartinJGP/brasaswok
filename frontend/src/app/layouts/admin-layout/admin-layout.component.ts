@@ -27,7 +27,8 @@ export class AdminLayoutComponent {
       section: 'Operaciones',
       items: [
         { label: 'Panel General', path: '/admin/dashboard', icon: 'dashboard' },
-        { label: 'Cocina & Pedidos', path: '/admin/orders', icon: 'orders', badge: 'En Vivo', badgeVariant: 'warning' }
+        { label: 'Cocina en Vivo', path: '/admin/kitchen', icon: 'flame', badge: 'KDS', badgeVariant: 'warning' },
+        { label: 'Pedidos & Comandas', path: '/admin/orders', icon: 'orders' }
       ]
     },
     {

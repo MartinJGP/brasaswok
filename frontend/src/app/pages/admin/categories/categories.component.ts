@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
@@ -22,7 +22,7 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
 
         <button
           type="button"
-          (click)="showCreateModal = true"
+          (click)="openCreateModal()"
           class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 self-start sm:self-auto"
         >
           <app-icon name="plus" [size]="16"></app-icon>
@@ -30,11 +30,28 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
         </button>
       </div>
 
-      <div *ngIf="isLoading" class="p-12 text-center text-xs text-brand-text-secondary">
-        Cargando categorías...
+      <div *ngIf="isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
+        <div class="w-8 h-8 mx-auto mb-3 rounded-full border-2 border-brand-primary border-t-transparent animate-spin"></div>
+        <span>Cargando categorías desde el servidor...</span>
       </div>
 
-      <div *ngIf="!isLoading" class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
+      <div *ngIf="errorMessage()" class="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center space-y-3">
+        <p class="text-xs font-bold text-rose-500">{{ errorMessage() }}</p>
+        <button
+          type="button"
+          (click)="loadCategories()"
+          class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow-card transition-all"
+        >
+          Reintentar Carga
+        </button>
+      </div>
+
+      <div *ngIf="!isLoading() && !errorMessage() && categories().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-3">
+        <p class="text-sm font-bold text-brand-text-primary">No hay categorías registradas</p>
+        <p class="text-xs text-brand-text-secondary">Comienza creando tu primera categoría culinaria.</p>
+      </div>
+
+      <div *ngIf="!isLoading() && !errorMessage() && categories().length > 0" class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-brand-surface-alt/70 text-brand-text-muted border-b border-brand-border uppercase font-semibold text-[10px] tracking-wider">
@@ -47,7 +64,7 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
               </tr>
             </thead>
             <tbody class="divide-y divide-brand-border/60 text-brand-text-primary">
-              <tr *ngFor="let cat of categories" class="hover:bg-brand-surface-alt/40 transition-colors">
+              <tr *ngFor="let cat of categories()" class="hover:bg-brand-surface-alt/40 transition-colors">
                 <td class="px-5 py-4 font-mono font-bold text-brand-text-muted">
                   #{{ cat.id }}
                 </td>
@@ -91,11 +108,11 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
         </div>
       </div>
 
-      <div *ngIf="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
+      <div *ngIf="showCreateModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
         <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 max-w-md w-full shadow-dropdown space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-brand-border">
             <h3 class="text-base font-bold text-brand-text-primary">Crear Categoría</h3>
-            <button (click)="showCreateModal = false" class="text-brand-text-muted hover:text-brand-text-primary">
+            <button (click)="closeCreateModal()" class="text-brand-text-muted hover:text-brand-text-primary">
               <app-icon name="x" [size]="18"></app-icon>
             </button>
           </div>
@@ -127,7 +144,7 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
             <div class="pt-2 flex justify-end gap-2">
               <button
                 type="button"
-                (click)="showCreateModal = false"
+                (click)="closeCreateModal()"
                 class="px-4 py-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-alt"
               >
                 Cancelar
@@ -149,9 +166,10 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
 export class AdminCategoriesComponent implements OnInit {
   private readonly adminService = inject(AdminService);
 
-  categories: AdminCategory[] = [];
-  isLoading = false;
-  showCreateModal = false;
+  readonly categories = signal<AdminCategory[]>([]);
+  readonly isLoading = signal<boolean>(true);
+  readonly errorMessage = signal<string | null>(null);
+  readonly showCreateModal = signal<boolean>(false);
 
   newCategory: Partial<AdminCategory> = {
     name: '',
@@ -164,28 +182,55 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.isLoading = true;
-    this.adminService.getCategories().subscribe(categories => {
-      this.categories = categories;
-      this.isLoading = false;
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    this.adminService.getCategories().subscribe({
+      next: (data) => {
+        this.categories.set(data);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('No se pudieron cargar las categorías desde el servidor.');
+        this.isLoading.set(false);
+      }
     });
   }
 
+  openCreateModal(): void {
+    this.showCreateModal.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal.set(false);
+  }
+
   toggleStatus(category: AdminCategory): void {
-    this.adminService.toggleCategoryStatus(category.id).subscribe(() => {
-      category.isActive = !category.isActive;
+    this.adminService.toggleCategoryStatus(category.id).subscribe({
+      next: () => {
+        this.categories.update(list =>
+          list.map(c => c.id === category.id ? { ...c, isActive: !c.isActive } : c)
+        );
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo cambiar el estado de la categoría');
+      }
     });
   }
 
   handleCreateCategory(): void {
-    this.adminService.createCategory(this.newCategory).subscribe(created => {
-      this.categories.push(created);
-      this.showCreateModal = false;
-      this.newCategory = {
-        name: '',
-        description: '',
-        isActive: true
-      };
+    this.adminService.createCategory(this.newCategory).subscribe({
+      next: (created) => {
+        this.categories.update(list => [...list, created]);
+        this.showCreateModal.set(false);
+        this.newCategory = {
+          name: '',
+          description: '',
+          isActive: true
+        };
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo crear la categoría');
+      }
     });
   }
 
@@ -195,7 +240,7 @@ export class AdminCategoriesComponent implements OnInit {
     }
     this.adminService.deleteCategory(category.id).subscribe({
       next: () => {
-        this.categories = this.categories.filter(c => c.id !== category.id);
+        this.categories.update(list => list.filter(c => c.id !== category.id));
       },
       error: (err) => {
         alert(err?.error?.message || 'No se pudo eliminar la categoría');

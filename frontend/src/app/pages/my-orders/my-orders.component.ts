@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -16,16 +16,16 @@ export class MyOrdersComponent implements OnInit {
   private readonly orderService = inject(OrderService);
   readonly authService = inject(AuthService);
 
-  orders: CustomerOrder[] = [];
-  isLoading = true;
-  errorMessage = '';
+  readonly orders = signal<CustomerOrder[]>([]);
+  readonly isLoading = signal<boolean>(true);
+  readonly errorMessage = signal<string | null>(null);
 
   searchQuery = '';
-  isSearching = false;
-  searchResult: CustomerOrder | null = null;
-  searchError = '';
+  readonly isSearching = signal<boolean>(false);
+  readonly searchResult = signal<CustomerOrder | null>(null);
+  readonly searchError = signal<string | null>(null);
 
-  cancellingOrderId: number | null = null;
+  readonly cancellingOrderId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.loadOrders();
@@ -33,49 +33,51 @@ export class MyOrdersComponent implements OnInit {
 
   loadOrders(): void {
     if (!this.authService.isLoggedIn()) {
-      this.isLoading = false;
+      this.isLoading.set(false);
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
     this.orderService.getMyOrders().subscribe({
       next: (data) => {
-        this.orders = data || [];
-        this.isLoading = false;
+        this.orders.set(data || []);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.isLoading = false;
-        this.errorMessage = 'No se pudieron cargar tus pedidos en este momento.';
+        this.isLoading.set(false);
+        this.errorMessage.set('No se pudieron cargar tus pedidos en este momento.');
       }
     });
   }
 
   handleSearchTicket(): void {
-    if (!this.searchQuery.trim()) {
+    const query = this.searchQuery.trim();
+    if (!query) {
       return;
     }
 
-    this.isSearching = true;
-    this.searchError = '';
-    this.searchResult = null;
+    this.isSearching.set(true);
+    this.searchError.set(null);
+    this.searchResult.set(null);
 
-    this.orderService.trackOrder(this.searchQuery).subscribe({
+    this.orderService.trackOrder(query).subscribe({
       next: (order) => {
-        this.searchResult = order;
-        this.isSearching = false;
+        this.searchResult.set(order);
+        this.isSearching.set(false);
       },
       error: (err) => {
-        this.isSearching = false;
-        this.searchError = err?.error?.message || 'No se encontró ningún pedido con el ticket especificado.';
+        this.isSearching.set(false);
+        this.searchError.set(err?.error?.message || 'No se encontró ningún pedido con el ticket especificado.');
       }
     });
   }
 
   clearSearch(): void {
     this.searchQuery = '';
-    this.searchResult = null;
-    this.searchError = '';
+    this.searchResult.set(null);
+    this.searchError.set(null);
   }
 
   handleCancelOrder(order: CustomerOrder): void {
@@ -83,17 +85,18 @@ export class MyOrdersComponent implements OnInit {
       return;
     }
 
-    this.cancellingOrderId = order.id;
+    this.cancellingOrderId.set(order.id);
     this.orderService.cancelOrder(order.id, 'Cancelado por solicitud del cliente').subscribe({
-      next: (updated) => {
-        this.cancellingOrderId = null;
-        order.status = 'CANCELADO';
-        if (this.searchResult && this.searchResult.id === order.id) {
-          this.searchResult.status = 'CANCELADO';
+      next: () => {
+        this.cancellingOrderId.set(null);
+        this.orders.update(list => list.map(o => o.id === order.id ? { ...o, status: 'CANCELADO' } : o));
+        const currentSearchResult = this.searchResult();
+        if (currentSearchResult && currentSearchResult.id === order.id) {
+          this.searchResult.set({ ...currentSearchResult, status: 'CANCELADO' });
         }
       },
       error: (err) => {
-        this.cancellingOrderId = null;
+        this.cancellingOrderId.set(null);
         alert(err?.error?.message || 'No se pudo cancelar el pedido.');
       }
     });

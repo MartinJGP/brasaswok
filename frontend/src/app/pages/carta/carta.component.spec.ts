@@ -1,19 +1,67 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
 import { CartaComponent } from './carta.component';
 import { CartService } from '../../core/services/cart.service';
+import { MenuService } from '../../core/services/menu.service';
+import { Dish } from '../../core/models/dish.model';
 
 describe('CartaComponent', () => {
   let component: CartaComponent;
   let fixture: ComponentFixture<CartaComponent>;
   let cartService: CartService;
 
+  const mockDishes: Dish[] = [
+    {
+      id: 1,
+      name: '1 Pollo a la Brasa Tradicional',
+      category: 'Brasas & Pollos',
+      description: 'Pollo entero marinado con papas fritas',
+      price: 65.90,
+      imageUrl: 'https://example.com/pollo.jpg',
+      isStar: true
+    },
+    {
+      id: 2,
+      name: 'Lomo Saltado al Wok Criollo',
+      category: 'Wok & Salteados',
+      description: 'Lomo fino salteado al fuego vivo',
+      price: 42.50,
+      imageUrl: 'https://example.com/lomo.jpg',
+      isStar: true
+    },
+    {
+      id: 3,
+      name: 'Arroz Chaufa Especial',
+      category: 'Wok & Salteados',
+      description: 'Arroz al wok con sillao y cebollita china',
+      price: 36.00,
+      imageUrl: 'https://example.com/chaufa.jpg',
+      isStar: false
+    }
+  ];
+
+  const mockMenuService = {
+    dishes: signal(mockDishes),
+    categories: signal(['Todos', 'Brasas & Pollos', 'Wok & Salteados']),
+    isLoading: signal(false),
+    error: signal<string | null>(null),
+    loadDishes: () => {},
+    getCategoryCount: (cat: string) => {
+      if (cat === 'Todos') return mockDishes.length;
+      return mockDishes.filter(d => d.category === cat).length;
+    }
+  };
+
   beforeEach(async () => {
     localStorage.clear();
 
     await TestBed.configureTestingModule({
       imports: [CartaComponent],
-      providers: [provideRouter([])]
+      providers: [
+        provideRouter([]),
+        { provide: MenuService, useValue: mockMenuService }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CartaComponent);
@@ -31,7 +79,7 @@ describe('CartaComponent', () => {
   });
 
   it('should list all dishes by default', () => {
-    expect(component.filteredDishes().length).toBe(11);
+    expect(component.filteredDishes().length).toBe(3);
     expect(component.selectedCategory()).toBe('Todos');
   });
 
@@ -40,7 +88,7 @@ describe('CartaComponent', () => {
     fixture.detectChanges();
 
     expect(component.selectedCategory()).toBe('Brasas & Pollos');
-    expect(component.filteredDishes().length).toBe(3);
+    expect(component.filteredDishes().length).toBe(1);
     expect(component.filteredDishes().every(d => d.category === 'Brasas & Pollos')).toBe(true);
   });
 
@@ -48,17 +96,17 @@ describe('CartaComponent', () => {
     component.onSearchChange('chaufa');
     fixture.detectChanges();
 
-    expect(component.filteredDishes().length).toBe(2);
+    expect(component.filteredDishes().length).toBe(1);
     expect(component.filteredDishes().some(d => d.name.includes('Chaufa'))).toBe(true);
   });
 
   it('should clear search term properly', () => {
     component.onSearchChange('lomo');
-    expect(component.filteredDishes().length).toBe(2);
+    expect(component.filteredDishes().length).toBe(1);
 
     component.clearSearch();
     expect(component.searchTerm()).toBe('');
-    expect(component.filteredDishes().length).toBe(11);
+    expect(component.filteredDishes().length).toBe(3);
   });
 
   it('should open and close the dish modal', () => {

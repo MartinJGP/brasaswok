@@ -28,25 +28,25 @@
           La Carta
         </a>
         <a
+          routerLink="/horarios"
+          routerLinkActive="text-brand-accent font-bold"
+          class="hover:text-white transition-colors"
+        >
+          Horarios
+        </a>
+        <a
+          routerLink="/sedes"
+          routerLinkActive="text-brand-accent font-bold"
+          class="hover:text-white transition-colors"
+        >
+          Sedes
+        </a>
+        <a
           routerLink="/mis-pedidos"
           routerLinkActive="text-brand-accent font-bold"
           class="hover:text-white transition-colors"
         >
           Mis Pedidos
-        </a>
-        <a
-          routerLink="/"
-          [fragment]="'filosofia'"
-          class="hover:text-white transition-colors"
-        >
-          Nuestra Cocina
-        </a>
-        <a
-          routerLink="/"
-          [fragment]="'contacto'"
-          class="hover:text-white transition-colors"
-        >
-          Horarios & Sede
         </a>
       </nav>
 
@@ -164,27 +164,25 @@
         La Carta
       </a>
       <a
+        routerLink="/horarios"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Horarios
+      </a>
+      <a
+        routerLink="/sedes"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Sedes & Zonas
+      </a>
+      <a
         routerLink="/mis-pedidos"
         (click)="isMobileMenuOpen = false"
         class="block py-2 text-sm font-medium text-white/80 hover:text-white"
       >
         Mis Pedidos
-      </a>
-      <a
-        routerLink="/"
-        [fragment]="'filosofia'"
-        (click)="isMobileMenuOpen = false"
-        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
-      >
-        Nuestra Cocina
-      </a>
-      <a
-        routerLink="/"
-        [fragment]="'contacto'"
-        (click)="isMobileMenuOpen = false"
-        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
-      >
-        Horarios & Sede
       </a>
 
       <div class="pt-3 border-t border-white/10 flex flex-col gap-2.5">
@@ -290,8 +288,9 @@
           <h4 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Plataforma</h4>
           <ul class="space-y-2 text-xs text-white/70">
             <li><a routerLink="/carta" class="hover:text-white transition-colors">Carta Digital Completa</a></li>
-            <li><a routerLink="/" [fragment]="'filosofia'" class="hover:text-white transition-colors">Nuestra Cocina</a></li>
-            <li><a routerLink="/" [fragment]="'contacto'" class="hover:text-white transition-colors">Zonas de Reparto</a></li>
+            <li><a routerLink="/horarios" class="hover:text-white transition-colors">Horarios de Atención</a></li>
+            <li><a routerLink="/sedes" class="hover:text-white transition-colors">Nuestras Sedes & Zonas</a></li>
+            <li><a routerLink="/mis-pedidos" class="hover:text-white transition-colors">Mis Pedidos & Seguimiento</a></li>
             <li class="pt-2">
               <a
                 routerLink="/admin/dashboard"
