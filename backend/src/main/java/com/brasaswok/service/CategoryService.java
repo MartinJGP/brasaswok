@@ -6,6 +6,7 @@ import com.brasaswok.exception.BadRequestException;
 import com.brasaswok.exception.ResourceNotFoundException;
 import com.brasaswok.model.Category;
 import com.brasaswok.repository.CategoryRepository;
+import com.brasaswok.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional(readOnly = true)
@@ -83,6 +86,15 @@ public class CategoryService {
         Category category = findCategoryOrThrow(id);
         category.setIsActive(!Boolean.TRUE.equals(category.getIsActive()));
         return toResponse(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public void deleteCategory(Long id) {
+        Category category = findCategoryOrThrow(id);
+        if (productRepository.existsByCategoryId(id)) {
+            throw new BadRequestException("No se puede eliminar la categoría porque contiene productos asociados.");
+        }
+        categoryRepository.delete(category);
     }
 
     private Category findCategoryOrThrow(Long id) {

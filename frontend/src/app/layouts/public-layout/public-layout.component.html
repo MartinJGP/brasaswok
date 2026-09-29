@@ -28,6 +28,13 @@
           La Carta
         </a>
         <a
+          routerLink="/mis-pedidos"
+          routerLinkActive="text-brand-accent font-bold"
+          class="hover:text-white transition-colors"
+        >
+          Mis Pedidos
+        </a>
+        <a
           routerLink="/"
           [fragment]="'filosofia'"
           class="hover:text-white transition-colors"
@@ -155,6 +162,13 @@
         class="block py-2 text-sm font-medium text-white/80 hover:text-white"
       >
         La Carta
+      </a>
+      <a
+        routerLink="/mis-pedidos"
+        (click)="isMobileMenuOpen = false"
+        class="block py-2 text-sm font-medium text-white/80 hover:text-white"
+      >
+        Mis Pedidos
       </a>
       <a
         routerLink="/"

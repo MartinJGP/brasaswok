@@ -66,14 +66,24 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
                   </span>
                 </td>
                 <td class="px-5 py-4 text-right">
-                  <button
-                    type="button"
-                    (click)="toggleStatus(cat)"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
-                    [ngClass]="cat.isActive ? 'border-brand-border text-brand-text-secondary hover:text-brand-text-primary' : 'border-emerald-500/40 text-emerald-600 bg-emerald-50/50'"
-                  >
-                    {{ cat.isActive ? 'Desactivar' : 'Activar' }}
-                  </button>
+                  <div class="inline-flex items-center gap-2">
+                    <button
+                      type="button"
+                      (click)="toggleStatus(cat)"
+                      class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
+                      [ngClass]="cat.isActive ? 'border-brand-border text-brand-text-secondary hover:text-brand-text-primary' : 'border-emerald-500/40 text-emerald-600 bg-emerald-50/50'"
+                    >
+                      {{ cat.isActive ? 'Desactivar' : 'Activar' }}
+                    </button>
+                    <button
+                      type="button"
+                      (click)="handleDeleteCategory(cat)"
+                      class="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all active:scale-95"
+                      title="Eliminar categoría"
+                    >
+                      <app-icon name="trash" [size]="14"></app-icon>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -176,6 +186,20 @@ export class AdminCategoriesComponent implements OnInit {
         description: '',
         isActive: true
       };
+    });
+  }
+
+  handleDeleteCategory(category: AdminCategory): void {
+    if (!confirm(`¿Estás seguro de eliminar la categoría "${category.name}"?`)) {
+      return;
+    }
+    this.adminService.deleteCategory(category.id).subscribe({
+      next: () => {
+        this.categories = this.categories.filter(c => c.id !== category.id);
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo eliminar la categoría');
+      }
     });
   }
 }

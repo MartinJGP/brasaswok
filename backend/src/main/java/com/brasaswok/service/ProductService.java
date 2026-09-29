@@ -105,6 +105,17 @@ public class ProductService {
         return toResponse(productRepository.save(product));
     }
 
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = findProductOrThrow(id);
+        try {
+            productRepository.delete(product);
+            productRepository.flush();
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new BadRequestException("No se puede eliminar el producto porque tiene pedidos asociados. Se recomienda desactivar su disponibilidad.");
+        }
+    }
+
     private Product findProductOrThrow(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));

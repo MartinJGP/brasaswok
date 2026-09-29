@@ -51,4 +51,19 @@ public class OrderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(orderService.getOrderById(id, userDetails));
     }
+
+    @GetMapping("/track/{orderNumber}")
+    public ResponseEntity<OrderResponse> trackOrder(@PathVariable String orderNumber) {
+        return ResponseEntity.ok(orderService.getOrderByOrderNumber(orderNumber));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}/cancel")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @PathVariable Long id,
+            @RequestBody(required = false) java.util.Map<String, String> body,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String reason = body != null ? body.get("reason") : null;
+        return ResponseEntity.ok(orderService.cancelOrder(id, userDetails, reason));
+    }
 }

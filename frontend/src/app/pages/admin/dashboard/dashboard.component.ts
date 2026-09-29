@@ -56,6 +56,26 @@ export class DashboardComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.adminService.getDashboardStats().subscribe({
+      next: (stats) => {
+        if (stats) {
+          this.metrics[0].value = `S/ ${stats.todaySales.toFixed(2)}`;
+          this.metrics[1].value = `${stats.activeOrders} en cocina`;
+          this.metrics[3].value = `S/ ${stats.averageTicket.toFixed(2)}`;
+          if (stats.topDishes && stats.topDishes.length > 0) {
+            const maxCount = Math.max(...stats.topDishes.map(d => d.quantity), 1);
+            this.topDishes = stats.topDishes.map(d => ({
+              name: d.name,
+              count: d.quantity,
+              percentage: Math.round((d.quantity / maxCount) * 100),
+              category: d.name.toLowerCase().includes('wok') || d.name.toLowerCase().includes('chaufa') ? 'Wok' : 'Brasas'
+            }));
+          }
+        }
+      },
+      error: () => {}
+    });
+
     this.adminService.getOrders().subscribe(orders => {
       if (orders && orders.length > 0) {
         this.recentOrders = orders.slice(0, 5).map(o => ({
@@ -202,7 +222,7 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
-  readonly topDishes: TopDishItem[] = [
+  topDishes: TopDishItem[] = [
     { name: '1 Pollo a la Brasa Tradicional', count: 42, percentage: 88, category: 'Brasas' },
     { name: 'Lomo Saltado al Wok Criollo', count: 31, percentage: 65, category: 'Wok' },
     { name: 'Arroz Chaufa Especial de Chancho', count: 27, percentage: 56, category: 'Wok' },

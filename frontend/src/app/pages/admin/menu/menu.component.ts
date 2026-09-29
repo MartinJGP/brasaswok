@@ -82,14 +82,24 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                   </span>
                 </td>
                 <td class="px-5 py-4 text-right">
-                  <button
-                    type="button"
-                    (click)="toggleAvailability(product)"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
-                    [ngClass]="product.isAvailable ? 'border-brand-border text-brand-text-secondary hover:text-brand-text-primary' : 'border-emerald-500/40 text-emerald-600 bg-emerald-50/50'"
-                  >
-                    {{ product.isAvailable ? 'Pausar' : 'Activar' }}
-                  </button>
+                  <div class="inline-flex items-center gap-2">
+                    <button
+                      type="button"
+                      (click)="toggleAvailability(product)"
+                      class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
+                      [ngClass]="product.isAvailable ? 'border-brand-border text-brand-text-secondary hover:text-brand-text-primary' : 'border-emerald-500/40 text-emerald-600 bg-emerald-50/50'"
+                    >
+                      {{ product.isAvailable ? 'Pausar' : 'Activar' }}
+                    </button>
+                    <button
+                      type="button"
+                      (click)="handleDeleteProduct(product)"
+                      class="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all active:scale-95"
+                      title="Eliminar plato"
+                    >
+                      <app-icon name="trash" [size]="14"></app-icon>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -157,14 +167,29 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
             </div>
 
             <div>
-              <label class="block font-semibold text-brand-text-primary mb-1">URL de Fotografía</label>
-              <input
-                type="url"
-                [(ngModel)]="newProduct.imageUrl"
-                name="imageUrl"
-                placeholder="https://images.unsplash.com/..."
-                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary"
-              />
+              <label class="block font-semibold text-brand-text-primary mb-1">Fotografía del Plato</label>
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="file"
+                    (change)="onFileSelected($event)"
+                    accept="image/png,image/jpeg,image/webp"
+                    class="text-xs text-brand-text-muted file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-primary-hover file:cursor-pointer"
+                  />
+                  <span *ngIf="isUploadingImage" class="text-[11px] text-brand-primary animate-pulse font-semibold">Subiendo...</span>
+                </div>
+                <input
+                  type="url"
+                  [(ngModel)]="newProduct.imageUrl"
+                  name="imageUrl"
+                  placeholder="O ingresa URL externa (https://...)"
+                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-xs"
+                />
+                <div *ngIf="newProduct.imageUrl" class="flex items-center gap-2 pt-1">
+                  <img [src]="newProduct.imageUrl" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-brand-border" />
+                  <span class="text-[11px] text-emerald-500 font-semibold">Imagen lista para guardar</span>
+                </div>
+              </div>
             </div>
 
             <div class="pt-2 flex justify-end gap-2">
@@ -177,7 +202,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
               </button>
               <button
                 type="submit"
-                [disabled]="!newProduct.name || !newProduct.price"
+                [disabled]="!newProduct.name || !newProduct.price || isUploadingImage"
                 class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white font-bold rounded-xl shadow-card"
               >
                 Guardar Plato
@@ -196,6 +221,7 @@ export class AdminMenuComponent implements OnInit {
   categories: AdminCategory[] = [];
   isLoading = false;
   showCreateModal = false;
+  isUploadingImage = false;
 
   newProduct: Partial<AdminProduct> = {
     name: '',
@@ -228,6 +254,38 @@ export class AdminMenuComponent implements OnInit {
   toggleAvailability(product: AdminProduct): void {
     this.adminService.toggleProductAvailability(product.id).subscribe(() => {
       product.isAvailable = !product.isAvailable;
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.isUploadingImage = true;
+      this.adminService.uploadImage(file).subscribe({
+        next: (res) => {
+          this.newProduct.imageUrl = 'http://localhost:8080' + res.url;
+          this.isUploadingImage = false;
+        },
+        error: (err) => {
+          this.isUploadingImage = false;
+          alert(err?.error?.message || 'Error al subir la imagen');
+        }
+      });
+    }
+  }
+
+  handleDeleteProduct(product: AdminProduct): void {
+    if (!confirm(`¿Estás seguro de eliminar el plato "${product.name}"?`)) {
+      return;
+    }
+    this.adminService.deleteProduct(product.id).subscribe({
+      next: () => {
+        this.products = this.products.filter(p => p.id !== product.id);
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'No se pudo eliminar el plato');
+      }
     });
   }
 

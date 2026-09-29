@@ -67,9 +67,12 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/test/public").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/menu/**", "/api/products/**", "/api/categories/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/menu/**", "/api/products/**", "/api/categories/**", "/api/orders/track/**").permitAll()
                         .requestMatchers("/ws/**", "/ws-brasas/**").permitAll()
+                        .requestMatchers("/api/upload/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )

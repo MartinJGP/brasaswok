@@ -131,6 +131,50 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
+    public OrderResponse getOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con número: " + orderNumber));
+        return toOrderResponse(order);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse cancelOrder(Long orderId, UserDetailsImpl userDetails, String reason) {
+        Order order = orderRepository.findByIdAndCustomerId(orderId, userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con id: " + orderId));
+
+        if (order.getStatus() != OrderStatus.PENDIENTE) {
+            throw new BadRequestException("Solo se pueden cancelar pedidos en estado PENDIENTE. Estado actual: " + order.getStatus());
+        }
+
+        User customer = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        order.setStatus(OrderStatus.CANCELADO);
+        OrderStatusLog log = new OrderStatusLog(
+                order,
+                OrderStatus.PENDIENTE,
+                OrderStatus.CANCELADO,
+                customer,
+                reason != null && !reason.isBlank() ? reason : "Cancelado por el cliente"
+        );
+        order.addStatusLog(log);
+
+        Order saved = orderRepository.save(order);
+        notificationService.notifyStatusChange(saved, OrderStatus.CANCELADO);
+        return toOrderResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderByIdForAdmin(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con id: " + orderId));
+        return toOrderResponse(order);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(String status) {
         List<Order> orders;
         if (status != null && !status.isBlank()) {

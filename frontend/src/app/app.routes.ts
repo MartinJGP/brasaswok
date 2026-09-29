@@ -19,6 +19,15 @@ export const routes: Routes = [
         path: 'carta',
         loadComponent: () => import('./pages/carta/carta.component').then(m => m.CartaComponent),
         title: 'La Carta Gastronómica | Brasas a Wok'
+      },
+      {
+        path: 'mis-pedidos',
+        loadComponent: () => import('./pages/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+        title: 'Mis Pedidos & Seguimiento | Brasas a Wok'
+      },
+      {
+        path: 'pedidos',
+        redirectTo: 'mis-pedidos'
       }
     ]
   },

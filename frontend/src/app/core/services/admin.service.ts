@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 
 export interface AdminOrder {
   id: number;
@@ -44,6 +44,19 @@ export interface AdminCategory {
   name: string;
   description: string;
   isActive: boolean;
+}
+
+export interface DashboardStatsResponse {
+  todaySales: number;
+  activeOrders: number;
+  averageTicket: number;
+  totalOrdersToday: number;
+  ordersByStatus: Record<string, number>;
+  topDishes: Array<{
+    name: string;
+    quantity: number;
+    totalRevenue: number;
+  }>;
 }
 
 @Injectable({
@@ -310,5 +323,46 @@ export class AdminService {
         return of(this.fallbackCategories[0]);
       })
     );
+  }
+
+  getDashboardStats(): Observable<DashboardStatsResponse> {
+    return this.http.get<DashboardStatsResponse>(`${this.baseUrl}/admin/dashboard/stats`);
+  }
+
+  uploadImage(file: File): Observable<{ url: string; filename: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; filename: string }>(`${this.baseUrl}/upload/image`, formData);
+  }
+
+  deleteProduct(productId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/products/${productId}`).pipe(
+      tap(() => {
+        this.fallbackProducts = this.fallbackProducts.filter(p => p.id !== productId);
+      })
+    );
+  }
+
+  deleteCategory(categoryId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/categories/${categoryId}`).pipe(
+      tap(() => {
+        this.fallbackCategories = this.fallbackCategories.filter(c => c.id !== categoryId);
+      })
+    );
+  }
+
+  updateProduct(id: number, product: Partial<AdminProduct>): Observable<AdminProduct> {
+    const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${id}`;
+    const payload = {
+      name: product.name,
+      slug: slug,
+      description: product.description || '',
+      price: product.price,
+      categoryId: product.categoryId || 1,
+      imageUrl: product.imageUrl || '',
+      isAvailable: product.isAvailable ?? true
+    };
+
+    return this.http.put<AdminProduct>(`${this.baseUrl}/products/${id}`, payload);
   }
 }

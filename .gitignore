@@ -28,3 +28,7 @@ desktop.ini
 *.log
 .env
 .env.*.local
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep

@@ -21,6 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByIdAndCustomerId(Long id, Long customerId);
 
+    Optional<Order> findByOrderNumber(String orderNumber);
+
     boolean existsByOrderNumber(String orderNumber);
 
     @Query("SELECT COUNT(o) FROM Order o")

@@ -36,6 +36,11 @@ public class AdminOrderController {
         return ResponseEntity.ok(orderService.getAllOrders(status));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.getOrderByIdForAdmin(id));
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,

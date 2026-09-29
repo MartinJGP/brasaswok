@@ -16,6 +16,12 @@ public interface OrderService {
 
     OrderResponse getOrderById(Long orderId, UserDetailsImpl userDetails);
 
+    OrderResponse getOrderByOrderNumber(String orderNumber);
+
+    OrderResponse cancelOrder(Long orderId, UserDetailsImpl userDetails, String reason);
+
+    OrderResponse getOrderByIdForAdmin(Long orderId);
+
     List<OrderResponse> getAllOrders(String status);
 
     OrderResponse updateOrderStatus(Long orderId, OrderStatusUpdateRequest request, UserDetailsImpl adminDetails);
