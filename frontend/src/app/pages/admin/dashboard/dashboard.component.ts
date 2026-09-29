@@ -35,6 +35,8 @@ interface TopDishItem {
 }
 
 import { RouterLink } from '@angular/router';
+import { OnInit, inject } from '@angular/core';
+import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,7 +44,9 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink, IconComponent, BadgeComponent],
   templateUrl: './dashboard.component.html'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  private readonly adminService = inject(AdminService);
+
   selectedPeriod = 'hoy';
 
   readonly periods = [
@@ -50,6 +54,47 @@ export class DashboardComponent {
     { id: 'semana', label: 'Esta Semana' },
     { id: 'mes', label: 'Este Mes' }
   ];
+
+  ngOnInit(): void {
+    this.adminService.getOrders().subscribe(orders => {
+      if (orders && orders.length > 0) {
+        this.recentOrders = orders.slice(0, 5).map(o => ({
+          orderNumber: o.orderNumber,
+          timeAgo: 'Reciente',
+          customer: o.customerName || 'Cliente',
+          destination: o.deliveryAddress || 'Delivery Express',
+          itemsSummary: o.items?.map(i => `${i.quantity}x ${i.productName}`).join(' + ') || 'Comanda Brasas & Wok',
+          itemsCount: o.items?.length || 1,
+          total: o.totalAmount,
+          paymentMethod: o.paymentMethod,
+          statusLabel: this.getStatusLabel(o.status),
+          statusVariant: this.getStatusVariant(o.status)
+        }));
+      }
+    });
+  }
+
+  private getStatusLabel(status: string): string {
+    switch (status) {
+      case 'PENDIENTE': return 'Pendiente';
+      case 'EN_COCINA': return 'En Cocina';
+      case 'EN_CAMINO': return 'En Camino';
+      case 'ENTREGADO': return 'Entregado';
+      case 'CANCELADO': return 'Cancelado';
+      default: return status;
+    }
+  }
+
+  private getStatusVariant(status: string): BadgeVariant {
+    switch (status) {
+      case 'PENDIENTE': return 'warning';
+      case 'EN_COCINA': return 'warning';
+      case 'EN_CAMINO': return 'info';
+      case 'ENTREGADO': return 'success';
+      case 'CANCELADO': return 'error';
+      default: return 'neutral';
+    }
+  }
 
   readonly metrics: MetricItem[] = [
     {
@@ -94,7 +139,7 @@ export class DashboardComponent {
     }
   ];
 
-  readonly recentOrders: RecentOrderItem[] = [
+  recentOrders: RecentOrderItem[] = [
     {
       orderNumber: 'BW-001',
       timeAgo: '8 min',

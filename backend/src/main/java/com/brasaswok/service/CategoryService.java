@@ -30,6 +30,14 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public CategoryResponse getCategoryById(Long id) {
         return toResponse(findCategoryOrThrow(id));
     }

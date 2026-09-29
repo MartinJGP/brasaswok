@@ -200,7 +200,7 @@ export class AdminService {
   updateOrderStatus(orderId: number, newStatus: string, notes?: string): Observable<AdminOrder> {
     return this.http.put<AdminOrder>(`${this.baseUrl}/admin/orders/${orderId}/status`, {
       status: newStatus,
-      notes: notes || ''
+      comment: notes || ''
     }).pipe(
       catchError(() => {
         const order = this.fallbackOrders.find(o => o.id === orderId);
@@ -220,13 +220,24 @@ export class AdminService {
   }
 
   getProducts(): Observable<AdminProduct[]> {
-    return this.http.get<AdminProduct[]>(`${this.baseUrl}/products`).pipe(
+    return this.http.get<AdminProduct[]>(`${this.baseUrl}/products?all=true`).pipe(
       catchError(() => of(this.fallbackProducts))
     );
   }
 
   createProduct(product: Partial<AdminProduct>): Observable<AdminProduct> {
-    return this.http.post<AdminProduct>(`${this.baseUrl}/products`, product).pipe(
+    const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${Date.now()}`;
+    const payload = {
+      name: product.name,
+      slug: slug,
+      description: product.description || '',
+      price: product.price,
+      categoryId: product.categoryId || 1,
+      imageUrl: product.imageUrl || 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=800&q=80',
+      isAvailable: product.isAvailable ?? true
+    };
+
+    return this.http.post<AdminProduct>(`${this.baseUrl}/products`, payload).pipe(
       catchError(() => {
         const created: AdminProduct = {
           id: Math.floor(100 + Math.random() * 900),
@@ -258,13 +269,23 @@ export class AdminService {
   }
 
   getCategories(): Observable<AdminCategory[]> {
-    return this.http.get<AdminCategory[]>(`${this.baseUrl}/categories`).pipe(
+    return this.http.get<AdminCategory[]>(`${this.baseUrl}/categories?all=true`).pipe(
       catchError(() => of(this.fallbackCategories))
     );
   }
 
   createCategory(category: Partial<AdminCategory>): Observable<AdminCategory> {
-    return this.http.post<AdminCategory>(`${this.baseUrl}/categories`, category).pipe(
+    const slug = (category as any).slug || category.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `categoria-${Date.now()}`;
+    const payload = {
+      name: category.name,
+      slug: slug,
+      description: category.description || '',
+      imageUrl: '',
+      displayOrder: 0,
+      isActive: true
+    };
+
+    return this.http.post<AdminCategory>(`${this.baseUrl}/categories`, payload).pipe(
       catchError(() => {
         const created: AdminCategory = {
           id: Math.floor(10 + Math.random() * 90),
