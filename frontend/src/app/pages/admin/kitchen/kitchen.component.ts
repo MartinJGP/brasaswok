@@ -24,7 +24,7 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
         </div>
 
         <div class="flex items-center gap-3">
-          <span class="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-brand-surface border border-brand-border text-white">
+          <span class="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-brand-surface border border-brand-border text-brand-text-primary shadow-subtle">
             {{ activeKitchenOrders().length }} comandas activas
           </span>
           <button
@@ -44,10 +44,10 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
       </div>
 
       <div *ngIf="!isLoading() && activeKitchenOrders().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-3">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto">
           <app-icon name="check" [size]="28"></app-icon>
         </div>
-        <h3 class="text-base font-bold text-white">¡Cocina al día!</h3>
+        <h3 class="text-base font-bold text-brand-text-primary">¡Cocina al día!</h3>
         <p class="text-xs text-brand-text-secondary max-w-sm mx-auto">
           No hay comandas pendientes de cocción en este momento. Las nuevas órdenes aparecerán automáticamente.
         </p>
@@ -62,13 +62,13 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
           <div class="p-5 space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-brand-border">
               <div>
-                <span class="text-lg font-mono font-extrabold text-white">#{{ order.orderNumber }}</span>
+                <span class="text-lg font-mono font-extrabold text-brand-text-primary">#{{ order.orderNumber }}</span>
                 <span class="text-[11px] text-brand-text-muted block">{{ order.createdAt | date:'shortTime' }}</span>
               </div>
 
               <span
                 class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1"
-                [ngClass]="order.status === 'EN_COCINA' ? 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'"
+                [ngClass]="order.status === 'EN_COCINA' ? 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30' : 'bg-amber-500/20 text-amber-600 border border-amber-500/30'"
               >
                 <app-icon name="flame" [size]="12"></app-icon>
                 <span>{{ order.status === 'EN_COCINA' ? 'Al Fuego' : 'Ingresado' }}</span>
@@ -82,10 +82,10 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
               <div class="space-y-2 bg-brand-surface-alt/60 p-3 rounded-xl border border-brand-border/60">
                 <div *ngFor="let item of order.items" class="text-xs">
                   <div class="flex items-center justify-between font-bold">
-                    <span class="text-brand-primary text-sm">{{ item.quantity }}x</span>
-                    <span class="text-white flex-1 ml-2">{{ item.productName }}</span>
+                    <span class="text-brand-primary text-sm font-mono">{{ item.quantity }}x</span>
+                    <span class="text-brand-text-primary flex-1 ml-2 font-semibold">{{ item.productName }}</span>
                   </div>
-                  <p *ngIf="item.notes" class="text-[11px] text-brand-accent italic mt-0.5 ml-6 bg-brand-secondary/40 px-2 py-0.5 rounded">
+                  <p *ngIf="item.notes" class="text-[11px] text-brand-accent italic mt-0.5 ml-6 bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/20">
                     Nota: "{{ item.notes }}"
                   </p>
                 </div>
@@ -99,7 +99,7 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
           </div>
 
           <div class="p-4 bg-brand-surface-alt/50 border-t border-brand-border flex items-center justify-between gap-3">
-            <span class="text-xs text-brand-text-secondary truncate max-w-[130px]">
+            <span class="text-xs text-brand-text-secondary truncate max-w-[130px] font-medium">
               {{ order.customerName }}
             </span>
 

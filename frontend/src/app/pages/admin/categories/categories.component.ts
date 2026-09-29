@@ -126,7 +126,7 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
                 name="name"
                 required
                 placeholder="Ej: Postres Caseros"
-                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary"
+                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-brand-text-primary"
               />
             </div>
 
@@ -137,7 +137,7 @@ import { AdminService, AdminCategory } from '../../../core/services/admin.servic
                 name="description"
                 rows="2"
                 placeholder="Breve reseña de la categoría..."
-                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary resize-none"
+                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary resize-none text-brand-text-primary"
               ></textarea>
             </div>
 

@@ -143,7 +143,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                 name="name"
                 required
                 placeholder="Ej: Tacu Tacu en Salsa de Mariscos"
-                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary"
+                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-brand-text-primary"
               />
             </div>
 
@@ -153,7 +153,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                 <select
                   [(ngModel)]="newProduct.categoryId"
                   name="categoryId"
-                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary"
+                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-brand-text-primary"
                 >
                   <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
                 </select>
@@ -168,7 +168,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                   name="price"
                   required
                   placeholder="35.00"
-                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary font-mono"
+                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary font-mono text-brand-text-primary"
                 />
               </div>
             </div>
@@ -180,7 +180,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                 name="description"
                 rows="2"
                 placeholder="Ingredientes clave, término y acompañamiento..."
-                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary resize-none"
+                class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary resize-none text-brand-text-primary"
               ></textarea>
             </div>
 
@@ -201,7 +201,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                   [(ngModel)]="newProduct.imageUrl"
                   name="imageUrl"
                   placeholder="O ingresa URL externa (https://...)"
-                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-xs"
+                  class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-xs text-brand-text-primary"
                 />
                 <div *ngIf="newProduct.imageUrl" class="flex items-center gap-2 pt-1">
                   <img [src]="newProduct.imageUrl" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-brand-border" />

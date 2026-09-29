@@ -6,7 +6,7 @@
         <span>Atención en Salón & Delivery</span>
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white font-sans tracking-tight">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary font-sans tracking-tight">
         Horarios de Atención
       </h1>
 
@@ -17,9 +17,9 @@
       <div class="pt-2">
         <span
           class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
-          [ngClass]="isOpenNow() ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'"
+          [ngClass]="isOpenNow() ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-600 border border-amber-500/30'"
         >
-          <span class="w-2 h-2 rounded-full" [ngClass]="isOpenNow() ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'"></span>
+          <span class="w-2 h-2 rounded-full" [ngClass]="isOpenNow() ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
           <span>{{ isOpenNow() ? 'Cocina Abierta Ahora' : 'Cerrado en este Momento' }}</span>
         </span>
       </div>
@@ -28,7 +28,7 @@
     <div class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
       <div class="p-6 border-b border-brand-border flex items-center justify-between">
         <div>
-          <h2 class="text-base font-bold text-white font-sans">Jornadas Semanales</h2>
+          <h2 class="text-base font-bold text-brand-text-primary font-sans">Jornadas Semanales</h2>
           <p class="text-xs text-brand-text-secondary mt-0.5">Rango de servicio para mesas y despacho motorizado.</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center">
@@ -40,7 +40,7 @@
         <div *ngFor="let s of schedules" class="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-brand-surface-alt/40 transition-colors">
           <div class="space-y-1">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-extrabold text-white">{{ s.dayGroup }}</span>
+              <span class="text-sm font-extrabold text-brand-text-primary">{{ s.dayGroup }}</span>
               <span *ngIf="s.isPeak" class="px-2 py-0.5 rounded-md bg-brand-accent/10 text-brand-accent text-[10px] font-bold uppercase tracking-wider">
                 Mayor afluencia
               </span>
@@ -68,7 +68,7 @@
           <app-icon name="phone" [size]="16"></app-icon>
           <span class="text-xs font-bold uppercase tracking-wider">Central de Pedidos</span>
         </div>
-        <p class="text-base font-extrabold text-white font-mono">(01) 719-2020</p>
+        <p class="text-base font-extrabold text-brand-text-primary font-mono">(01) 719-2020</p>
         <p class="text-xs text-brand-text-secondary">Atención telefónica directa para reservas y pedidos corporativos.</p>
       </div>
 
@@ -77,7 +77,7 @@
           <app-icon name="flame" [size]="16"></app-icon>
           <span class="text-xs font-bold uppercase tracking-wider">WhatsApp Delivery</span>
         </div>
-        <p class="text-base font-extrabold text-white font-mono">987 654 321</p>
+        <p class="text-base font-extrabold text-brand-text-primary font-mono">987 654 321</p>
         <p class="text-xs text-brand-text-secondary">Escríbenos para consultas rápidas o seguimiento de tu orden.</p>
       </div>
     </div>

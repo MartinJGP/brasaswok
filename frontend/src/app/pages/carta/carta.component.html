@@ -63,14 +63,14 @@
 
       <div *ngIf="searchTerm()" class="flex items-center gap-2 text-xs">
         <span class="text-brand-text-secondary">Filtro: <strong class="text-brand-primary">"{{ searchTerm() }}"</strong></span>
-        <button (click)="clearSearch()" class="text-brand-text-muted hover:text-white underline">Quitar</button>
+        <button (click)="clearSearch()" class="text-brand-text-muted hover:text-brand-text-primary underline">Quitar</button>
       </div>
     </div>
 
     <div *ngIf="error()" class="p-6 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-center space-y-3 max-w-lg mx-auto my-8">
-      <app-icon name="alert" [size]="28" customClass="text-rose-400 mx-auto"></app-icon>
-      <h3 class="text-sm font-bold text-white">Error de conexión con la carta</h3>
-      <p class="text-xs text-rose-300">{{ error() }}</p>
+      <app-icon name="alert" [size]="28" customClass="text-rose-500 mx-auto"></app-icon>
+      <h3 class="text-sm font-bold text-rose-700">Error de conexión con la carta</h3>
+      <p class="text-xs text-rose-600">{{ error() }}</p>
       <div>
         <button
           type="button"
@@ -119,7 +119,7 @@
         <app-icon name="search" [size]="24"></app-icon>
       </div>
       <div>
-        <h3 class="text-base font-bold text-white">No hay platos disponibles</h3>
+        <h3 class="text-base font-bold text-brand-text-primary">No hay platos disponibles</h3>
         <p class="text-xs text-brand-text-secondary mt-1">
           {{ searchTerm() ? 'No hay platos que coincidan con la búsqueda.' : 'No hay platos registrados en esta categoría.' }}
         </p>
