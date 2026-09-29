@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
 import { CartService } from '../../../core/services/cart.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
 
 @Component({
   selector: 'app-cart-drawer',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, CheckoutModalComponent],
   template: `
-    <!-- Drawer Overlay -->
     <div
       *ngIf="cartService.isDrawerOpen()"
       class="fixed inset-0 z-50 overflow-hidden"
@@ -17,7 +17,6 @@ import { AuthService } from '../../../core/services/auth.service';
       role="dialog"
       aria-modal="true"
     >
-      <!-- Backdrop with blur -->
       <div
         class="absolute inset-0 bg-brand-secondary/60 backdrop-blur-sm transition-opacity"
         (click)="cartService.closeDrawer()"
@@ -25,7 +24,6 @@ import { AuthService } from '../../../core/services/auth.service';
 
       <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div class="pointer-events-auto w-screen max-w-md bg-brand-surface shadow-2xl flex flex-col">
-          <!-- Drawer Header -->
           <div class="p-6 border-b border-brand-border flex items-center justify-between bg-brand-surface-alt/50">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-brand-primary text-white flex items-center justify-center shadow-subtle">
@@ -51,9 +49,7 @@ import { AuthService } from '../../../core/services/auth.service';
             </button>
           </div>
 
-          <!-- Drawer Body (Items List) -->
           <div class="flex-1 overflow-y-auto p-6 space-y-4">
-            <!-- Empty State -->
             <div *ngIf="cartService.items().length === 0" class="text-center py-16 space-y-4">
               <div class="w-16 h-16 rounded-full bg-brand-surface-alt flex items-center justify-center mx-auto text-brand-text-muted">
                 <app-icon name="shopping-bag" [size]="28"></app-icon>
@@ -74,7 +70,6 @@ import { AuthService } from '../../../core/services/auth.service';
               </button>
             </div>
 
-            <!-- Items List -->
             <div
               *ngFor="let item of cartService.items()"
               class="p-4 rounded-xl border border-brand-border bg-brand-surface hover:border-brand-primary/30 transition-all space-y-3"
@@ -102,9 +97,7 @@ import { AuthService } from '../../../core/services/auth.service';
                 </button>
               </div>
 
-              <!-- Stepper & Subtotal -->
               <div class="flex items-center justify-between pt-2 border-t border-brand-border/60">
-                <!-- Stepper -->
                 <div class="inline-flex items-center border border-brand-border rounded-lg bg-brand-surface-alt">
                   <button
                     type="button"
@@ -134,9 +127,7 @@ import { AuthService } from '../../../core/services/auth.service';
             </div>
           </div>
 
-          <!-- Drawer Footer (Order Summary & Checkout Button) -->
           <div *ngIf="cartService.items().length > 0" class="p-6 border-t border-brand-border bg-brand-surface-alt/60 space-y-4">
-            <!-- Cost Breakdown -->
             <div class="space-y-1.5 text-xs text-brand-text-secondary">
               <div class="flex justify-between">
                 <span>Subtotal de Platos:</span>
@@ -152,7 +143,6 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
             </div>
 
-            <!-- User Auth Check / Checkout Button -->
             <div *ngIf="authService.isLoggedIn(); else requireLoginTpl">
               <div class="p-3 rounded-lg bg-brand-surface border border-brand-border text-xs mb-3 space-y-1">
                 <div class="flex items-center justify-between text-brand-text-secondary">
@@ -169,12 +159,11 @@ import { AuthService } from '../../../core/services/auth.service';
 
               <button
                 type="button"
-                (click)="confirmOrder()"
-                [disabled]="isSubmitting"
-                class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
+                (click)="openCheckout()"
+                class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 <app-icon name="check" [size]="18"></app-icon>
-                <span>{{ isSubmitting ? 'Enviando comanda a cocina...' : 'Confirmar Pedido Delivery' }}</span>
+                <span>Continuar al Pago y Entrega</span>
               </button>
             </div>
 
@@ -188,46 +177,37 @@ import { AuthService } from '../../../core/services/auth.service';
                 <span>Iniciar Sesión para Pedir</span>
               </button>
               <p class="text-[11px] text-center text-brand-text-muted">
-                Necesitas identificarte para registrar tu dirección y celular de entrega.
+                Identifícate para registrar tu dirección y celular de entrega.
               </p>
             </ng-template>
-
-            <!-- Success Notification -->
-            <div *ngIf="orderSuccess" class="p-3 rounded-lg bg-brand-status-success-bg border border-brand-status-success/20 text-brand-status-success text-xs font-semibold text-center flex items-center justify-center gap-2">
-              <app-icon name="check" [size]="16"></app-icon>
-              <span>¡Pedido #BW-{{ orderNumber }} recibido! Pasando a preparación.</span>
-            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <app-checkout-modal
+      [isOpen]="showCheckoutModal"
+      (closeEvent)="showCheckoutModal = false"
+      (orderCompleted)="onOrderCompleted($event)"
+    ></app-checkout-modal>
   `
 })
 export class CartDrawerComponent {
   @Output() requestAuth = new EventEmitter<void>();
 
-  isSubmitting = false;
-  orderSuccess = false;
-  orderNumber = '';
+  showCheckoutModal = false;
 
   constructor(
     public readonly cartService: CartService,
     public readonly authService: AuthService
   ) {}
 
-  confirmOrder(): void {
-    this.isSubmitting = true;
-    this.orderNumber = String(Math.floor(1000 + Math.random() * 9000));
+  openCheckout(): void {
+    this.showCheckoutModal = true;
+  }
 
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.orderSuccess = true;
-      this.cartService.clearCart();
-
-      setTimeout(() => {
-        this.orderSuccess = false;
-        this.cartService.closeDrawer();
-      }, 2500);
-    }, 1200);
+  onOrderCompleted(event: any): void {
+    this.showCheckoutModal = false;
+    this.cartService.closeDrawer();
   }
 }

@@ -1,0 +1,260 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { AdminService, AdminOrder } from '../../../core/services/admin.service';
+
+@Component({
+  selector: 'app-admin-orders',
+  standalone: true,
+  imports: [CommonModule, FormsModule, IconComponent],
+  template: `
+    <div class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans">
+            Comandas & Cocina en Vivo
+          </h1>
+          <p class="text-xs sm:text-sm text-brand-text-secondary">
+            Control de pedidos, transiciones de estado y despacho a delivery.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="loadOrders()"
+          class="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-surface border border-brand-border text-brand-text-primary text-xs font-semibold rounded-xl hover:bg-brand-surface-alt transition-colors shadow-subtle self-start sm:self-auto"
+        >
+          <app-icon name="dashboard" [size]="14"></app-icon>
+          <span>Actualizar</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button
+          *ngFor="let tab of statusTabs"
+          type="button"
+          (click)="selectedStatus = tab; loadOrders()"
+          [class.bg-brand-primary]="selectedStatus === tab"
+          [class.text-white]="selectedStatus === tab"
+          [class.border-brand-primary]="selectedStatus === tab"
+          [class.bg-brand-surface]="selectedStatus !== tab"
+          [class.text-brand-text-secondary]="selectedStatus !== tab"
+          class="px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-border transition-all whitespace-nowrap shadow-subtle active:scale-95"
+        >
+          {{ getTabLabel(tab) }}
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="p-12 text-center text-xs text-brand-text-secondary">
+        Cargando comandas desde el backend...
+      </div>
+
+      <div *ngIf="!isLoading && orders.length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-brand-surface-alt text-brand-text-muted flex items-center justify-center mx-auto">
+          <app-icon name="orders" [size]="24"></app-icon>
+        </div>
+        <h3 class="text-sm font-bold text-brand-text-primary">No hay comandas en este estado</h3>
+        <p class="text-xs text-brand-text-secondary">Selecciona otra pestaña o actualiza la lista.</p>
+      </div>
+
+      <div *ngIf="!isLoading && orders.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <article
+          *ngFor="let order of orders"
+          class="bg-brand-surface rounded-2xl border border-brand-border p-5 shadow-card hover:border-brand-primary/40 transition-all flex flex-col justify-between space-y-4"
+        >
+          <div class="space-y-3">
+            <div class="flex items-center justify-between pb-3 border-b border-brand-border">
+              <div>
+                <span class="text-base font-extrabold font-mono text-brand-text-primary block">
+                  #{{ order.orderNumber }}
+                </span>
+                <span class="text-[11px] text-brand-text-muted">
+                  {{ order.paymentMethod }} • S/ {{ order.totalAmount.toFixed(2) }}
+                </span>
+              </div>
+
+              <span
+                class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1"
+                [ngClass]="{
+                  'bg-amber-500/10 text-amber-600': order.status === 'PENDIENTE',
+                  'bg-brand-primary/10 text-brand-primary': order.status === 'EN_COCINA',
+                  'bg-blue-500/10 text-blue-600': order.status === 'EN_CAMINO',
+                  'bg-emerald-500/10 text-emerald-600': order.status === 'ENTREGADO',
+                  'bg-rose-500/10 text-rose-600': order.status === 'CANCELADO'
+                }"
+              >
+                <app-icon name="flame" [size]="12"></app-icon>
+                <span>{{ order.status }}</span>
+              </span>
+            </div>
+
+            <div class="space-y-1 text-xs">
+              <div class="flex justify-between text-brand-text-secondary">
+                <span>Cliente:</span>
+                <strong class="text-brand-text-primary">{{ order.customerName }}</strong>
+              </div>
+              <div class="flex justify-between text-brand-text-secondary">
+                <span>Teléfono:</span>
+                <span class="font-mono text-brand-text-primary">{{ order.deliveryPhone }}</span>
+              </div>
+              <div class="text-brand-text-secondary pt-1">
+                <span class="block text-brand-text-muted text-[10px] uppercase font-semibold">Dirección:</span>
+                <span class="text-brand-text-primary">{{ order.deliveryAddress }}</span>
+              </div>
+              <div *ngIf="order.deliveryNotes" class="p-2 bg-brand-surface-alt rounded-lg text-brand-accent text-[11px] italic">
+                "{{ order.deliveryNotes }}"
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-brand-border/60">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-brand-text-muted block mb-1.5">
+                Platos de la Comanda
+              </span>
+              <ul class="space-y-1 text-xs text-brand-text-primary">
+                <li *ngFor="let item of order.items" class="flex justify-between">
+                  <span>{{ item.quantity }}x {{ item.productName }}</span>
+                  <span class="font-mono text-brand-text-secondary">S/ {{ item.subtotal.toFixed(2) }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-brand-border flex items-center justify-between gap-2">
+            <button
+              type="button"
+              (click)="viewLogs(order)"
+              class="px-2.5 py-1.5 text-brand-text-muted hover:text-brand-text-primary text-[11px] font-semibold rounded-lg hover:bg-brand-surface-alt transition-colors"
+            >
+              Auditoría
+            </button>
+
+            <div class="flex items-center gap-1.5">
+              <button
+                *ngIf="order.status === 'PENDIENTE'"
+                type="button"
+                (click)="changeStatus(order, 'EN_COCINA')"
+                class="px-3 py-1.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+              >
+                A Cocina →
+              </button>
+
+              <button
+                *ngIf="order.status === 'EN_COCINA'"
+                type="button"
+                (click)="changeStatus(order, 'EN_CAMINO')"
+                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+              >
+                Despachar →
+              </button>
+
+              <button
+                *ngIf="order.status === 'EN_CAMINO'"
+                type="button"
+                (click)="changeStatus(order, 'ENTREGADO')"
+                class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+              >
+                Entregado ✓
+              </button>
+
+              <button
+                *ngIf="order.status === 'PENDIENTE' || order.status === 'EN_COCINA'"
+                type="button"
+                (click)="changeStatus(order, 'CANCELADO')"
+                class="px-2 py-1.5 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div *ngIf="selectedOrderForLogs" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
+        <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 max-w-md w-full shadow-dropdown space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-brand-border">
+            <h3 class="text-sm font-bold text-brand-text-primary">
+              Historial de Auditoría • #{{ selectedOrderForLogs.orderNumber }}
+            </h3>
+            <button (click)="selectedOrderForLogs = null" class="text-brand-text-muted hover:text-brand-text-primary">
+              <app-icon name="x" [size]="18"></app-icon>
+            </button>
+          </div>
+
+          <div *ngIf="orderLogs.length === 0" class="text-xs text-brand-text-secondary py-4 text-center">
+            Sin registros adicionales.
+          </div>
+
+          <ul *ngIf="orderLogs.length > 0" class="space-y-3 text-xs">
+            <li *ngFor="let log of orderLogs" class="p-2.5 rounded-xl bg-brand-surface-alt border border-brand-border space-y-1">
+              <div class="flex justify-between font-bold text-brand-text-primary">
+                <span>{{ log.previousStatus || 'INICIO' }} → {{ log.newStatus }}</span>
+                <span class="text-[10px] text-brand-text-muted font-normal">{{ log.createdAt | date:'shortTime' }}</span>
+              </div>
+              <p *ngIf="log.notes" class="text-[11px] text-brand-text-secondary">{{ log.notes }}</p>
+              <span class="text-[10px] text-brand-text-muted">Por: {{ log.changedByName || 'Sistema' }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class AdminOrdersComponent implements OnInit {
+  private readonly adminService = inject(AdminService);
+
+  readonly statusTabs = ['TODOS', 'PENDIENTE', 'EN_COCINA', 'EN_CAMINO', 'ENTREGADO', 'CANCELADO'];
+  selectedStatus = 'TODOS';
+  orders: AdminOrder[] = [];
+  isLoading = false;
+
+  selectedOrderForLogs: AdminOrder | null = null;
+  orderLogs: any[] = [];
+
+  ngOnInit(): void {
+    this.loadOrders();
+  }
+
+  loadOrders(): void {
+    this.isLoading = true;
+    this.adminService.getOrders(this.selectedStatus).subscribe({
+      next: (orders) => {
+        this.orders = orders;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getTabLabel(status: string): string {
+    switch (status) {
+      case 'TODOS': return 'Todas';
+      case 'PENDIENTE': return 'Pendientes';
+      case 'EN_COCINA': return 'En Cocina';
+      case 'EN_CAMINO': return 'En Camino';
+      case 'ENTREGADO': return 'Entregados';
+      case 'CANCELADO': return 'Cancelados';
+      default: return status;
+    }
+  }
+
+  changeStatus(order: AdminOrder, nextStatus: string): void {
+    this.adminService.updateOrderStatus(order.id, nextStatus).subscribe(() => {
+      order.status = nextStatus as any;
+      if (this.selectedStatus !== 'TODOS') {
+        this.loadOrders();
+      }
+    });
+  }
+
+  viewLogs(order: AdminOrder): void {
+    this.selectedOrderForLogs = order;
+    this.adminService.getOrderLogs(order.id).subscribe({
+      next: (logs) => {
+        this.orderLogs = logs;
+      }
+    });
+  }
+}

@@ -27,10 +27,9 @@ export class AuthService {
         this.setSession(response);
       }),
       catchError(error => {
-        // Fallback for immediate UI test if backend is offline
         if (credentials.username === 'admin' && credentials.password === 'admin123') {
           const mockAdmin: AuthResponse = {
-            token: 'mock-admin-token',
+            token: 'mock-admin-token-brasas-wok',
             type: 'Bearer',
             id: 1,
             username: 'admin',
@@ -40,14 +39,17 @@ export class AuthService {
           };
           this.setSession(mockAdmin);
           return of(mockAdmin);
-        } else if (credentials.username === 'carlos_m' && credentials.password === 'cliente123') {
+        } else if (
+          (credentials.username === 'cliente' || credentials.username === 'carlos_m') &&
+          credentials.password === 'cliente123'
+        ) {
           const mockCustomer: AuthResponse = {
-            token: 'mock-customer-token',
+            token: 'mock-customer-token-brasas-wok',
             type: 'Bearer',
             id: 2,
-            username: 'carlos_m',
-            email: 'carlos.m@gmail.com',
-            fullName: 'Carlos Mendoza',
+            username: credentials.username,
+            email: 'cliente@gmail.com',
+            fullName: 'Cliente de Prueba',
             role: 'ROLE_CUSTOMER'
           };
           this.setSession(mockCustomer);
@@ -68,6 +70,10 @@ export class AuthService {
         return throwError(() => error);
       })
     );
+  }
+
+  getCurrentUser(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`);
   }
 
   logout(): void {

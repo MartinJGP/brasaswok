@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
@@ -11,21 +12,18 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
   imports: [CommonModule, FormsModule, IconComponent],
   template: `
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Backdrop Overlay -->
       <div
         class="fixed inset-0 bg-brand-secondary/70 backdrop-blur-sm transition-opacity"
         (click)="close()"
         aria-hidden="true"
       ></div>
 
-      <!-- Modal Card -->
       <div
         class="relative w-full max-w-md bg-brand-surface rounded-2xl shadow-dropdown border border-brand-border overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <!-- Modal Header -->
         <div class="p-6 pb-4 border-b border-brand-border flex items-center justify-between bg-brand-surface-alt/40">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center">
@@ -49,7 +47,6 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
           </button>
         </div>
 
-        <!-- Segmented Tab Switcher -->
         <div class="p-6 pt-4 pb-0">
           <div class="flex bg-brand-surface-alt p-1 rounded-xl border border-brand-border text-xs font-semibold">
             <button
@@ -77,7 +74,6 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
           </div>
         </div>
 
-        <!-- Alerts -->
         <div class="px-6 pt-4" *ngIf="errorMessage">
           <div class="p-3 rounded-lg bg-brand-status-error-bg border border-brand-status-error/20 text-brand-status-error text-xs flex items-center gap-2">
             <app-icon name="alert" [size]="16" customClass="shrink-0"></app-icon>
@@ -92,7 +88,6 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
           </div>
         </div>
 
-        <!-- Tab 1: Login Form -->
         <form *ngIf="activeTab === 'login'" (ngSubmit)="handleLogin()" class="p-6 space-y-4">
           <div>
             <label class="block text-xs font-semibold text-brand-text-primary mb-1.5">Usuario o Correo</label>
@@ -105,7 +100,7 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
                 [(ngModel)]="loginForm.username"
                 name="username"
                 required
-                placeholder="ej: carlos_m o admin"
+                placeholder="ej: cliente o admin"
                 class="w-full pl-9 pr-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
               />
             </div>
@@ -136,15 +131,13 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
             {{ isLoading ? 'Ingresando...' : 'Iniciar Sesión' }}
           </button>
 
-          <!-- Quick Test Credentials Hint -->
           <div class="p-3 rounded-lg bg-brand-surface-alt text-[11px] text-brand-text-secondary border border-brand-border space-y-1">
             <span class="font-bold text-brand-text-primary block">Credenciales de prueba:</span>
-            <p>• Cliente: <span class="font-mono text-brand-primary font-semibold">carlos_m</span> / <span class="font-mono">cliente123</span></p>
-            <p>• Admin: <span class="font-mono text-brand-primary font-semibold">admin</span> / <span class="font-mono">admin123</span></p>
+            <p>• Cliente: <span class="font-mono text-brand-primary font-semibold">cliente</span> / <span class="font-mono">cliente123</span></p>
+            <p>• Administrador: <span class="font-mono text-brand-primary font-semibold">admin</span> / <span class="font-mono">admin123</span></p>
           </div>
         </form>
 
-        <!-- Tab 2: Register Form -->
         <form *ngIf="activeTab === 'register'" (ngSubmit)="handleRegister()" class="p-6 space-y-3">
           <div>
             <label class="block text-xs font-semibold text-brand-text-primary mb-1">Nombre Completo</label>
@@ -251,7 +244,10 @@ export class AuthModalComponent {
     address: ''
   };
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly router: Router
+  ) {}
 
   handleLogin(): void {
     this.isLoading = true;
@@ -264,7 +260,10 @@ export class AuthModalComponent {
         this.successMessage = `¡Bienvenido(a), ${user.fullName}!`;
         setTimeout(() => {
           this.close();
-        }, 800);
+          if (user.role === 'ROLE_ADMIN') {
+            this.router.navigate(['/admin/dashboard']);
+          }
+        }, 700);
       },
       error: () => {
         this.isLoading = false;
@@ -286,10 +285,13 @@ export class AuthModalComponent {
           username: this.registerForm.username,
           password: this.registerForm.password
         }).subscribe({
-          next: () => {
+          next: (user) => {
             setTimeout(() => {
               this.close();
-            }, 800);
+              if (user.role === 'ROLE_ADMIN') {
+                this.router.navigate(['/admin/dashboard']);
+              }
+            }, 700);
           }
         });
       },

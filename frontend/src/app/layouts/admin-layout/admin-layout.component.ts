@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NavItem } from '../../core/models/nav-item.model';
+import { AuthService } from '../../core/services/auth.service';
 
 interface MenuGroup {
   section: string;
@@ -16,6 +17,9 @@ interface MenuGroup {
   templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   isMobileMenuOpen = false;
 
   readonly menuGroups: MenuGroup[] = [
@@ -23,23 +27,14 @@ export class AdminLayoutComponent {
       section: 'Operaciones',
       items: [
         { label: 'Panel General', path: '/admin/dashboard', icon: 'dashboard' },
-        { label: 'Cocina & Pedidos', path: '/admin/orders', icon: 'orders', badge: '8', badgeVariant: 'warning' },
-        { label: 'Mesas & Salón', path: '/admin/tables', icon: 'tables' }
+        { label: 'Cocina & Pedidos', path: '/admin/orders', icon: 'orders', badge: 'En Vivo', badgeVariant: 'warning' }
       ]
     },
     {
-      section: 'Carta & Productos',
+      section: 'Carta & Catálogo',
       items: [
         { label: 'Platos & Menú', path: '/admin/menu', icon: 'menu' },
         { label: 'Categorías', path: '/admin/categories', icon: 'categories' }
-      ]
-    },
-    {
-      section: 'Gestión & Reportes',
-      items: [
-        { label: 'Equipo & Usuarios', path: '/admin/users', icon: 'users' },
-        { label: 'Métricas & Ventas', path: '/admin/reports', icon: 'reports' },
-        { label: 'Configuración', path: '/admin/settings', icon: 'settings' }
       ]
     }
   ];
@@ -50,5 +45,10 @@ export class AdminLayoutComponent {
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

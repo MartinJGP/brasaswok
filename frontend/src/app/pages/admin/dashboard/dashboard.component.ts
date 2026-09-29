@@ -34,10 +34,12 @@ interface TopDishItem {
   category: 'Brasas' | 'Wok';
 }
 
+import { RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, IconComponent, BadgeComponent],
+  imports: [CommonModule, RouterLink, IconComponent, BadgeComponent],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
