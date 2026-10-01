@@ -237,7 +237,7 @@
   </section>
 
   <aside
-    *ngIf="cartService.totalCount() > 0"
+    *ngIf="cartService.totalCount() > 0 && !authService.isAdmin()"
     class="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 max-w-md w-full"
     aria-label="Resumen de pedido"
   >

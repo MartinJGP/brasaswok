@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MenuService } from '../../core/services/menu.service';
 import { CartService } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Dish, DishCategory } from '../../core/models/dish.model';
 import { CategoryBarComponent } from './components/category-bar/category-bar.component';
 import { ProductCardComponent } from './components/product-card/product-card.component';
@@ -27,6 +28,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 export class CartaComponent implements OnInit {
   private readonly menuService = inject(MenuService);
   readonly cartService = inject(CartService);
+  readonly authService = inject(AuthService);
 
   readonly categories = this.menuService.categories;
   readonly isLoading = this.menuService.isLoading;

@@ -137,7 +137,7 @@
   </main>
 
   <aside
-    *ngIf="cartService.totalCount() > 0"
+    *ngIf="cartService.totalCount() > 0 && !authService.isAdmin()"
     class="sm:hidden fixed bottom-4 left-4 right-4 z-40 bg-brand-secondary/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-dropdown border border-white/10 flex items-center justify-between"
     aria-label="Resumen de pedido flotante"
   >
