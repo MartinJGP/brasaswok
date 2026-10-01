@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { AuthModalComponent } from '../../shared/components/auth-modal/auth-modal.component';
 import { OrderService, CustomerOrder } from '../../core/services/order.service';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, IconComponent],
+  imports: [CommonModule, FormsModule, RouterLink, IconComponent, AuthModalComponent],
   templateUrl: './my-orders.component.html'
 })
 export class MyOrdersComponent implements OnInit {
@@ -19,6 +20,7 @@ export class MyOrdersComponent implements OnInit {
   readonly orders = signal<CustomerOrder[]>([]);
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly showAuthModal = signal<boolean>(false);
 
   searchQuery = '';
   readonly isSearching = signal<boolean>(false);
@@ -31,8 +33,12 @@ export class MyOrdersComponent implements OnInit {
     this.loadOrders();
   }
 
+  // consulta pedidos de cliente logueado
   loadOrders(): void {
-    if (!this.authService.isLoggedIn()) {
+    const isLogged = this.authService.isLoggedIn ? this.authService.isLoggedIn() : false;
+    const isAdmin = this.authService.isAdmin ? this.authService.isAdmin() : false;
+
+    if (!isLogged || isAdmin) {
       this.isLoading.set(false);
       return;
     }
@@ -52,6 +58,15 @@ export class MyOrdersComponent implements OnInit {
     });
   }
 
+  // gestiona cierre de modal de autenticacion
+  onAuthModalClosed(): void {
+    this.showAuthModal.set(false);
+    if (this.authService.isLoggedIn() && !this.authService.isAdmin()) {
+      this.loadOrders();
+    }
+  }
+
+  // busca pedido por codigo de ticket
   handleSearchTicket(): void {
     const query = this.searchQuery.trim();
     if (!query) {
@@ -74,12 +89,14 @@ export class MyOrdersComponent implements OnInit {
     });
   }
 
+  // restablece busqueda de ticket
   clearSearch(): void {
     this.searchQuery = '';
     this.searchResult.set(null);
     this.searchError.set(null);
   }
 
+  // cancela pedido en estado pendiente
   handleCancelOrder(order: CustomerOrder): void {
     if (!confirm(`¿Estás seguro de que deseas cancelar el pedido ${order.orderNumber}?`)) {
       return;
@@ -102,6 +119,7 @@ export class MyOrdersComponent implements OnInit {
     });
   }
 
+  // calcula paso numerico del estado para la barra
   getOrderStep(status: string): number {
     switch (status) {
       case 'PENDIENTE': return 1;
@@ -112,6 +130,7 @@ export class MyOrdersComponent implements OnInit {
     }
   }
 
+  // asigna estilos visuales segun estado
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'PENDIENTE':
@@ -129,6 +148,7 @@ export class MyOrdersComponent implements OnInit {
     }
   }
 
+  // retorna texto amigable del estado
   getStatusLabel(status: string): string {
     switch (status) {
       case 'PENDIENTE': return 'Pendiente';

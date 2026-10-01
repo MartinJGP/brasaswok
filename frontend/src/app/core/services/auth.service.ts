@@ -16,50 +16,25 @@ export class AuthService {
 
   readonly currentUser = this._currentUser.asReadonly();
   readonly token = this._token.asReadonly();
+  // verifica si hay usuario autenticado
   readonly isLoggedIn = computed(() => this._currentUser() !== null);
+  // verifica rol administrador
   readonly isAdmin = computed(() => this._currentUser()?.role === 'ROLE_ADMIN');
+  // verifica rol cliente
+  readonly isCustomer = computed(() => this._currentUser()?.role === 'ROLE_CUSTOMER');
 
   constructor(private readonly http: HttpClient) {}
 
+  // inicia sesion con credenciales
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         this.setSession(response);
-      }),
-      catchError(error => {
-        if (credentials.username === 'admin' && credentials.password === 'admin123') {
-          const mockAdmin: AuthResponse = {
-            token: 'mock-admin-token-brasas-wok',
-            type: 'Bearer',
-            id: 1,
-            username: 'admin',
-            email: 'admin@brasaswok.pe',
-            fullName: 'Administrador Brasas & Wok',
-            role: 'ROLE_ADMIN'
-          };
-          this.setSession(mockAdmin);
-          return of(mockAdmin);
-        } else if (
-          (credentials.username === 'cliente' || credentials.username === 'carlos_m') &&
-          credentials.password === 'cliente123'
-        ) {
-          const mockCustomer: AuthResponse = {
-            token: 'mock-customer-token-brasas-wok',
-            type: 'Bearer',
-            id: 2,
-            username: credentials.username,
-            email: 'cliente@gmail.com',
-            fullName: 'Cliente de Prueba',
-            role: 'ROLE_CUSTOMER'
-          };
-          this.setSession(mockCustomer);
-          return of(mockCustomer);
-        }
-        return throwError(() => error);
       })
     );
   }
 
+  // registra nuevo cliente
   register(data: RegisterRequest): Observable<any> {
     const payload = {
       ...data,
@@ -72,10 +47,12 @@ export class AuthService {
     );
   }
 
+  // obtiene usuario actual
   getCurrentUser(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`);
   }
 
+  // cierra sesion activa
   logout(): void {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
@@ -85,6 +62,7 @@ export class AuthService {
     this._currentUser.set(null);
   }
 
+  // guarda sesion en storage local
   private setSession(authResponse: AuthResponse): void {
     const user: User = {
       id: authResponse.id,

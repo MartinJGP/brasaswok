@@ -170,7 +170,7 @@
           Historial de Compras
         </h2>
         <button
-          *ngIf="authService.isLoggedIn()"
+          *ngIf="authService.isLoggedIn() && !authService.isAdmin()"
           (click)="loadOrders()"
           class="text-xs text-brand-primary hover:text-brand-primary-hover font-semibold flex items-center gap-1"
         >
@@ -178,19 +178,70 @@
         </button>
       </div>
 
-      <div *ngIf="!authService.isLoggedIn()" class="p-8 bg-brand-surface rounded-2xl border border-brand-border text-center space-y-3">
-        <app-icon name="lock" [size]="32" customClass="text-brand-text-muted mx-auto"></app-icon>
-        <h3 class="text-sm font-bold text-brand-text-primary">Inicia sesión para ver tu historial</h3>
-        <p class="text-xs text-brand-text-secondary max-w-sm mx-auto">
-          Accede con tu cuenta para consultar todas tus compras pasadas, estado de comandas y comprobantes.
-        </p>
-        <div class="pt-2">
-          <a
-            routerLink="/"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card"
+      <div *ngIf="!authService.isLoggedIn()" class="p-8 bg-brand-surface rounded-2xl border border-brand-border text-center space-y-4 shadow-card">
+        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary mx-auto flex items-center justify-center">
+          <app-icon name="lock" [size]="24"></app-icon>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-brand-text-primary">Inicia sesión como cliente</h3>
+          <p class="text-xs text-brand-text-secondary max-w-md mx-auto">
+            Para consultar tus compras anteriores, estado de cocción en vivo y comprobantes, debes identificarte con tu cuenta de cliente.
+          </p>
+        </div>
+        <div class="pt-1 flex flex-wrap justify-center gap-3">
+          <button
+            type="button"
+            (click)="showAuthModal.set(true)"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
           >
-            Ir al Inicio
+            <app-icon name="user" [size]="15"></app-icon>
+            <span>Iniciar Sesión como Cliente</span>
+          </button>
+          <a
+            routerLink="/carta"
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+          >
+            Ver Carta
           </a>
+        </div>
+      </div>
+
+      <div *ngIf="authService.isLoggedIn() && authService.isAdmin()" class="p-8 bg-brand-surface rounded-2xl border border-amber-500/30 text-center space-y-4 shadow-card">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 mx-auto flex items-center justify-center border border-amber-500/20">
+          <app-icon name="dashboard" [size]="24"></app-icon>
+        </div>
+        <div class="space-y-1.5">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold uppercase tracking-wider">
+            Sesión de Administrador
+          </div>
+          <h3 class="text-base font-bold text-brand-text-primary">Esta sección requiere rol de cliente</h3>
+          <p class="text-xs text-brand-text-secondary max-w-lg mx-auto">
+            El área de 'Mis Pedidos' está destinada al seguimiento personal de comensales. Como administrador, puedes gestionar todas las comandas del restaurante en cocina o acceder al panel general.
+          </p>
+        </div>
+        <div class="pt-2 flex flex-wrap justify-center gap-3">
+          <a
+            routerLink="/admin/kitchen"
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+          >
+            <app-icon name="flame" [size]="15"></app-icon>
+            <span>Ver Comandas en Cocina</span>
+          </a>
+          <a
+            routerLink="/admin/dashboard"
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+          >
+            <app-icon name="dashboard" [size]="15"></app-icon>
+            <span>Panel Admin</span>
+          </a>
+          <button
+            type="button"
+            (click)="showAuthModal.set(true)"
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-secondary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+          >
+            <app-icon name="user" [size]="15"></app-icon>
+            <span>Iniciar como Cliente</span>
+          </button>
         </div>
       </div>
 
@@ -202,12 +253,12 @@
         <button (click)="loadOrders()" class="underline hover:text-rose-700">Reintentar</button>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
+      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
         <div class="inline-block w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
         <p>Cargando tus pedidos desde el servidor...</p>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && !isLoading() && orders().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-4">
+      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && !isLoading() && orders().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-4">
         <div class="w-16 h-16 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary mx-auto">
           <app-icon name="shopping-bag" [size]="28"></app-icon>
         </div>
@@ -228,7 +279,7 @@
         </div>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && !isLoading() && orders().length > 0" class="space-y-4">
+      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && !isLoading() && orders().length > 0" class="space-y-4">
         <div
           *ngFor="let order of orders()"
           class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card transition-all hover:border-brand-border/80"
@@ -306,4 +357,6 @@
       </div>
     </div>
   </div>
+
+  <app-auth-modal *ngIf="showAuthModal()" (closeEvent)="onAuthModalClosed()"></app-auth-modal>
 </div>

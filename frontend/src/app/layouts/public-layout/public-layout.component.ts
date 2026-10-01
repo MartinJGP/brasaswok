@@ -22,15 +22,18 @@ export class PublicLayoutComponent {
     public readonly authService: AuthService
   ) {}
 
+  // abre modal de acceso
   openAuthModal(): void {
     this.showAuthModal = true;
     this.isMobileMenuOpen = false;
   }
 
+  // cierra modal de acceso
   closeAuthModal(): void {
     this.showAuthModal = false;
   }
 
+  // cierra sesion del usuario
   logout(): void {
     this.authService.logout();
     this.isMobileMenuOpen = false;

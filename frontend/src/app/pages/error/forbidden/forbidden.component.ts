@@ -21,10 +21,13 @@ import { AuthModalComponent } from '../../../shared/components/auth-modal/auth-m
             403
           </span>
           <h1 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans">
-            Acceso Restringido
+            {{ authService.isAdmin() ? 'Acceso Restringido - Rol de Cliente Requerido' : 'Acceso Restringido' }}
           </h1>
-          <p class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
-            Tu perfil de usuario no cuenta con privilegios administrativos para acceder a esta área. El panel de control está reservado para la administración y cocina de Brasas a Wok.
+          <p *ngIf="authService.isAdmin()" class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
+            Has iniciado sesión con el rol de Administrador. Esta sección (pedidos personales, carrito y pagos) está reservada para cuentas con rol de cliente / usuario comensal. Para realizar compras y ver comandas personales, inicia sesión como cliente o regresa al panel administrativo.
+          </p>
+          <p *ngIf="!authService.isAdmin()" class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
+            Tu perfil de usuario no cuenta con privilegios administrativos para acceder a esta área. El panel de control y cocina están reservados para la administración de Brasas a Wok.
           </p>
         </div>
 
@@ -42,30 +45,60 @@ import { AuthModalComponent } from '../../../shared/components/auth-modal/auth-m
         </div>
 
         <div class="pt-2 flex flex-col gap-2.5">
-          <a
-            routerLink="/carta"
-            class="w-full py-3 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
-          >
-            <app-icon name="shopping-bag" [size]="16"></app-icon>
-            <span>Ir a la Carta Gastronómica</span>
-          </a>
-
-          <div class="flex gap-2">
+          <ng-container *ngIf="authService.isAdmin()">
             <button
               type="button"
               (click)="showLoginModal = true"
-              class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+              class="w-full py-3 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              Iniciar como Admin
+              <app-icon name="user" [size]="16"></app-icon>
+              <span>Iniciar como Cliente</span>
             </button>
 
+            <div class="flex gap-2">
+              <a
+                routerLink="/admin/dashboard"
+                class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all flex items-center justify-center gap-1.5"
+              >
+                <app-icon name="dashboard" [size]="14"></app-icon>
+                <span>Panel Admin</span>
+              </a>
+
+              <a
+                routerLink="/carta"
+                class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-secondary text-xs font-semibold rounded-xl border border-brand-border transition-all flex items-center justify-center"
+              >
+                Ver Carta
+              </a>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="!authService.isAdmin()">
             <a
-              routerLink="/"
-              class="py-2.5 px-4 bg-transparent hover:bg-brand-surface-alt text-brand-text-secondary text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
+              routerLink="/carta"
+              class="w-full py-3 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              Inicio
+              <app-icon name="shopping-bag" [size]="16"></app-icon>
+              <span>Ir a la Carta Gastronómica</span>
             </a>
-          </div>
+
+            <div class="flex gap-2">
+              <button
+                type="button"
+                (click)="showLoginModal = true"
+                class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+              >
+                Iniciar como Admin
+              </button>
+
+              <a
+                routerLink="/"
+                class="py-2.5 px-4 bg-transparent hover:bg-brand-surface-alt text-brand-text-secondary text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
+              >
+                Inicio
+              </a>
+            </div>
+          </ng-container>
         </div>
       </div>
 
@@ -78,10 +111,13 @@ export class ForbiddenComponent {
   private readonly router = inject(Router);
   showLoginModal = false;
 
+  // redirige segun el rol tras cerrar el modal
   onLoginClosed(): void {
     this.showLoginModal = false;
     if (this.authService.isAdmin()) {
       this.router.navigate(['/admin/dashboard']);
+    } else if (this.authService.isCustomer()) {
+      this.router.navigate(['/mis-pedidos']);
     }
   }
 }

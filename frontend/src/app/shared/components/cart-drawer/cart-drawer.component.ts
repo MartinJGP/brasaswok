@@ -144,27 +144,48 @@ import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.compone
             </div>
 
             <div *ngIf="authService.isLoggedIn(); else requireLoginTpl">
-              <div class="p-3 rounded-lg bg-brand-surface border border-brand-border text-xs mb-3 space-y-1">
-                <div class="flex items-center justify-between text-brand-text-secondary">
-                  <span>Entrega para:</span>
-                  <strong class="text-brand-text-primary">{{ authService.currentUser()?.fullName }}</strong>
+              <ng-container *ngIf="authService.isAdmin()">
+                <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-2 text-center mb-3">
+                  <div class="inline-flex items-center gap-1.5 text-amber-600 font-bold uppercase text-[10px]">
+                    <app-icon name="alert" [size]="12"></app-icon>
+                    <span>Rol Administrador Detectado</span>
+                  </div>
+                  <p class="text-brand-text-secondary text-[11px] leading-relaxed">
+                    Para registrar comandas personales y procesar el pago de delivery, inicia sesión con una cuenta de cliente.
+                  </p>
+                  <button
+                    type="button"
+                    (click)="requestAuth.emit()"
+                    class="w-full py-2.5 px-3 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg shadow-card transition-all"
+                  >
+                    Iniciar como Cliente
+                  </button>
                 </div>
-                <div class="flex items-center justify-between text-brand-text-secondary">
-                  <span>Dirección:</span>
-                  <span class="truncate max-w-[200px] font-medium text-brand-text-primary">
-                    {{ authService.currentUser()?.address || 'Av. Javier Prado Este 1234' }}
-                  </span>
-                </div>
-              </div>
+              </ng-container>
 
-              <button
-                type="button"
-                (click)="openCheckout()"
-                class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
-              >
-                <app-icon name="check" [size]="18"></app-icon>
-                <span>Continuar al Pago y Entrega</span>
-              </button>
+              <ng-container *ngIf="!authService.isAdmin()">
+                <div class="p-3 rounded-lg bg-brand-surface border border-brand-border text-xs mb-3 space-y-1">
+                  <div class="flex items-center justify-between text-brand-text-secondary">
+                    <span>Entrega para:</span>
+                    <strong class="text-brand-text-primary">{{ authService.currentUser()?.fullName }}</strong>
+                  </div>
+                  <div class="flex items-center justify-between text-brand-text-secondary">
+                    <span>Dirección:</span>
+                    <span class="truncate max-w-[200px] font-medium text-brand-text-primary">
+                      {{ authService.currentUser()?.address || 'Av. Javier Prado Este 1234' }}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  (click)="openCheckout()"
+                  class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <app-icon name="check" [size]="18"></app-icon>
+                  <span>Continuar al Pago y Entrega</span>
+                </button>
+              </ng-container>
             </div>
 
             <ng-template #requireLoginTpl>
@@ -174,10 +195,10 @@ import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.compone
                 class="w-full py-3.5 px-4 bg-brand-secondary hover:bg-brand-secondary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 <app-icon name="user" [size]="18"></app-icon>
-                <span>Iniciar Sesión para Pedir</span>
+                <span>Iniciar Sesión como Cliente</span>
               </button>
               <p class="text-[11px] text-center text-brand-text-muted">
-                Identifícate para registrar tu dirección y celular de entrega.
+                Identifícate con tu cuenta de cliente para registrar tu pedido y realizar el pago.
               </p>
             </ng-template>
           </div>
@@ -202,10 +223,16 @@ export class CartDrawerComponent {
     public readonly authService: AuthService
   ) {}
 
+  // abre modal de pago y checkout
   openCheckout(): void {
+    if (this.authService.isAdmin()) {
+      this.requestAuth.emit();
+      return;
+    }
     this.showCheckoutModal = true;
   }
 
+  // finaliza pedido y limpia comanda
   onOrderCompleted(event: any): void {
     this.showCheckoutModal = false;
     this.cartService.closeDrawer();

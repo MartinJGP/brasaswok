@@ -67,6 +67,7 @@ export class AdminService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = 'http://localhost:8080/api';
 
+  // obtiene comandas para gestion administrativa
   getOrders(status?: string): Observable<AdminOrder[]> {
     const url = status && status !== 'TODOS'
       ? `${this.baseUrl}/admin/orders?status=${status}`
@@ -75,6 +76,7 @@ export class AdminService {
     return this.http.get<AdminOrder[]>(url);
   }
 
+  // actualiza estado de comanda en cocina o delivery
   updateOrderStatus(orderId: number, newStatus: string, notes?: string): Observable<AdminOrder> {
     return this.http.put<AdminOrder>(`${this.baseUrl}/admin/orders/${orderId}/status`, {
       status: newStatus,
@@ -82,14 +84,17 @@ export class AdminService {
     });
   }
 
+  // consulta historial de cambios de comanda
   getOrderLogs(orderId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/admin/orders/${orderId}/logs`);
   }
 
+  // lista productos del catalogo
   getProducts(): Observable<AdminProduct[]> {
     return this.http.get<AdminProduct[]>(`${this.baseUrl}/products?all=true`);
   }
 
+  // registra nuevo plato en la carta
   createProduct(product: Partial<AdminProduct>): Observable<AdminProduct> {
     const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${Date.now()}`;
     const payload = {
@@ -105,6 +110,7 @@ export class AdminService {
     return this.http.post<AdminProduct>(`${this.baseUrl}/products`, payload);
   }
 
+  // actualiza datos de un plato existente
   updateProduct(id: number, product: Partial<AdminProduct>): Observable<AdminProduct> {
     const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${id}`;
     const payload = {
@@ -120,18 +126,22 @@ export class AdminService {
     return this.http.put<AdminProduct>(`${this.baseUrl}/products/${id}`, payload);
   }
 
+  // alterna disponibilidad de plato
   toggleProductAvailability(productId: number): Observable<AdminProduct> {
     return this.http.patch<AdminProduct>(`${this.baseUrl}/products/${productId}/toggle-availability`, {});
   }
 
+  // elimina plato del sistema
   deleteProduct(productId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/products/${productId}`);
   }
 
+  // lista categorias de la carta
   getCategories(): Observable<AdminCategory[]> {
     return this.http.get<AdminCategory[]>(`${this.baseUrl}/categories?all=true`);
   }
 
+  // registra nueva categoria
   createCategory(category: Partial<AdminCategory>): Observable<AdminCategory> {
     const slug = (category as any).slug || category.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `categoria-${Date.now()}`;
     const payload = {
@@ -146,18 +156,22 @@ export class AdminService {
     return this.http.post<AdminCategory>(`${this.baseUrl}/categories`, payload);
   }
 
+  // alterna estado de categoria
   toggleCategoryStatus(categoryId: number): Observable<AdminCategory> {
     return this.http.patch<AdminCategory>(`${this.baseUrl}/categories/${categoryId}/toggle-status`, {});
   }
 
+  // elimina categoria
   deleteCategory(categoryId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/categories/${categoryId}`);
   }
 
+  // obtiene metricas para dashboard general
   getDashboardStats(): Observable<DashboardStatsResponse> {
     return this.http.get<DashboardStatsResponse>(`${this.baseUrl}/admin/dashboard/stats`);
   }
 
+  // sube archivo de imagen al servidor
   uploadImage(file: File): Observable<{ url: string; filename: string }> {
     const formData = new FormData();
     formData.append('file', file);

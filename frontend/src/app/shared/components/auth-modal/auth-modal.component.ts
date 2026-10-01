@@ -100,7 +100,7 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
                 [(ngModel)]="loginForm.username"
                 name="username"
                 required
-                placeholder="ej: cliente o admin"
+                placeholder="ej: carlos_m o usuario"
                 class="w-full pl-9 pr-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
               />
             </div>
@@ -130,12 +130,6 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
           >
             {{ isLoading ? 'Ingresando...' : 'Iniciar Sesión' }}
           </button>
-
-          <div class="p-3 rounded-lg bg-brand-surface-alt text-[11px] text-brand-text-secondary border border-brand-border space-y-1">
-            <span class="font-bold text-brand-text-primary block">Credenciales de prueba:</span>
-            <p>• Cliente: <span class="font-mono text-brand-primary font-semibold">cliente</span> / <span class="font-mono">cliente123</span></p>
-            <p>• Administrador: <span class="font-mono text-brand-primary font-semibold">admin</span> / <span class="font-mono">admin123</span></p>
-          </div>
         </form>
 
         <form *ngIf="activeTab === 'register'" (ngSubmit)="handleRegister()" class="p-6 space-y-3">
@@ -249,6 +243,7 @@ export class AuthModalComponent {
     private readonly router: Router
   ) {}
 
+  // envia formulario de inicio de sesion
   handleLogin(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -272,6 +267,7 @@ export class AuthModalComponent {
     });
   }
 
+  // registra nuevo usuario cliente
   handleRegister(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -302,6 +298,7 @@ export class AuthModalComponent {
     });
   }
 
+  // cierra modal de autenticacion
   close(): void {
     this.closeEvent.emit();
   }

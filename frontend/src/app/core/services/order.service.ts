@@ -46,15 +46,18 @@ export class OrderService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = 'http://localhost:8080/api/orders';
 
+  // obtiene historial de comandas del cliente autenticado
   getMyOrders(): Observable<CustomerOrder[]> {
     return this.http.get<CustomerOrder[]>(`${this.baseUrl}/my-orders`);
   }
 
+  // rastrea pedido publicamente por codigo de ticket
   trackOrder(orderNumber: string): Observable<CustomerOrder> {
     const cleanNumber = orderNumber.trim().toUpperCase();
     return this.http.get<CustomerOrder>(`${this.baseUrl}/track/${cleanNumber}`);
   }
 
+  // cancela pedido en estado pendiente
   cancelOrder(orderId: number, reason?: string): Observable<CustomerOrder> {
     return this.http.put<CustomerOrder>(`${this.baseUrl}/${orderId}/cancel`, {
       reason: reason || 'Cancelado por el cliente'

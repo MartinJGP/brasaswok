@@ -47,7 +47,9 @@ describe('MyOrdersComponent', () => {
 
   const mockAuthService = {
     isLoggedIn: () => true,
-    currentUser: () => ({ id: 2, fullName: 'Cliente Test', email: 'test@brasaswok.pe' }),
+    isAdmin: () => false,
+    isCustomer: () => true,
+    currentUser: () => ({ id: 2, fullName: 'Cliente Test', email: 'test@brasaswok.pe', role: 'ROLE_CUSTOMER' }),
     logout: () => {}
   };
 

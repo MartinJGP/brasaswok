@@ -24,6 +24,7 @@ export class MenuService {
     this.loadDishes();
   }
 
+  // carga platos y categorias desde el backend
   loadDishes(): void {
     this._isLoading.set(true);
     this._error.set(null);
@@ -65,10 +66,12 @@ export class MenuService {
     });
   }
 
+  // busca plato por id
   getDishById(id: number): Dish | undefined {
     return this._dishes().find(d => d.id === id);
   }
 
+  // calcula cantidad de platos por categoria
   getCategoryCount(category: string): number {
     if (category === 'Todos') {
       return this._dishes().length;

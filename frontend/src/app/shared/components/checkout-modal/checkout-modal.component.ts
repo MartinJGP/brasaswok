@@ -378,6 +378,34 @@ export type PaymentMethodType = 'TARJETA' | 'YAPE_PLIN' | 'EFECTIVO' | 'TRANSFER
             Listo, volver a la Carta
           </button>
         </div>
+
+        <div *ngIf="step === 'error'" class="p-8 text-center space-y-4 animate-in fade-in duration-200">
+          <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 mx-auto flex items-center justify-center border border-rose-500/20 shadow-subtle">
+            <app-icon name="alert" [size]="32"></app-icon>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-base font-bold text-brand-text-primary">No se pudo completar el pedido</h4>
+            <p class="text-xs text-rose-600 max-w-sm mx-auto leading-relaxed">
+              {{ errorMessage }}
+            </p>
+          </div>
+          <div class="pt-2 flex justify-center gap-3">
+            <button
+              type="button"
+              (click)="step = 'form'"
+              class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all"
+            >
+              Volver al Formulario
+            </button>
+            <button
+              type="button"
+              (click)="close()"
+              class="px-4 py-2 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `
@@ -391,8 +419,9 @@ export class CheckoutModalComponent {
   readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
 
-  step: 'form' | 'processing' | 'success' = 'form';
+  step: 'form' | 'processing' | 'success' | 'error' = 'form';
   selectedMethod: PaymentMethodType = 'TARJETA';
+  errorMessage = '';
 
   deliveryAddress = this.authService.currentUser()?.address || 'Av. Javier Prado Este 1234, Dpto 402';
   deliveryPhone = this.authService.currentUser()?.phone || '987654321';
@@ -410,10 +439,18 @@ export class CheckoutModalComponent {
   confirmedOrderNumber = '';
   confirmedTotal = 0;
 
+  // procesa comanda y pago en el backend
   processCheckout(): void {
+    this.errorMessage = '';
+
+    if (this.authService.isAdmin()) {
+      this.step = 'error';
+      this.errorMessage = 'Los pedidos de delivery solo pueden ser realizados por clientes. Tu cuenta tiene rol de Administrador.';
+      return;
+    }
+
     this.step = 'processing';
     this.confirmedTotal = this.cartService.total();
-    this.confirmedOrderNumber = String(Math.floor(1000 + Math.random() * 9000));
 
     const orderPayload = {
       deliveryAddress: this.deliveryAddress,
@@ -444,19 +481,20 @@ export class CheckoutModalComponent {
           next: () => {
             this.handleSuccess();
           },
-          error: () => {
-            this.handleSuccess();
+          error: (payErr) => {
+            this.step = 'error';
+            this.errorMessage = payErr?.error?.message || 'El pedido fue creado pero falló el registro del pago simulado.';
           }
         });
       },
-      error: () => {
-        setTimeout(() => {
-          this.handleSuccess();
-        }, 1000);
+      error: (ordErr) => {
+        this.step = 'error';
+        this.errorMessage = ordErr?.error?.message || 'No se pudo registrar la comanda en el servidor. Verifica tu conexión.';
       }
     });
   }
 
+  // genera codigo de referencia segun metodo
   private getTransactionReference(): string {
     switch (this.selectedMethod) {
       case 'TARJETA':
@@ -470,6 +508,7 @@ export class CheckoutModalComponent {
     }
   }
 
+  // completa pedido y limpia carrito
   private handleSuccess(): void {
     this.step = 'success';
     this.cartService.clearCart();
@@ -480,11 +519,14 @@ export class CheckoutModalComponent {
     });
   }
 
+  // resetea estado y cierra modal
   close(): void {
     this.step = 'form';
+    this.errorMessage = '';
     this.closeEvent.emit();
   }
 
+  // finaliza flujo de compra
   finish(): void {
     this.close();
     this.cartService.closeDrawer();
