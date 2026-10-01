@@ -7,15 +7,7 @@ export type BadgeVariant = 'success' | 'warning' | 'error' | 'info' | 'neutral';
   selector: 'app-badge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span
-      class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide transition-colors"
-      [ngClass]="variantClasses[variant]"
-    >
-      <span class="w-1.5 h-1.5 rounded-full" [ngClass]="dotClasses[variant]"></span>
-      <ng-content></ng-content>
-    </span>
-  `
+  templateUrl: './badge.component.html'
 })
 export class BadgeComponent {
   @Input() variant: BadgeVariant = 'neutral';

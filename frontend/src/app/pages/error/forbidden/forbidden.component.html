@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-brand-bg flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-brand-surface rounded-3xl border border-brand-border p-8 sm:p-10 shadow-card text-center space-y-6">
+    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center shadow-subtle border border-amber-500/20">
+      <app-icon name="lock" [size]="30"></app-icon>
+    </div>
+
+    <div class="space-y-2">
+      <span class="text-4xl sm:text-5xl font-black font-mono text-amber-600 tracking-tight block">
+        403
+      </span>
+      <h1 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans">
+        {{ authService.isAdmin() ? 'Acceso Restringido - Rol de Cliente Requerido' : 'Acceso Restringido' }}
+      </h1>
+      <p *ngIf="authService.isAdmin()" class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
+        Has iniciado sesión con el rol de Administrador. Esta sección (pedidos personales, carrito y pagos) está reservada para cuentas con rol de cliente / usuario comensal. Para realizar compras y ver comandas personales, inicia sesión como cliente o regresa al panel administrativo.
+      </p>
+      <p *ngIf="!authService.isAdmin()" class="text-xs sm:text-sm text-brand-text-secondary leading-relaxed">
+        Tu perfil de usuario no cuenta con privilegios administrativos para acceder a esta área. El panel de control y cocina están reservados para la administración de Brasas a Wok.
+      </p>
+    </div>
+
+    <div *ngIf="authService.isLoggedIn()" class="p-3 bg-brand-surface-alt rounded-xl border border-brand-border text-xs text-brand-text-secondary text-left space-y-1">
+      <div class="flex items-center justify-between">
+        <span class="text-brand-text-muted">Usuario activo:</span>
+        <strong class="text-brand-text-primary">{{ authService.currentUser()?.fullName }}</strong>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-brand-text-muted">Rol asignado:</span>
+        <span class="font-mono text-[11px] font-semibold text-brand-primary uppercase">
+          {{ authService.currentUser()?.role }}
+        </span>
+      </div>
+    </div>
+
+    <div class="pt-2 flex flex-col gap-2.5">
+      <ng-container *ngIf="authService.isAdmin()">
+        <button
+          type="button"
+          (click)="showLoginModal = true"
+          class="w-full py-3 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
+        >
+          <app-icon name="user" [size]="16"></app-icon>
+          <span>Iniciar como Cliente</span>
+        </button>
+
+        <div class="flex gap-2">
+          <a
+            routerLink="/admin/dashboard"
+            class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all flex items-center justify-center gap-1.5"
+          >
+            <app-icon name="dashboard" [size]="14"></app-icon>
+            <span>Panel Admin</span>
+          </a>
+
+          <a
+            routerLink="/carta"
+            class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-secondary text-xs font-semibold rounded-xl border border-brand-border transition-all flex items-center justify-center"
+          >
+            Ver Carta
+          </a>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!authService.isAdmin()">
+        <a
+          routerLink="/carta"
+          class="w-full py-3 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
+        >
+          <app-icon name="shopping-bag" [size]="16"></app-icon>
+          <span>Ir a la Carta Gastronómica</span>
+        </a>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            (click)="showLoginModal = true"
+            class="flex-1 py-2.5 px-3 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+          >
+            Iniciar como Admin
+          </button>
+
+          <a
+            routerLink="/"
+            class="py-2.5 px-4 bg-transparent hover:bg-brand-surface-alt text-brand-text-secondary text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
+          >
+            Inicio
+          </a>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <app-auth-modal *ngIf="showLoginModal" (closeEvent)="onLoginClosed()"></app-auth-modal>
+</div>
