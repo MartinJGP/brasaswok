@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/api/test/public").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/menu/**", "/api/products/**", "/api/categories/**", "/api/orders/track/**").permitAll()
-                        .requestMatchers("/ws/**", "/ws-brasas/**").permitAll()
+                        .requestMatchers("/ws/**", "/ws-brasas/**", "/ws-brasas-socket/**").permitAll()
                         .requestMatchers("/api/upload/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()

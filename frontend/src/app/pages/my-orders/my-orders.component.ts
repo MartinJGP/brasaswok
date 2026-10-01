@@ -1,11 +1,15 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { AuthModalComponent } from '../../shared/components/auth-modal/auth-modal.component';
 import { OrderService, CustomerOrder } from '../../core/services/order.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
+import { WebSocketService } from '../../core/services/websocket.service';
 
 @Component({
   selector: 'app-my-orders',
@@ -15,6 +19,9 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class MyOrdersComponent implements OnInit {
   private readonly orderService = inject(OrderService);
+  private readonly toastService = inject(ToastService);
+  private readonly wsService = inject(WebSocketService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly authService = inject(AuthService);
 
   readonly orders = signal<CustomerOrder[]>([]);
@@ -30,11 +37,43 @@ export class MyOrdersComponent implements OnInit {
   readonly cancellingOrderId = signal<number | null>(null);
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.loadOrders(true);
+    this.initRealtimeListeners();
   }
 
-  // consulta pedidos de cliente logueado
-  loadOrders(): void {
+  // escucha eventos en vivo y respaldo en segundo plano
+  private initRealtimeListeners(): void {
+    this.wsService.onOrderStatusEvents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (!event) return;
+
+        // actualiza busqueda activa si coincide
+        const currentSearch = this.searchResult();
+        if (currentSearch && (currentSearch.id === event.orderId || currentSearch.orderNumber === event.orderNumber)) {
+          this.orderService.trackOrder(currentSearch.orderNumber).subscribe({
+            next: (updated) => this.searchResult.set(updated)
+          });
+        }
+
+        // verifica si pertenece al cliente logueado
+        const matchesClientOrder = this.orders().some(o => o.id === event.orderId || o.orderNumber === event.orderNumber);
+        if (matchesClientOrder && event.message) {
+          this.toastService.info(event.message);
+        }
+
+        this.loadOrders(false);
+      });
+
+    interval(6000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadOrders(false);
+      });
+  }
+
+  // consulta pedidos de cliente logueado sin parpadear
+  loadOrders(showSpinner = true): void {
     const isLogged = this.authService.isLoggedIn ? this.authService.isLoggedIn() : false;
     const isAdmin = this.authService.isAdmin ? this.authService.isAdmin() : false;
 
@@ -43,7 +82,9 @@ export class MyOrdersComponent implements OnInit {
       return;
     }
 
-    this.isLoading.set(true);
+    if (showSpinner) {
+      this.isLoading.set(true);
+    }
     this.errorMessage.set(null);
 
     this.orderService.getMyOrders().subscribe({
@@ -53,7 +94,9 @@ export class MyOrdersComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        this.errorMessage.set('No se pudieron cargar tus pedidos en este momento.');
+        if (showSpinner) {
+          this.errorMessage.set('No se pudieron cargar tus pedidos en este momento.');
+        }
       }
     });
   }
@@ -62,7 +105,7 @@ export class MyOrdersComponent implements OnInit {
   onAuthModalClosed(): void {
     this.showAuthModal.set(false);
     if (this.authService.isLoggedIn() && !this.authService.isAdmin()) {
-      this.loadOrders();
+      this.loadOrders(true);
     }
   }
 

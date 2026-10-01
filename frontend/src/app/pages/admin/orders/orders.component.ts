@@ -1,9 +1,12 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminOrder } from '../../../core/services/admin.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { WebSocketService } from '../../../core/services/websocket.service';
 
 @Component({
   selector: 'app-admin-orders',
@@ -14,6 +17,8 @@ import { ToastService } from '../../../core/services/toast.service';
 export class AdminOrdersComponent implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly wsService = inject(WebSocketService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly statusTabs = ['TODOS', 'PENDIENTE', 'EN_COCINA', 'EN_CAMINO', 'ENTREGADO', 'CANCELADO'];
   readonly selectedStatus = signal<string>('TODOS');
@@ -24,16 +29,35 @@ export class AdminOrdersComponent implements OnInit {
   readonly orderLogs = signal<any[]>([]);
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.loadOrders(true);
+    this.initRealtimeListeners();
+  }
+
+  // escucha eventos en vivo y respaldo en segundo plano
+  private initRealtimeListeners(): void {
+    this.wsService.onAdminEvents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadOrders(false);
+      });
+
+    interval(6000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadOrders(false);
+      });
   }
 
   onTabChange(tab: string): void {
     this.selectedStatus.set(tab);
-    this.loadOrders();
+    this.loadOrders(true);
   }
 
-  loadOrders(): void {
-    this.isLoading.set(true);
+  // carga comandas con opcion de no parpadear
+  loadOrders(showSpinner = true): void {
+    if (showSpinner) {
+      this.isLoading.set(true);
+    }
     this.adminService.getOrders(this.selectedStatus()).subscribe({
       next: (orders) => {
         this.orders.set(orders || []);
@@ -64,7 +88,7 @@ export class AdminOrdersComponent implements OnInit {
         this.orders.update(list => list.map(o => o.id === order.id ? { ...o, status: nextStatus as any } : o));
         this.toastService.success(`Comanda #${order.orderNumber}: Estado cambiado a ${nextStatus}`);
         if (this.selectedStatus() !== 'TODOS') {
-          this.loadOrders();
+          this.loadOrders(false);
         }
       },
       error: (err) => {

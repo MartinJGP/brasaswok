@@ -48,6 +48,8 @@ public class OrderStatusNotificationService {
             Object payload = new StatusPayload(order.getId(), order.getOrderNumber(), status.name(), message);
             messagingTemplate.convertAndSend("/topic/orders/" + order.getId() + "/status", payload);
             messagingTemplate.convertAndSend("/topic/pedido/" + order.getId(), payload);
+            messagingTemplate.convertAndSend("/topic/orders/status", payload);
+            messagingTemplate.convertAndSend("/topic/admin", payload);
             log.debug("WS notification sent for order {} → {}", order.getId(), status);
         } catch (Exception e) {
             log.warn("WebSocket notification failed for order {}: {}", order.getId(), e.getMessage());

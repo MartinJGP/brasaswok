@@ -1,8 +1,11 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminOrder } from '../../../core/services/admin.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { WebSocketService } from '../../../core/services/websocket.service';
 
 @Component({
   selector: 'app-admin-kitchen',
@@ -13,6 +16,8 @@ import { ToastService } from '../../../core/services/toast.service';
 export class AdminKitchenComponent implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toastService = inject(ToastService);
+  private readonly wsService = inject(WebSocketService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly allOrders = signal<AdminOrder[]>([]);
   readonly isLoading = signal<boolean>(true);
@@ -22,12 +27,33 @@ export class AdminKitchenComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadKitchenOrders();
+    this.loadKitchenOrders(true);
+    this.initRealtimeListeners();
   }
 
-  // carga comandas de cocina
-  loadKitchenOrders(): void {
-    this.isLoading.set(true);
+  // escucha eventos websocket y respaldo periodico
+  private initRealtimeListeners(): void {
+    this.wsService.onAdminEvents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event?.message) {
+          this.toastService.info(event.message);
+        }
+        this.loadKitchenOrders(false);
+      });
+
+    interval(5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadKitchenOrders(false);
+      });
+  }
+
+  // carga comandas de cocina sin parpadeo visual
+  loadKitchenOrders(showSpinner = true): void {
+    if (showSpinner) {
+      this.isLoading.set(true);
+    }
     this.adminService.getOrders('TODOS').subscribe({
       next: (orders) => {
         this.allOrders.set(orders || []);
