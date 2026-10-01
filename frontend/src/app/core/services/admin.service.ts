@@ -31,6 +31,7 @@ export interface AdminOrder {
 export interface AdminProduct {
   id: number;
   name: string;
+  slug?: string;
   description: string;
   price: number;
   categoryId: number;
@@ -96,13 +97,13 @@ export class AdminService {
 
   // registra nuevo plato en la carta
   createProduct(product: Partial<AdminProduct>): Observable<AdminProduct> {
-    const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${Date.now()}`;
+    const slug = product.slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${Date.now()}`;
     const payload = {
       name: product.name,
       slug: slug,
       description: product.description || '',
-      price: product.price,
-      categoryId: product.categoryId || 1,
+      price: Number(product.price),
+      categoryId: Number(product.categoryId) || 1,
       imageUrl: product.imageUrl || 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=800&q=80',
       isAvailable: product.isAvailable ?? true
     };
@@ -112,13 +113,13 @@ export class AdminService {
 
   // actualiza datos de un plato existente
   updateProduct(id: number, product: Partial<AdminProduct>): Observable<AdminProduct> {
-    const slug = (product as any).slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${id}`;
+    const slug = product.slug || product.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `producto-${id}`;
     const payload = {
       name: product.name,
       slug: slug,
       description: product.description || '',
-      price: product.price,
-      categoryId: product.categoryId || 1,
+      price: Number(product.price),
+      categoryId: Number(product.categoryId) || 1,
       imageUrl: product.imageUrl || '',
       isAvailable: product.isAvailable ?? true
     };

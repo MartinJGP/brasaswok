@@ -47,48 +47,60 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
           </button>
         </div>
 
-        <div class="p-6 pt-4 pb-0">
-          <div class="flex bg-brand-surface-alt p-1 rounded-xl border border-brand-border text-xs font-semibold">
-            <button
-              type="button"
-              (click)="activeTab = 'login'; errorMessage = ''; successMessage = ''"
-              [class.bg-brand-surface]="activeTab === 'login'"
-              [class.text-brand-text-primary]="activeTab === 'login'"
-              [class.shadow-subtle]="activeTab === 'login'"
-              [class.text-brand-text-secondary]="activeTab !== 'login'"
-              class="flex-1 py-2 rounded-lg transition-all"
-            >
-              Iniciar Sesión
-            </button>
-            <button
-              type="button"
-              (click)="activeTab = 'register'; errorMessage = ''; successMessage = ''"
-              [class.bg-brand-surface]="activeTab === 'register'"
-              [class.text-brand-text-primary]="activeTab === 'register'"
-              [class.shadow-subtle]="activeTab === 'register'"
-              [class.text-brand-text-secondary]="activeTab !== 'register'"
-              class="flex-1 py-2 rounded-lg transition-all"
-            >
-              Registrarse
-            </button>
+        <div *ngIf="isSuccess" class="p-8 text-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border-2 border-emerald-500 text-emerald-500 mx-auto flex items-center justify-center shadow-lg animate-bounce">
+            <app-icon name="check" [size]="32"></app-icon>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg sm:text-xl font-extrabold text-brand-text-primary font-sans">
+              {{ successTitle }}
+            </h3>
+            <p class="text-xs text-brand-text-secondary max-w-xs mx-auto">
+              {{ successMessage }}
+            </p>
+          </div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-surface-alt border border-brand-border text-xs text-brand-text-secondary">
+            <span class="w-3.5 h-3.5 border-2 border-brand-primary border-t-transparent rounded-full animate-spin"></span>
+            <span>Reiniciando sesión y cargando inicio...</span>
           </div>
         </div>
 
-        <div class="px-6 pt-4" *ngIf="errorMessage">
-          <div class="p-3 rounded-lg bg-brand-status-error-bg border border-brand-status-error/20 text-brand-status-error text-xs flex items-center gap-2">
-            <app-icon name="alert" [size]="16" customClass="shrink-0"></app-icon>
-            <span>{{ errorMessage }}</span>
+        <ng-container *ngIf="!isSuccess">
+          <div class="p-6 pt-4 pb-0">
+            <div class="flex bg-brand-surface-alt p-1 rounded-xl border border-brand-border text-xs font-semibold">
+              <button
+                type="button"
+                (click)="activeTab = 'login'; errorMessage = ''; successMessage = ''"
+                [class.bg-brand-surface]="activeTab === 'login'"
+                [class.text-brand-text-primary]="activeTab === 'login'"
+                [class.shadow-subtle]="activeTab === 'login'"
+                [class.text-brand-text-secondary]="activeTab !== 'login'"
+                class="flex-1 py-2 rounded-lg transition-all"
+              >
+                Iniciar Sesión
+              </button>
+              <button
+                type="button"
+                (click)="activeTab = 'register'; errorMessage = ''; successMessage = ''"
+                [class.bg-brand-surface]="activeTab === 'register'"
+                [class.text-brand-text-primary]="activeTab === 'register'"
+                [class.shadow-subtle]="activeTab === 'register'"
+                [class.text-brand-text-secondary]="activeTab !== 'register'"
+                class="flex-1 py-2 rounded-lg transition-all"
+              >
+                Registrarse
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="px-6 pt-4" *ngIf="successMessage">
-          <div class="p-3 rounded-lg bg-brand-status-success-bg border border-brand-status-success/20 text-brand-status-success text-xs flex items-center gap-2">
-            <app-icon name="check" [size]="16" customClass="shrink-0"></app-icon>
-            <span>{{ successMessage }}</span>
+          <div class="px-6 pt-4" *ngIf="errorMessage">
+            <div class="p-3 rounded-lg bg-brand-status-error-bg border border-brand-status-error/20 text-brand-status-error text-xs flex items-center gap-2">
+              <app-icon name="alert" [size]="16" customClass="shrink-0"></app-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
           </div>
-        </div>
 
-        <form *ngIf="activeTab === 'login'" (ngSubmit)="handleLogin()" class="p-6 space-y-4">
+          <form *ngIf="activeTab === 'login'" (ngSubmit)="handleLogin()" class="p-6 space-y-4">
           <div>
             <label class="block text-xs font-semibold text-brand-text-primary mb-1.5">Usuario o Correo</label>
             <div class="relative">
@@ -212,8 +224,9 @@ import { LoginRequest, RegisterRequest } from '../../../core/models/user.model';
             {{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta y Pedir' }}
           </button>
         </form>
-      </div>
+      </ng-container>
     </div>
+  </div>
   `
 })
 export class AuthModalComponent {
@@ -221,6 +234,8 @@ export class AuthModalComponent {
 
   activeTab: 'login' | 'register' = 'login';
   isLoading = false;
+  isSuccess = false;
+  successTitle = '';
   errorMessage = '';
   successMessage = '';
 
@@ -252,13 +267,14 @@ export class AuthModalComponent {
     this.authService.login(this.loginForm).subscribe({
       next: (user) => {
         this.isLoading = false;
-        this.successMessage = `¡Bienvenido(a), ${user.fullName}!`;
+        this.isSuccess = true;
+        this.successTitle = '¡Inicio de Sesión Exitoso!';
+        this.successMessage = `Bienvenido(a), ${user.fullName}. Redirigiendo a inicio...`;
         setTimeout(() => {
           this.close();
-          if (user.role === 'ROLE_ADMIN') {
-            this.router.navigate(['/admin/dashboard']);
-          }
-        }, 700);
+          // reinicia la pagina y redirige a home
+          window.location.href = '/';
+        }, 1200);
       },
       error: () => {
         this.isLoading = false;
@@ -275,19 +291,30 @@ export class AuthModalComponent {
 
     this.authService.register(this.registerForm).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.successMessage = '¡Cuenta creada con éxito! Iniciando sesión...';
         this.authService.login({
           username: this.registerForm.username,
           password: this.registerForm.password
         }).subscribe({
           next: (user) => {
+            this.isLoading = false;
+            this.isSuccess = true;
+            this.successTitle = '¡Cuenta Creada con Éxito!';
+            this.successMessage = `Bienvenido(a), ${user.fullName}. Redirigiendo a inicio...`;
             setTimeout(() => {
               this.close();
-              if (user.role === 'ROLE_ADMIN') {
-                this.router.navigate(['/admin/dashboard']);
-              }
-            }, 700);
+              // reinicia la pagina y redirige a home
+              window.location.href = '/';
+            }, 1200);
+          },
+          error: () => {
+            this.isLoading = false;
+            this.isSuccess = true;
+            this.successTitle = '¡Registro Completado!';
+            this.successMessage = 'Tu cuenta fue creada exitosamente. Redirigiendo a inicio...';
+            setTimeout(() => {
+              this.close();
+              window.location.href = '/';
+            }, 1200);
           }
         });
       },

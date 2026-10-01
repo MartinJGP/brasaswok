@@ -172,7 +172,13 @@ import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.compone
                   <div class="flex items-center justify-between text-brand-text-secondary">
                     <span>Dirección:</span>
                     <span class="truncate max-w-[200px] font-medium text-brand-text-primary">
-                      {{ authService.currentUser()?.address || 'Av. Javier Prado Este 1234' }}
+                      {{ authService.currentUser()?.address || 'A registrar en entrega' }}
+                    </span>
+                  </div>
+                  <div *ngIf="authService.currentUser()?.phone" class="flex items-center justify-between text-brand-text-secondary">
+                    <span>Celular:</span>
+                    <span class="font-medium text-brand-text-primary font-mono">
+                      {{ authService.currentUser()?.phone }}
                     </span>
                   </div>
                 </div>

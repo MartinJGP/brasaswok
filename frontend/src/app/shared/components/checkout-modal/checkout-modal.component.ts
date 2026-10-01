@@ -66,7 +66,7 @@ export type PaymentMethodType = 'TARJETA' | 'YAPE_PLIN' | 'EFECTIVO' | 'TRANSFER
                     [(ngModel)]="deliveryAddress"
                     name="deliveryAddress"
                     required
-                    placeholder="Av. Javier Prado Este 1234, Dpto 402"
+                    placeholder="Ingresa tu dirección de entrega"
                     class="w-full px-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
                   />
                 </div>
@@ -78,7 +78,7 @@ export type PaymentMethodType = 'TARJETA' | 'YAPE_PLIN' | 'EFECTIVO' | 'TRANSFER
                     [(ngModel)]="deliveryPhone"
                     name="deliveryPhone"
                     required
-                    placeholder="987654321"
+                    placeholder="Ej: 987654321"
                     class="w-full px-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
                   />
                 </div>
@@ -411,7 +411,18 @@ export type PaymentMethodType = 'TARJETA' | 'YAPE_PLIN' | 'EFECTIVO' | 'TRANSFER
   `
 })
 export class CheckoutModalComponent {
-  @Input() isOpen = false;
+  private _isOpen = false;
+  @Input()
+  set isOpen(value: boolean) {
+    this._isOpen = value;
+    if (value) {
+      this.populateUserDetails();
+    }
+  }
+  get isOpen(): boolean {
+    return this._isOpen;
+  }
+
   @Output() closeEvent = new EventEmitter<void>();
   @Output() orderCompleted = new EventEmitter<any>();
 
@@ -423,8 +434,8 @@ export class CheckoutModalComponent {
   selectedMethod: PaymentMethodType = 'TARJETA';
   errorMessage = '';
 
-  deliveryAddress = this.authService.currentUser()?.address || 'Av. Javier Prado Este 1234, Dpto 402';
-  deliveryPhone = this.authService.currentUser()?.phone || '987654321';
+  deliveryAddress = '';
+  deliveryPhone = '';
   deliveryNotes = '';
 
   cardNumber = '';
@@ -438,6 +449,20 @@ export class CheckoutModalComponent {
 
   confirmedOrderNumber = '';
   confirmedTotal = 0;
+
+  // asigna datos por defecto del usuario autenticado
+  populateUserDetails(): void {
+    const user = this.authService.currentUser();
+    if (user?.address) {
+      this.deliveryAddress = user.address;
+    }
+    if (user?.phone) {
+      this.deliveryPhone = user.phone;
+    }
+    if (user?.fullName && !this.cardHolder) {
+      this.cardHolder = user.fullName.toUpperCase();
+    }
+  }
 
   // procesa comanda y pago en el backend
   processCheckout(): void {

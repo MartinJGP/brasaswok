@@ -100,11 +100,19 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                   </span>
                 </td>
                 <td class="px-5 py-4 text-right">
-                  <div class="inline-flex items-center gap-2">
+                  <div class="inline-flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      (click)="openEditModal(product)"
+                      class="p-1.5 rounded-lg text-brand-primary hover:bg-brand-primary/10 border border-brand-border/60 hover:border-brand-primary/40 transition-all active:scale-95"
+                      title="Editar información y fotografía"
+                    >
+                      <app-icon name="edit" [size]="14"></app-icon>
+                    </button>
                     <button
                       type="button"
                       (click)="toggleAvailability(product)"
-                      class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
+                      class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95"
                       [ngClass]="product.isAvailable ? 'border-brand-border text-brand-text-secondary hover:text-brand-text-primary' : 'border-emerald-500/40 text-emerald-600 bg-emerald-50/50'"
                     >
                       {{ product.isAvailable ? 'Pausar' : 'Activar' }}
@@ -125,21 +133,23 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
         </div>
       </div>
 
-      <div *ngIf="showCreateModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
+      <div *ngIf="showModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
         <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 max-w-lg w-full shadow-dropdown space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-brand-border">
-            <h3 class="text-base font-bold text-brand-text-primary">Registrar Nuevo Plato</h3>
-            <button (click)="closeCreateModal()" class="text-brand-text-muted hover:text-brand-text-primary">
+            <h3 class="text-base font-bold text-brand-text-primary">
+              {{ modalMode() === 'create' ? 'Registrar Nuevo Plato' : 'Editar Información & Foto del Plato' }}
+            </h3>
+            <button (click)="closeModal()" class="text-brand-text-muted hover:text-brand-text-primary">
               <app-icon name="x" [size]="18"></app-icon>
             </button>
           </div>
 
-          <form (ngSubmit)="handleCreateProduct()" class="space-y-3.5 text-xs">
+          <form (ngSubmit)="handleSaveProduct()" class="space-y-3.5 text-xs">
             <div>
               <label class="block font-semibold text-brand-text-primary mb-1">Nombre del Plato</label>
               <input
                 type="text"
-                [(ngModel)]="newProduct.name"
+                [(ngModel)]="productForm.name"
                 name="name"
                 required
                 placeholder="Ej: Tacu Tacu en Salsa de Mariscos"
@@ -151,7 +161,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
               <div>
                 <label class="block font-semibold text-brand-text-primary mb-1">Categoría</label>
                 <select
-                  [(ngModel)]="newProduct.categoryId"
+                  [(ngModel)]="productForm.categoryId"
                   name="categoryId"
                   class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-brand-text-primary"
                 >
@@ -164,7 +174,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                 <input
                   type="number"
                   step="0.10"
-                  [(ngModel)]="newProduct.price"
+                  [(ngModel)]="productForm.price"
                   name="price"
                   required
                   placeholder="35.00"
@@ -176,7 +186,7 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
             <div>
               <label class="block font-semibold text-brand-text-primary mb-1">Descripción</label>
               <textarea
-                [(ngModel)]="newProduct.description"
+                [(ngModel)]="productForm.description"
                 name="description"
                 rows="2"
                 placeholder="Ingredientes clave, término y acompañamiento..."
@@ -194,18 +204,18 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
                     accept="image/png,image/jpeg,image/webp"
                     class="text-xs text-brand-text-muted file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-primary-hover file:cursor-pointer"
                   />
-                  <span *ngIf="isUploadingImage()" class="text-[11px] text-brand-primary animate-pulse font-semibold">Subiendo...</span>
+                  <span *ngIf="isUploadingImage()" class="text-[11px] text-brand-primary animate-pulse font-semibold">Subiendo imagen...</span>
                 </div>
                 <input
                   type="url"
-                  [(ngModel)]="newProduct.imageUrl"
+                  [(ngModel)]="productForm.imageUrl"
                   name="imageUrl"
-                  placeholder="O ingresa URL externa (https://...)"
+                  placeholder="O ingresa URL externa de imagen (https://...)"
                   class="w-full px-3 py-2 bg-brand-surface-alt border border-brand-border rounded-xl focus:border-brand-primary text-xs text-brand-text-primary"
                 />
-                <div *ngIf="newProduct.imageUrl" class="flex items-center gap-2 pt-1">
-                  <img [src]="newProduct.imageUrl" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-brand-border" />
-                  <span class="text-[11px] text-emerald-500 font-semibold">Imagen lista para guardar</span>
+                <div *ngIf="productForm.imageUrl" class="flex items-center gap-2 pt-1">
+                  <img [src]="productForm.imageUrl" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-brand-border" />
+                  <span class="text-[11px] text-emerald-600 font-semibold">Fotografía vinculada</span>
                 </div>
               </div>
             </div>
@@ -213,17 +223,17 @@ import { AdminService, AdminProduct, AdminCategory } from '../../../core/service
             <div class="pt-2 flex justify-end gap-2">
               <button
                 type="button"
-                (click)="closeCreateModal()"
+                (click)="closeModal()"
                 class="px-4 py-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-alt"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                [disabled]="!newProduct.name || !newProduct.price || isUploadingImage()"
-                class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white font-bold rounded-xl shadow-card"
+                [disabled]="!productForm.name || !productForm.price || isUploadingImage()"
+                class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white font-bold rounded-xl shadow-card transition-all active:scale-95"
               >
-                Guardar Plato
+                {{ modalMode() === 'create' ? 'Guardar Plato' : 'Actualizar Plato' }}
               </button>
             </div>
           </form>
@@ -239,10 +249,12 @@ export class AdminMenuComponent implements OnInit {
   readonly categories = signal<AdminCategory[]>([]);
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
-  readonly showCreateModal = signal<boolean>(false);
+  readonly showModal = signal<boolean>(false);
+  readonly modalMode = signal<'create' | 'edit'>('create');
+  readonly editingProductId = signal<number | null>(null);
   readonly isUploadingImage = signal<boolean>(false);
 
-  newProduct: Partial<AdminProduct> = {
+  productForm: Partial<AdminProduct> = {
     name: '',
     description: '',
     price: 0,
@@ -255,6 +267,7 @@ export class AdminMenuComponent implements OnInit {
     this.loadData();
   }
 
+  // carga catalogo y categorias
   loadData(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
@@ -267,7 +280,7 @@ export class AdminMenuComponent implements OnInit {
         this.products.set(products);
         this.categories.set(categories);
         if (categories.length > 0) {
-          this.newProduct.categoryId = categories[0].id;
+          this.productForm.categoryId = categories[0].id;
         }
         this.isLoading.set(false);
       },
@@ -278,14 +291,43 @@ export class AdminMenuComponent implements OnInit {
     });
   }
 
+  // abre modal para registrar plato nuevo
   openCreateModal(): void {
-    this.showCreateModal.set(true);
+    this.modalMode.set('create');
+    this.editingProductId.set(null);
+    this.productForm = {
+      name: '',
+      description: '',
+      price: 0,
+      categoryId: this.categories()[0]?.id || 1,
+      imageUrl: '',
+      isAvailable: true
+    };
+    this.showModal.set(true);
   }
 
-  closeCreateModal(): void {
-    this.showCreateModal.set(false);
+  // abre modal para editar plato y foto
+  openEditModal(product: AdminProduct): void {
+    this.modalMode.set('edit');
+    this.editingProductId.set(product.id);
+    this.productForm = {
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: product.price,
+      categoryId: product.categoryId,
+      imageUrl: product.imageUrl,
+      isAvailable: product.isAvailable
+    };
+    this.showModal.set(true);
   }
 
+  // cierra modal de edicion o creacion
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  // alterna disponibilidad de plato
   toggleAvailability(product: AdminProduct): void {
     this.adminService.toggleProductAvailability(product.id).subscribe({
       next: () => {
@@ -299,6 +341,7 @@ export class AdminMenuComponent implements OnInit {
     });
   }
 
+  // sube archivo de fotografia
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -306,7 +349,7 @@ export class AdminMenuComponent implements OnInit {
       this.isUploadingImage.set(true);
       this.adminService.uploadImage(file).subscribe({
         next: (res) => {
-          this.newProduct.imageUrl = 'http://localhost:8080' + res.url;
+          this.productForm.imageUrl = 'http://localhost:8080' + res.url;
           this.isUploadingImage.set(false);
         },
         error: (err) => {
@@ -317,6 +360,7 @@ export class AdminMenuComponent implements OnInit {
     }
   }
 
+  // elimina plato seleccionado
   handleDeleteProduct(product: AdminProduct): void {
     if (!confirm(`¿Estás seguro de eliminar el plato "${product.name}"?`)) {
       return;
@@ -331,23 +375,30 @@ export class AdminMenuComponent implements OnInit {
     });
   }
 
-  handleCreateProduct(): void {
-    this.adminService.createProduct(this.newProduct).subscribe({
-      next: (created) => {
-        this.products.update(list => [created, ...list]);
-        this.showCreateModal.set(false);
-        this.newProduct = {
-          name: '',
-          description: '',
-          price: 0,
-          categoryId: this.categories()[0]?.id || 1,
-          imageUrl: '',
-          isAvailable: true
-        };
-      },
-      error: (err) => {
-        alert(err?.error?.message || 'No se pudo registrar el plato');
-      }
-    });
+  // registra o actualiza plato en base de datos
+  handleSaveProduct(): void {
+    if (this.modalMode() === 'create') {
+      this.adminService.createProduct(this.productForm).subscribe({
+        next: (created) => {
+          this.products.update(list => [created, ...list]);
+          this.closeModal();
+        },
+        error: (err) => {
+          alert(err?.error?.message || 'No se pudo registrar el plato');
+        }
+      });
+    } else {
+      const id = this.editingProductId();
+      if (!id) return;
+      this.adminService.updateProduct(id, this.productForm).subscribe({
+        next: (updated) => {
+          this.products.update(list => list.map(p => p.id === updated.id ? updated : p));
+          this.closeModal();
+        },
+        error: (err) => {
+          alert(err?.error?.message || 'No se pudo actualizar el plato');
+        }
+      });
+    }
   }
 }
