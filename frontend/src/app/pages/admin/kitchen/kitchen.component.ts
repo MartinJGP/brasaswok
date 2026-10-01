@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminOrder } from '../../../core/services/admin.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-admin-kitchen',
@@ -114,15 +115,24 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
                 <span>Poner al Fuego</span>
               </button>
 
-              <button
-                *ngIf="order.status === 'EN_COCINA'"
-                type="button"
-                (click)="advanceStatus(order, 'EN_CAMINO')"
-                class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-card flex items-center gap-1 active:scale-95"
-              >
-                <app-icon name="check" [size]="13"></app-icon>
-                <span>Listo / Despachar</span>
-              </button>
+              <div *ngIf="order.status === 'EN_COCINA'" class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  (click)="advanceStatus(order, 'PENDIENTE', 'Corrección: retornado a pendiente')"
+                  class="px-2.5 py-2 bg-brand-surface border border-brand-border text-brand-text-muted hover:text-brand-text-primary text-xs font-semibold rounded-xl transition-all"
+                  title="Regresar a estado pendiente"
+                >
+                  ← Pendiente
+                </button>
+                <button
+                  type="button"
+                  (click)="advanceStatus(order, 'EN_CAMINO')"
+                  class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-card flex items-center gap-1 active:scale-95"
+                >
+                  <app-icon name="check" [size]="13"></app-icon>
+                  <span>Listo / Despachar</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -132,6 +142,7 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
 })
 export class AdminKitchenComponent implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly toastService = inject(ToastService);
 
   readonly allOrders = signal<AdminOrder[]>([]);
   readonly isLoading = signal<boolean>(true);
@@ -144,6 +155,7 @@ export class AdminKitchenComponent implements OnInit {
     this.loadKitchenOrders();
   }
 
+  // carga comandas de cocina
   loadKitchenOrders(): void {
     this.isLoading.set(true);
     this.adminService.getOrders('TODOS').subscribe({
@@ -157,10 +169,15 @@ export class AdminKitchenComponent implements OnInit {
     });
   }
 
-  advanceStatus(order: AdminOrder, nextStatus: string): void {
-    this.adminService.updateOrderStatus(order.id, nextStatus).subscribe({
+  // avanza o retrocede estado de comanda
+  advanceStatus(order: AdminOrder, nextStatus: string, comment?: string): void {
+    this.adminService.updateOrderStatus(order.id, nextStatus, comment).subscribe({
       next: () => {
         this.allOrders.update(list => list.map(o => o.id === order.id ? { ...o, status: nextStatus as any } : o));
+        this.toastService.success(`Comanda #${order.orderNumber}: Estado ${nextStatus}`);
+      },
+      error: (err) => {
+        this.toastService.error(err?.error?.message || 'Error al actualizar comanda');
       }
     });
   }

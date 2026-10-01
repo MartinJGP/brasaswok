@@ -1,7 +1,8 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, throwError, of } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/user.model';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:8080/api/auth';
   private readonly TOKEN_KEY = 'brasas_token';
   private readonly USER_KEY = 'brasas_user';
+  private readonly toastService = inject(ToastService);
 
   private readonly _currentUser = signal<User | null>(this.getStoredUser());
   private readonly _token = signal<string | null>(this.getStoredToken());
@@ -60,6 +62,7 @@ export class AuthService {
     }
     this._token.set(null);
     this._currentUser.set(null);
+    this.toastService.info('Has cerrado sesión correctamente.');
   }
 
   // guarda sesion en storage local

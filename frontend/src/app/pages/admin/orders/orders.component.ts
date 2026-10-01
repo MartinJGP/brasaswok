@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminOrder } from '../../../core/services/admin.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-admin-orders',
@@ -149,14 +150,23 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
                 Despachar →
               </button>
 
-              <button
-                *ngIf="order.status === 'EN_CAMINO'"
-                type="button"
-                (click)="changeStatus(order, 'ENTREGADO')"
-                class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
-              >
-                Entregado ✓
-              </button>
+              <div *ngIf="order.status === 'EN_CAMINO'" class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  (click)="changeStatus(order, 'EN_COCINA', 'Corrección: retornado a cocina por error de despacho')"
+                  class="px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 border border-amber-500/30 text-xs font-semibold rounded-lg transition-all active:scale-95"
+                  title="Corregir error y retornar la comanda a cocina"
+                >
+                  ← Revertir a Cocina
+                </button>
+                <button
+                  type="button"
+                  (click)="changeStatus(order, 'ENTREGADO')"
+                  class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+                >
+                  Entregado ✓
+                </button>
+              </div>
 
               <button
                 *ngIf="order.status === 'PENDIENTE' || order.status === 'EN_COCINA'"
@@ -203,6 +213,7 @@ import { AdminService, AdminOrder } from '../../../core/services/admin.service';
 })
 export class AdminOrdersComponent implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly toastService = inject(ToastService);
 
   readonly statusTabs = ['TODOS', 'PENDIENTE', 'EN_COCINA', 'EN_CAMINO', 'ENTREGADO', 'CANCELADO'];
   readonly selectedStatus = signal<string>('TODOS');
@@ -246,13 +257,18 @@ export class AdminOrdersComponent implements OnInit {
     }
   }
 
-  changeStatus(order: AdminOrder, nextStatus: string): void {
-    this.adminService.updateOrderStatus(order.id, nextStatus).subscribe({
+  // actualiza estado de comanda con comentario opcional
+  changeStatus(order: AdminOrder, nextStatus: string, comment?: string): void {
+    this.adminService.updateOrderStatus(order.id, nextStatus, comment).subscribe({
       next: () => {
         this.orders.update(list => list.map(o => o.id === order.id ? { ...o, status: nextStatus as any } : o));
+        this.toastService.success(`Comanda #${order.orderNumber}: Estado cambiado a ${nextStatus}`);
         if (this.selectedStatus() !== 'TODOS') {
           this.loadOrders();
         }
+      },
+      error: (err) => {
+        this.toastService.error(err?.error?.message || 'No se pudo actualizar el estado de la comanda');
       }
     });
   }

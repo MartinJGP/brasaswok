@@ -309,6 +309,20 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void updateStatus_revertFromEnCaminoToEnCocina_shouldSucceed() {
+        Order order = buildSavedOrder(customer);
+        order.setStatus(OrderStatus.EN_CAMINO);
+
+        when(orderRepository.findById(10L)).thenReturn(Optional.of(order));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(admin));
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+        OrderStatusUpdateRequest req = new OrderStatusUpdateRequest(OrderStatus.EN_COCINA, "Corrección: pedido retornado a cocina");
+        orderService.updateOrderStatus(10L, req, adminDetails);
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.EN_COCINA);
+    }
+
+    @Test
     void updateStatus_invalidTransition_shouldThrowBadRequest() {
         Order order = buildSavedOrder(customer);
         order.setStatus(OrderStatus.ENTREGADO);

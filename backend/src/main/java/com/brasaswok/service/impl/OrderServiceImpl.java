@@ -35,8 +35,8 @@ public class OrderServiceImpl implements OrderService {
 
     private static final java.util.Map<OrderStatus, Set<OrderStatus>> VALID_TRANSITIONS = java.util.Map.of(
             OrderStatus.PENDIENTE,  Set.of(OrderStatus.EN_COCINA, OrderStatus.CANCELADO),
-            OrderStatus.EN_COCINA,  Set.of(OrderStatus.EN_CAMINO, OrderStatus.CANCELADO),
-            OrderStatus.EN_CAMINO,  Set.of(OrderStatus.ENTREGADO),
+            OrderStatus.EN_COCINA,  Set.of(OrderStatus.EN_CAMINO, OrderStatus.PENDIENTE, OrderStatus.CANCELADO),
+            OrderStatus.EN_CAMINO,  Set.of(OrderStatus.ENTREGADO, OrderStatus.EN_COCINA),
             OrderStatus.ENTREGADO,  Set.of(),
             OrderStatus.CANCELADO,  Set.of()
     );
