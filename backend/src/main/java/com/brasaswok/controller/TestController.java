@@ -17,6 +17,11 @@ public class TestController {
         return ResponseEntity.ok(Map.of("message", "Public content"));
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> healthEndpoint() {
+        return ResponseEntity.ok(Map.of("status", "UP", "service", "brasaswok-backend"));
+    }
+
     @GetMapping("/customer")
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER', 'ROLE_ADMIN')")
     public ResponseEntity<Map<String, String>> customerEndpoint() {

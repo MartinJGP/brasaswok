@@ -73,9 +73,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/api/test/public").permitAll()
+                        .requestMatchers("/", "/health", "/api/health", "/api/auth/**", "/api/test/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/menu/**", "/api/products/**", "/api/categories/**", "/api/orders/track/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/menu", "/api/menu/**",
+                                "/api/products", "/api/products/**",
+                                "/api/categories", "/api/categories/**",
+                                "/api/orders/track/**").permitAll()
                         .requestMatchers("/ws/**", "/ws-brasas/**", "/ws-brasas-socket/**").permitAll()
                         .requestMatchers("/api/upload/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
