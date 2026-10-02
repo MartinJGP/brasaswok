@@ -1,57 +1,46 @@
-<div class="min-h-screen bg-brand-bg text-brand-text-primary py-10 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl mx-auto space-y-8">
-    <div class="text-center space-y-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-wider">
-        <app-icon name="clock" [size]="14"></app-icon>
-        <span>Atención en Salón & Delivery</span>
-      </div>
-
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary font-sans tracking-tight">
+<div class="min-h-screen bg-brand-bg text-brand-text-primary py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto space-y-8">
+    <div class="text-center space-y-2">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-sans tracking-tight">
         Horarios de Atención
       </h1>
-
-      <p class="text-xs sm:text-sm text-brand-text-secondary max-w-lg mx-auto">
-        Disfruta de nuestros pollos al carbón y salteados al wok preparados al instante dentro de nuestros horarios de cocina viva.
+      <p class="text-xs sm:text-sm text-brand-text-secondary max-w-md mx-auto">
+        Disfruta de nuestros pollos al carbón y salteados al wok en salón o delivery.
       </p>
 
       <div class="pt-2">
         <span
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
-          [ngClass]="isOpenNow() ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-600 border border-amber-500/30'"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+          [ngClass]="isOpenNow() ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-700 border border-amber-500/20'"
         >
-          <span class="w-2 h-2 rounded-full" [ngClass]="isOpenNow() ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
-          <span>{{ isOpenNow() ? 'Cocina Abierta Ahora' : 'Cerrado en este Momento' }}</span>
+          <span class="w-2 h-2 rounded-full" [ngClass]="isOpenNow() ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+          <span>{{ isOpenNow() ? 'Abierto Ahora' : 'Cerrado en este Momento' }}</span>
         </span>
       </div>
     </div>
 
-    <div class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
-      <div class="p-6 border-b border-brand-border flex items-center justify-between">
-        <div>
-          <h2 class="text-base font-bold text-brand-text-primary font-sans">Jornadas Semanales</h2>
-          <p class="text-xs text-brand-text-secondary mt-0.5">Rango de servicio para mesas y despacho motorizado.</p>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center">
-          <app-icon name="clock" [size]="20"></app-icon>
-        </div>
+    <!-- Tabla Limpia de Horarios -->
+    <div class="bg-brand-surface rounded-xl border border-brand-border overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-brand-border bg-brand-surface-alt/40">
+        <h2 class="text-sm font-bold text-brand-text-primary font-sans">Turnos de Salón y Despacho</h2>
       </div>
 
-      <div class="divide-y divide-brand-border">
-        <div *ngFor="let s of schedules" class="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-brand-surface-alt/40 transition-colors">
-          <div class="space-y-1">
+      <div class="divide-y divide-brand-border/60">
+        <div *ngFor="let s of schedules" class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div>
             <div class="flex items-center gap-2">
-              <span class="text-sm font-extrabold text-brand-text-primary">{{ s.dayGroup }}</span>
-              <span *ngIf="s.isPeak" class="px-2 py-0.5 rounded-md bg-brand-accent/10 text-brand-accent text-[10px] font-bold uppercase tracking-wider">
+              <span class="font-bold text-sm text-brand-text-primary">{{ s.dayGroup }}</span>
+              <span *ngIf="s.isPeak" class="px-1.5 py-0.5 rounded bg-brand-accent/10 text-brand-accent text-[10px] font-semibold">
                 Mayor afluencia
               </span>
             </div>
-            <p class="text-xs text-brand-text-secondary">Atención continua sin interrupciones.</p>
+            <p class="text-brand-text-secondary mt-0.5">Atención continua sin interrupciones.</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 text-xs font-mono sm:text-right">
+          <div class="grid grid-cols-2 gap-4 sm:text-right font-mono text-xs">
             <div>
               <span class="text-[10px] uppercase font-bold text-brand-text-muted block font-sans">Salón</span>
-              <span class="text-brand-text-primary font-bold">{{ s.dineInHours }}</span>
+              <span class="text-brand-text-primary font-semibold">{{ s.dineInHours }}</span>
             </div>
             <div>
               <span class="text-[10px] uppercase font-bold text-brand-text-muted block font-sans">Delivery</span>
@@ -62,33 +51,28 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="bg-brand-surface rounded-2xl border border-brand-border p-5 space-y-2">
-        <div class="flex items-center gap-2 text-brand-primary">
-          <app-icon name="phone" [size]="16"></app-icon>
-          <span class="text-xs font-bold uppercase tracking-wider">Central de Pedidos</span>
-        </div>
-        <p class="text-base font-extrabold text-brand-text-primary font-mono">(01) 719-2020</p>
-        <p class="text-xs text-brand-text-secondary">Atención telefónica directa para reservas y pedidos corporativos.</p>
+    <!-- Contacto Rápido -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-4 space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-text-muted">Central Telefónica</span>
+        <p class="text-base font-bold text-brand-text-primary font-mono">(01) 719-2020</p>
+        <p class="text-brand-text-secondary">Para reservas y consultas de salón.</p>
       </div>
 
-      <div class="bg-brand-surface rounded-2xl border border-brand-border p-5 space-y-2">
-        <div class="flex items-center gap-2 text-brand-accent">
-          <app-icon name="flame" [size]="16"></app-icon>
-          <span class="text-xs font-bold uppercase tracking-wider">WhatsApp Delivery</span>
-        </div>
-        <p class="text-base font-extrabold text-brand-text-primary font-mono">987 654 321</p>
-        <p class="text-xs text-brand-text-secondary">Escríbenos para consultas rápidas o seguimiento de tu orden.</p>
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-4 space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-accent">WhatsApp Pedidos</span>
+        <p class="text-base font-bold text-brand-text-primary font-mono">987 654 321</p>
+        <p class="text-brand-text-secondary">Escríbenos para consultas de delivery.</p>
       </div>
     </div>
 
     <div class="text-center pt-2">
       <a
         routerLink="/carta"
-        class="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg transition-all"
       >
-        <app-icon name="flame" [size]="16"></app-icon>
-        <span>Explorar la Carta y Pedir Online</span>
+        <span>Ver Carta y Pedir Online</span>
+        <app-icon name="arrow-right" [size]="14"></app-icon>
       </a>
     </div>
   </div>

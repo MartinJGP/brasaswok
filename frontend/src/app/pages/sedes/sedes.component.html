@@ -1,30 +1,24 @@
-<div class="min-h-screen bg-brand-bg text-brand-text-primary py-10 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl mx-auto space-y-8">
-    <div class="text-center space-y-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-wider">
-        <app-icon name="map-pin" [size]="14"></app-icon>
-        <span>Ubicación & Cobertura</span>
-      </div>
-
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary font-sans tracking-tight">
+<div class="min-h-screen bg-brand-bg text-brand-text-primary py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto space-y-8">
+    <div class="text-center space-y-2">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-sans tracking-tight">
         Nuestras Sedes & Cobertura
       </h1>
-
-      <p class="text-xs sm:text-sm text-brand-text-secondary max-w-lg mx-auto">
-        Visítanos en nuestro salón principal o solicita tu pedido por delivery con despacho caliente a tu distrito.
+      <p class="text-xs sm:text-sm text-brand-text-secondary max-w-md mx-auto">
+        Visítanos en nuestro salón principal o solicita tu pedido con despacho caliente a tu distrito.
       </p>
     </div>
 
-    <div class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card">
-      <div class="p-6 sm:p-8 bg-brand-surface-alt/70 border-b border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="bg-brand-surface rounded-xl border border-brand-border overflow-hidden">
+      <div class="p-5 sm:p-6 border-b border-brand-border bg-brand-surface-alt/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="px-2.5 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-[11px] font-bold uppercase tracking-wider border border-brand-primary/20">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-brand-primary">
             {{ sede.badge }}
           </span>
-          <h2 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans mt-2">
+          <h2 class="text-lg sm:text-xl font-bold text-brand-text-primary font-sans mt-0.5">
             {{ sede.name }}
           </h2>
-          <p class="text-xs text-brand-text-secondary mt-1">
+          <p class="text-xs text-brand-text-secondary mt-0.5">
             {{ sede.address }}
           </p>
         </div>
@@ -32,46 +26,41 @@
         <div class="flex items-center gap-2 shrink-0">
           <a
             href="tel:017192020"
-            class="px-4 py-2 bg-brand-surface hover:bg-brand-surface-alt border border-brand-border text-brand-text-primary text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-subtle"
+            class="px-3.5 py-2 bg-brand-surface hover:bg-brand-surface-alt border border-brand-border text-brand-text-primary text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5"
           >
-            <app-icon name="phone" [size]="14" customClass="text-brand-accent"></app-icon>
+            <app-icon name="phone" [size]="13"></app-icon>
             <span>Llamar</span>
           </a>
           <a
             routerLink="/carta"
-            class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center gap-1.5"
+            class="px-3.5 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
           >
-            <app-icon name="flame" [size]="14"></app-icon>
-            <span>Pedir Delivery</span>
+            <app-icon name="flame" [size]="13"></app-icon>
+            <span>Pedir Online</span>
           </a>
         </div>
       </div>
 
-      <div class="p-6 sm:p-8 space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-brand-text-secondary">
+      <div class="p-5 sm:p-6 space-y-6 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div class="space-y-3">
-            <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Dirección & Referencia</h3>
-            <div class="flex items-start gap-2.5">
-              <app-icon name="map-pin" [size]="16" customClass="text-brand-primary shrink-0 mt-0.5"></app-icon>
-              <div>
-                <p class="font-bold text-brand-text-primary text-sm">{{ sede.address }}</p>
-                <p class="text-brand-text-muted mt-0.5">{{ sede.reference }}</p>
-              </div>
+            <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Dirección</h3>
+            <div class="space-y-1">
+              <p class="font-bold text-brand-text-primary text-sm">{{ sede.address }}</p>
+              <p class="text-brand-text-secondary">{{ sede.reference }}</p>
             </div>
-
-            <div class="flex items-center gap-2.5 pt-2">
-              <app-icon name="clock" [size]="16" customClass="text-brand-accent shrink-0"></app-icon>
-              <span class="text-brand-text-secondary font-medium">{{ sede.dineInHours }}</span>
-            </div>
+            <p class="text-brand-text-muted pt-1">
+              Horario salón: <span class="text-brand-text-primary font-medium">{{ sede.dineInHours }}</span>
+            </p>
           </div>
 
           <div class="space-y-3">
-            <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Distritos de Cobertura Delivery</h3>
-            <p class="text-brand-text-muted">Despacho express motorizado con empaque térmico sellado:</p>
+            <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Zonas de Cobertura Delivery</h3>
+            <p class="text-brand-text-secondary">Despacho motorizado con empaque sellado:</p>
             <div class="flex flex-wrap gap-1.5 pt-1">
               <span
                 *ngFor="let zone of sede.deliveryZones"
-                class="px-2.5 py-1 rounded-lg bg-brand-surface-alt border border-brand-border text-xs font-semibold text-brand-text-primary"
+                class="px-2.5 py-1 rounded-md bg-brand-surface-alt text-brand-text-primary font-medium"
               >
                 {{ zone }}
               </span>
@@ -79,12 +68,12 @@
           </div>
         </div>
 
-        <div class="pt-6 border-t border-brand-border space-y-3">
-          <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Comodidades & Servicios de la Sede</h3>
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-brand-text-secondary">
+        <div class="pt-5 border-t border-brand-border space-y-2">
+          <h3 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider">Servicios de la Sede</h3>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-brand-text-secondary">
             <li *ngFor="let feat of sede.features" class="flex items-center gap-2">
-              <app-icon name="check" [size]="14" customClass="text-emerald-600 shrink-0"></app-icon>
-              <span class="text-brand-text-primary font-medium">{{ feat }}</span>
+              <app-icon name="check" [size]="13" customClass="text-emerald-600 shrink-0"></app-icon>
+              <span>{{ feat }}</span>
             </li>
           </ul>
         </div>

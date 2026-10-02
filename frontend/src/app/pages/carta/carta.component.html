@@ -1,32 +1,30 @@
-<div class="min-h-screen pb-24 sm:pb-16 bg-brand-bg text-brand-text-primary">
-  <section class="bg-brand-secondary text-white py-8 sm:py-10 border-b border-white/10">
+<div class="min-h-screen pb-20 sm:pb-16 bg-brand-bg text-brand-text-primary">
+  <!-- Cabecera Compacta de la Carta -->
+  <section class="bg-brand-secondary text-white py-6 sm:py-8 border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-accent text-xs font-bold uppercase tracking-wider mb-2">
-            <app-icon name="flame" [size]="14"></app-icon>
-            <span>Carta Gastronómica</span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-sans tracking-tight">
-            Brasas al Carbón & Wok Criollo
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white font-sans tracking-tight">
+            Nuestra Carta
           </h1>
-          <p class="text-xs sm:text-sm text-white/70 mt-1 max-w-xl">
-            Preparaciones al fuego vivo con ingredientes frescos del día. Selecciona tus platos favoritos para salón o delivery.
+          <p class="text-xs sm:text-sm text-white/70 mt-0.5">
+            Brasas al carbón y salteados al wok preparados al instante.
           </p>
         </div>
 
-        <div class="w-full md:w-80">
+        <!-- Buscador Compacto Integrado -->
+        <div class="w-full sm:w-72">
           <div class="relative">
             <input
               type="text"
               [ngModel]="searchTerm()"
               (ngModelChange)="onSearchChange($event)"
               placeholder="Buscar plato o ingrediente..."
-              class="w-full pl-9 pr-9 py-2.5 bg-white/10 border border-white/15 rounded-xl text-xs text-white placeholder-white/50 focus:border-brand-primary focus:bg-white/15 focus:outline-none transition-colors"
+              class="w-full pl-8 pr-8 py-2 bg-white/10 border border-white/15 rounded-lg text-xs text-white placeholder-white/50 focus:border-brand-primary focus:bg-white/15 focus:outline-none transition-colors"
               aria-label="Buscar en la carta"
             />
-            <div class="absolute left-3 top-2.5 text-white/40 pointer-events-none">
-              <app-icon name="search" [size]="15"></app-icon>
+            <div class="absolute left-2.5 top-2.5 text-white/40 pointer-events-none">
+              <app-icon name="search" [size]="14"></app-icon>
             </div>
             <button
               *ngIf="searchTerm()"
@@ -35,7 +33,7 @@
               class="absolute right-2.5 top-2.5 text-white/40 hover:text-white"
               aria-label="Limpiar búsqueda"
             >
-              <app-icon name="x" [size]="15"></app-icon>
+              <app-icon name="x" [size]="14"></app-icon>
             </button>
           </div>
         </div>
@@ -43,6 +41,7 @@
     </div>
   </section>
 
+  <!-- Barra de Categorías -->
   <app-category-bar
     [categories]="categories()"
     [activeCategory]="selectedCategory()"
@@ -50,56 +49,57 @@
     (categorySelect)="onCategorySelect($event)"
   ></app-category-bar>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
-    <div class="flex items-center justify-between gap-3 mb-6 pb-3 border-b border-brand-border">
+  <!-- Contenido Principal: Grilla de Platos -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+    <div class="flex items-center justify-between gap-3 mb-6 pb-2 border-b border-brand-border">
       <div class="flex items-baseline gap-2">
-        <h2 class="text-lg sm:text-xl font-extrabold text-brand-text-primary font-sans">
+        <h2 class="text-base sm:text-lg font-bold text-brand-text-primary font-sans">
           {{ selectedCategory() === 'Todos' ? 'Todos los Platos' : selectedCategory() }}
         </h2>
         <span *ngIf="!isLoading()" class="text-xs font-mono text-brand-text-muted">
-          ({{ filteredDishes().length }} {{ filteredDishes().length === 1 ? 'plato' : 'platos' }})
+          ({{ filteredDishes().length }})
         </span>
       </div>
 
-      <div *ngIf="searchTerm()" class="flex items-center gap-2 text-xs">
+      <div *ngIf="searchTerm()" class="flex items-center gap-1.5 text-xs">
         <span class="text-brand-text-secondary">Filtro: <strong class="text-brand-primary">"{{ searchTerm() }}"</strong></span>
-        <button (click)="clearSearch()" class="text-brand-text-muted hover:text-brand-text-primary underline">Quitar</button>
+        <button (click)="clearSearch()" class="text-brand-text-muted hover:text-brand-text-primary underline ml-1">Quitar</button>
       </div>
     </div>
 
-    <div *ngIf="error()" class="p-6 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-center space-y-3 max-w-lg mx-auto my-8">
-      <app-icon name="alert" [size]="28" customClass="text-rose-500 mx-auto"></app-icon>
-      <h3 class="text-sm font-bold text-rose-700">Error de conexión con la carta</h3>
+    <!-- Error de Carga -->
+    <div *ngIf="error()" class="p-6 bg-rose-500/10 border border-rose-500/20 rounded-xl text-center space-y-3 max-w-md mx-auto my-8">
+      <app-icon name="alert" [size]="24" customClass="text-rose-500 mx-auto"></app-icon>
+      <h3 class="text-xs font-bold text-rose-700">Error al cargar la carta</h3>
       <p class="text-xs text-rose-600">{{ error() }}</p>
       <div>
         <button
           type="button"
           (click)="reloadDishes()"
-          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl transition-all shadow-card"
+          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg transition-all"
         >
-          Reintentar Carga
+          Reintentar
         </button>
       </div>
     </div>
 
-    <div *ngIf="isLoading() && !error()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-      <div *ngFor="let item of [1,2,3,4,5,6]" class="bg-brand-surface rounded-2xl border border-brand-border p-4 space-y-4 animate-pulse">
-        <div class="h-44 bg-brand-surface-alt rounded-xl w-full"></div>
-        <div class="space-y-2">
-          <div class="h-4 bg-brand-surface-alt rounded w-3/4"></div>
-          <div class="h-3 bg-brand-surface-alt rounded w-full"></div>
-          <div class="h-3 bg-brand-surface-alt rounded w-2/3"></div>
-        </div>
+    <!-- Skeletons de Carga -->
+    <div *ngIf="isLoading() && !error()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div *ngFor="let item of [1,2,3,4,5,6]" class="bg-brand-surface rounded-xl border border-brand-border p-4 space-y-3 animate-pulse">
+        <div class="h-40 bg-brand-surface-alt rounded-lg w-full"></div>
+        <div class="h-4 bg-brand-surface-alt rounded w-3/4"></div>
+        <div class="h-3 bg-brand-surface-alt rounded w-full"></div>
         <div class="flex justify-between items-center pt-2">
-          <div class="h-5 bg-brand-surface-alt rounded w-16"></div>
-          <div class="h-8 bg-brand-surface-alt rounded-xl w-24"></div>
+          <div class="h-4 bg-brand-surface-alt rounded w-16"></div>
+          <div class="h-7 bg-brand-surface-alt rounded-lg w-20"></div>
         </div>
       </div>
     </div>
 
+    <!-- Lista de Platos -->
     <div
       *ngIf="!isLoading() && !error() && filteredDishes().length > 0"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
     >
       <app-product-card
         *ngFor="let dish of filteredDishes()"
@@ -111,24 +111,25 @@
       ></app-product-card>
     </div>
 
+    <!-- Empty State -->
     <div
       *ngIf="!isLoading() && !error() && filteredDishes().length === 0"
-      class="py-16 text-center max-w-md mx-auto space-y-4 bg-brand-surface rounded-2xl border border-brand-border p-8"
+      class="py-14 text-center max-w-sm mx-auto space-y-3 bg-brand-surface rounded-xl border border-brand-border p-6"
     >
-      <div class="w-14 h-14 rounded-2xl bg-brand-surface-alt text-brand-text-muted flex items-center justify-center mx-auto">
-        <app-icon name="search" [size]="24"></app-icon>
+      <div class="w-12 h-12 rounded-xl bg-brand-surface-alt text-brand-text-muted flex items-center justify-center mx-auto">
+        <app-icon name="search" [size]="20"></app-icon>
       </div>
       <div>
-        <h3 class="text-base font-bold text-brand-text-primary">No hay platos disponibles</h3>
-        <p class="text-xs text-brand-text-secondary mt-1">
-          {{ searchTerm() ? 'No hay platos que coincidan con la búsqueda.' : 'No hay platos registrados en esta categoría.' }}
+        <h3 class="text-sm font-bold text-brand-text-primary">No se encontraron platos</h3>
+        <p class="text-xs text-brand-text-secondary mt-0.5">
+          {{ searchTerm() ? 'No hay platos coincidentes con tu búsqueda.' : 'No hay platos disponibles en esta categoría.' }}
         </p>
       </div>
       <div>
         <button
           type="button"
           (click)="clearAllFilters()"
-          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card"
+          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg"
         >
           Ver Todos los Platos
         </button>
@@ -136,31 +137,29 @@
     </div>
   </main>
 
+  <!-- Resumen de Pedido Flotante en Móvil (solo para clientes) -->
   <aside
     *ngIf="cartService.totalCount() > 0 && !authService.isAdmin()"
-    class="sm:hidden fixed bottom-4 left-4 right-4 z-40 bg-brand-secondary/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-dropdown border border-white/10 flex items-center justify-between"
+    class="sm:hidden fixed bottom-4 left-4 right-4 z-40 bg-brand-secondary text-white rounded-xl p-3 shadow-dropdown border border-white/10 flex items-center justify-between"
     aria-label="Resumen de pedido flotante"
   >
-    <div class="flex items-center gap-3">
-      <div class="relative w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white">
-        <app-icon name="shopping-bag" [size]="20"></app-icon>
-        <span class="absolute -top-1 -right-1 w-4 h-4 bg-white text-brand-secondary text-[9px] font-extrabold rounded-full flex items-center justify-center ring-2 ring-brand-secondary">
-          {{ cartService.totalCount() }}
-        </span>
-      </div>
+    <div class="flex items-center gap-2.5">
+      <span class="w-7 h-7 rounded-lg bg-brand-primary flex items-center justify-center text-white text-xs font-bold font-mono">
+        {{ cartService.totalCount() }}
+      </span>
       <div>
-        <span class="text-[11px] text-white/70 block">Mi Pedido</span>
-        <span class="text-sm font-bold text-white font-mono">S/ {{ cartService.total().toFixed(2) }}</span>
+        <span class="text-[10px] text-white/60 block">Total comanda</span>
+        <span class="text-xs font-bold text-white font-mono">S/ {{ cartService.total().toFixed(2) }}</span>
       </div>
     </div>
 
     <button
       type="button"
       (click)="cartService.openDrawer()"
-      class="px-4 py-2 bg-brand-primary text-white text-xs font-bold rounded-xl shadow-card flex items-center gap-1.5"
+      class="px-3.5 py-1.5 bg-brand-primary text-white text-xs font-bold rounded-lg flex items-center gap-1"
     >
-      <span>Ver Carrito</span>
-      <app-icon name="arrow-right" [size]="14"></app-icon>
+      <span>Ver Pedido</span>
+      <app-icon name="arrow-right" [size]="13"></app-icon>
     </button>
   </aside>
 

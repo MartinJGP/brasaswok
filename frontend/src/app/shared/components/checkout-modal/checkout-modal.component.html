@@ -1,29 +1,25 @@
 <div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
   <div
-    class="fixed inset-0 bg-brand-secondary/75 backdrop-blur-sm transition-opacity"
+    class="fixed inset-0 bg-brand-secondary/60 backdrop-blur-sm transition-opacity"
     (click)="step !== 'processing' ? close() : null"
     aria-hidden="true"
   ></div>
 
   <div
-    class="relative w-full max-w-xl bg-brand-surface rounded-2xl shadow-dropdown border border-brand-border overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200 my-6"
+    class="relative w-full max-w-lg bg-brand-surface rounded-2xl shadow-xl border border-brand-border overflow-hidden z-10 my-6"
     role="dialog"
     aria-modal="true"
   >
     <ng-container *ngIf="step === 'form'">
-      <div class="p-5 sm:p-6 border-b border-brand-border flex items-center justify-between bg-brand-surface-alt/50">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand-primary text-white flex items-center justify-center shadow-subtle">
-            <app-icon name="shopping-bag" [size]="18"></app-icon>
-          </div>
-          <div>
-            <h3 class="text-base sm:text-lg font-bold text-brand-text-primary font-sans">
-              Finalizar Pedido & Pago
-            </h3>
-            <p class="text-xs text-brand-text-secondary">
-              Delivery Express • Brasas a Wok
-            </p>
-          </div>
+      <!-- Cabecera -->
+      <div class="p-5 border-b border-brand-border flex items-center justify-between">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-brand-text-primary">
+            Finalizar Pedido
+          </h3>
+          <p class="text-xs text-brand-text-secondary mt-0.5">
+            Entrega a domicilio • Brasas a Wok
+          </p>
         </div>
 
         <button
@@ -32,15 +28,15 @@
           class="p-1.5 text-brand-text-muted hover:text-brand-text-primary rounded-lg transition-colors"
           aria-label="Cerrar ventana de pago"
         >
-          <app-icon name="x" [size]="20"></app-icon>
+          <app-icon name="x" [size]="18"></app-icon>
         </button>
       </div>
 
-      <form (ngSubmit)="processCheckout()" class="p-5 sm:p-6 space-y-5">
+      <form (ngSubmit)="processCheckout()" class="p-5 space-y-5">
+        <!-- 1. Datos de Entrega -->
         <div class="space-y-3">
-          <h4 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider flex items-center gap-2">
-            <app-icon name="map-pin" [size]="14" customClass="text-brand-primary"></app-icon>
-            <span>1. Datos de Entrega</span>
+          <h4 class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+            1. Datos de Entrega
           </h4>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -52,7 +48,7 @@
                 name="deliveryAddress"
                 required
                 placeholder="Ingresa tu dirección de entrega"
-                class="w-full px-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
+                class="w-full px-3 py-2 text-xs bg-brand-surface border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:border-brand-primary focus:outline-none transition-colors"
               />
             </div>
 
@@ -64,7 +60,7 @@
                 name="deliveryPhone"
                 required
                 placeholder="Ej: 987654321"
-                class="w-full px-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
+                class="w-full px-3 py-2 text-xs bg-brand-surface border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:border-brand-primary focus:outline-none transition-colors"
               />
             </div>
 
@@ -74,17 +70,17 @@
                 type="text"
                 [(ngModel)]="deliveryNotes"
                 name="deliveryNotes"
-                placeholder="Tocar timbre, dejar en recepción..."
-                class="w-full px-3 py-2 text-xs bg-brand-surface-alt border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-brand-surface focus:border-brand-primary"
+                placeholder="Piso, timbre, referencia..."
+                class="w-full px-3 py-2 text-xs bg-brand-surface border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:border-brand-primary focus:outline-none transition-colors"
               />
             </div>
           </div>
         </div>
 
-        <div class="space-y-3 pt-2 border-t border-brand-border">
-          <h4 class="text-xs font-bold text-brand-text-primary uppercase tracking-wider flex items-center gap-2">
-            <app-icon name="dollar" [size]="14" customClass="text-brand-accent"></app-icon>
-            <span>2. Método de Pago</span>
+        <!-- 2. Método de Pago -->
+        <div class="space-y-3 pt-3 border-t border-brand-border">
+          <h4 class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+            2. Método de Pago
           </h4>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -95,10 +91,10 @@
               [class.bg-brand-primary/5]="selectedMethod === 'TARJETA'"
               [class.text-brand-primary]="selectedMethod === 'TARJETA'"
               [class.border-brand-border]="selectedMethod !== 'TARJETA'"
-              [class.bg-brand-surface-alt]="selectedMethod !== 'TARJETA'"
-              class="p-2.5 rounded-xl border text-xs font-bold text-center transition-all flex flex-col items-center gap-1.5"
+              [class.text-brand-text-secondary]="selectedMethod !== 'TARJETA'"
+              class="p-2.5 rounded-xl border text-xs font-semibold text-center transition-colors flex flex-col items-center gap-1.5"
             >
-              <app-icon name="dashboard" [size]="18"></app-icon>
+              <app-icon name="dashboard" [size]="16"></app-icon>
               <span>Tarjeta</span>
             </button>
 
@@ -109,10 +105,10 @@
               [class.bg-brand-primary/5]="selectedMethod === 'YAPE_PLIN'"
               [class.text-brand-primary]="selectedMethod === 'YAPE_PLIN'"
               [class.border-brand-border]="selectedMethod !== 'YAPE_PLIN'"
-              [class.bg-brand-surface-alt]="selectedMethod !== 'YAPE_PLIN'"
-              class="p-2.5 rounded-xl border text-xs font-bold text-center transition-all flex flex-col items-center gap-1.5"
+              [class.text-brand-text-secondary]="selectedMethod !== 'YAPE_PLIN'"
+              class="p-2.5 rounded-xl border text-xs font-semibold text-center transition-colors flex flex-col items-center gap-1.5"
             >
-              <app-icon name="phone" [size]="18"></app-icon>
+              <app-icon name="phone" [size]="16"></app-icon>
               <span>Yape / Plin</span>
             </button>
 
@@ -123,10 +119,10 @@
               [class.bg-brand-primary/5]="selectedMethod === 'EFECTIVO'"
               [class.text-brand-primary]="selectedMethod === 'EFECTIVO'"
               [class.border-brand-border]="selectedMethod !== 'EFECTIVO'"
-              [class.bg-brand-surface-alt]="selectedMethod !== 'EFECTIVO'"
-              class="p-2.5 rounded-xl border text-xs font-bold text-center transition-all flex flex-col items-center gap-1.5"
+              [class.text-brand-text-secondary]="selectedMethod !== 'EFECTIVO'"
+              class="p-2.5 rounded-xl border text-xs font-semibold text-center transition-colors flex flex-col items-center gap-1.5"
             >
-              <app-icon name="dollar" [size]="18"></app-icon>
+              <app-icon name="dollar" [size]="16"></app-icon>
               <span>Efectivo</span>
             </button>
 
@@ -137,29 +133,28 @@
               [class.bg-brand-primary/5]="selectedMethod === 'TRANSFERENCIA'"
               [class.text-brand-primary]="selectedMethod === 'TRANSFERENCIA'"
               [class.border-brand-border]="selectedMethod !== 'TRANSFERENCIA'"
-              [class.bg-brand-surface-alt]="selectedMethod !== 'TRANSFERENCIA'"
-              class="p-2.5 rounded-xl border text-xs font-bold text-center transition-all flex flex-col items-center gap-1.5"
+              [class.text-brand-text-secondary]="selectedMethod !== 'TRANSFERENCIA'"
+              class="p-2.5 rounded-xl border text-xs font-semibold text-center transition-colors flex flex-col items-center gap-1.5"
             >
-              <app-icon name="truck" [size]="18"></app-icon>
+              <app-icon name="truck" [size]="16"></app-icon>
               <span>Transferencia</span>
             </button>
           </div>
 
+          <!-- Detalles Tarjeta -->
           <div *ngIf="selectedMethod === 'TARJETA'" class="space-y-3 pt-2">
-            <div class="relative w-full h-40 rounded-2xl p-4 bg-gradient-to-tr from-stone-900 via-neutral-900 to-amber-950 text-white shadow-card flex flex-col justify-between overflow-hidden border border-white/10">
+            <div class="w-full h-36 rounded-xl p-4 bg-stone-900 text-white flex flex-col justify-between border border-stone-800">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold tracking-widest uppercase text-brand-accent">Brasas a Wok • Gourmet Card</span>
-                <span class="text-xs font-mono font-bold">VISA / MC</span>
+                <span class="text-[10px] font-semibold tracking-wider uppercase text-amber-400">Brasas a Wok</span>
+                <span class="text-xs font-mono font-bold text-stone-300">VISA / MC</span>
               </div>
 
-              <div class="w-8 h-6 rounded-md bg-amber-400/80 border border-amber-300"></div>
-
               <div>
-                <span class="block font-mono text-sm sm:text-base tracking-widest font-bold">
+                <span class="block font-mono text-sm tracking-widest font-semibold">
                   {{ cardNumber || '•••• •••• •••• 4242' }}
                 </span>
-                <div class="flex items-center justify-between text-[10px] text-white/70 pt-1">
-                  <span class="uppercase">{{ cardHolder || authService.currentUser()?.fullName || 'CLIENTE GOURMET' }}</span>
+                <div class="flex items-center justify-between text-[10px] text-stone-400 pt-1">
+                  <span class="uppercase truncate max-w-[200px]">{{ cardHolder || authService.currentUser()?.fullName || 'CLIENTE' }}</span>
                   <span class="font-mono">{{ cardExpiry || '12/28' }}</span>
                 </div>
               </div>
@@ -174,7 +169,7 @@
                   name="cardNumber"
                   maxlength="19"
                   placeholder="4557 1234 5678 4242"
-                  class="w-full px-2.5 py-1.5 bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:bg-brand-surface focus:border-brand-primary"
+                  class="w-full px-2.5 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:border-brand-primary focus:outline-none"
                 />
               </div>
               <div>
@@ -185,7 +180,7 @@
                   name="cardExpiry"
                   maxlength="5"
                   placeholder="08/28"
-                  class="w-full px-2.5 py-1.5 bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:bg-brand-surface focus:border-brand-primary"
+                  class="w-full px-2.5 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:border-brand-primary focus:outline-none"
                 />
               </div>
               <div>
@@ -196,66 +191,67 @@
                   name="cardCvv"
                   maxlength="4"
                   placeholder="•••"
-                  class="w-full px-2.5 py-1.5 bg-brand-surface-alt border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:bg-brand-surface focus:border-brand-primary"
+                  class="w-full px-2.5 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-brand-text-primary font-mono text-xs focus:border-brand-primary focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
-          <div *ngIf="selectedMethod === 'YAPE_PLIN'" class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border space-y-3">
-            <div class="flex items-center gap-4">
-              <div class="w-20 h-20 bg-white p-1 rounded-xl shadow-subtle border border-brand-border flex items-center justify-center shrink-0">
-                <div class="w-full h-full bg-stone-900 rounded-lg flex flex-col items-center justify-center text-white text-[9px] font-mono leading-tight">
-                  <app-icon name="flame" [size]="20" customClass="text-brand-accent"></app-icon>
-                  <span>QR YAPE</span>
-                </div>
+          <!-- Detalles Yape/Plin -->
+          <div *ngIf="selectedMethod === 'YAPE_PLIN'" class="p-3.5 rounded-xl border border-brand-border space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-14 h-14 bg-stone-900 rounded-lg flex flex-col items-center justify-center text-white text-[9px] font-mono shrink-0">
+                <app-icon name="flame" [size]="16" customClass="text-amber-400"></app-icon>
+                <span>YAPE</span>
               </div>
-              <div class="space-y-1 text-xs">
-                <span class="font-bold text-brand-text-primary block">Yapea o Plinea al instante:</span>
-                <p class="font-mono text-sm font-extrabold text-brand-primary">987 654 321</p>
-                <p class="text-brand-text-secondary text-[11px]">Titular: Brasas a Wok S.A.C.</p>
+              <div class="space-y-0.5 text-xs">
+                <span class="text-brand-text-secondary text-[11px]">Número para pago:</span>
+                <p class="font-mono text-base font-bold text-brand-primary">987 654 321</p>
+                <p class="text-brand-text-muted text-[11px]">Titular: Brasas a Wok S.A.C.</p>
               </div>
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-brand-text-primary mb-1">
-                Código de Operación o Aprobación
+              <label class="block text-[11px] font-medium text-brand-text-secondary mb-1">
+                Código de Operación
               </label>
               <input
                 type="text"
                 [(ngModel)]="yapeRef"
                 name="yapeRef"
                 placeholder="Ej: 849201"
-                class="w-full px-3 py-2 text-xs bg-brand-surface border border-brand-border rounded-xl font-mono text-brand-text-primary focus:border-brand-primary"
+                class="w-full px-3 py-1.5 text-xs bg-brand-surface border border-brand-border rounded-lg font-mono text-brand-text-primary focus:border-brand-primary focus:outline-none"
               />
             </div>
           </div>
 
-          <div *ngIf="selectedMethod === 'EFECTIVO'" class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border space-y-2.5 text-xs">
-            <span class="font-bold text-brand-text-primary block">Pago en Efectivo contra Entrega</span>
+          <!-- Detalles Efectivo -->
+          <div *ngIf="selectedMethod === 'EFECTIVO'" class="p-3.5 rounded-xl border border-brand-border space-y-2 text-xs">
+            <span class="font-semibold text-brand-text-primary block">Pago en Efectivo contra Entrega</span>
             <p class="text-brand-text-secondary text-[11px]">
-              El repartidor llevará vuelto exacto según tu indicación.
+              Indica con cuánto pagarás para que el repartidor lleve vuelto exacto.
             </p>
-            <div class="flex items-center gap-3">
-              <label class="text-brand-text-secondary">¿Pagas con billete de:</label>
+            <div class="flex items-center gap-3 pt-1">
+              <label class="text-brand-text-secondary">Pagas con billete de:</label>
               <div class="relative w-32">
-                <span class="absolute left-2.5 top-2 text-xs font-bold text-brand-text-muted">S/</span>
+                <span class="absolute left-2.5 top-1.5 text-xs font-bold text-brand-text-muted">S/</span>
                 <input
                   type="number"
                   [(ngModel)]="cashAmount"
                   name="cashAmount"
-                  class="w-full pl-7 pr-2 py-1.5 text-xs bg-brand-surface border border-brand-border rounded-lg text-brand-text-primary font-mono font-bold"
+                  class="w-full pl-7 pr-2 py-1 text-xs bg-brand-surface border border-brand-border rounded-lg text-brand-text-primary font-mono font-bold focus:border-brand-primary focus:outline-none"
                 />
               </div>
             </div>
-            <div *ngIf="cashAmount > cartService.total()" class="text-[11px] text-brand-status-success font-semibold">
-              Tu vuelto será: S/ {{ (cashAmount - cartService.total()).toFixed(2) }}
+            <div *ngIf="cashAmount > cartService.total()" class="text-[11px] text-emerald-700 font-semibold pt-1">
+              Vuelto estimado: S/ {{ (cashAmount - cartService.total()).toFixed(2) }}
             </div>
           </div>
 
-          <div *ngIf="selectedMethod === 'TRANSFERENCIA'" class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border space-y-2 text-xs">
-            <span class="font-bold text-brand-text-primary block">Cuentas Corrientes Empresariales:</span>
-            <p class="text-[11px] text-brand-text-secondary">
+          <!-- Detalles Transferencia -->
+          <div *ngIf="selectedMethod === 'TRANSFERENCIA'" class="p-3.5 rounded-xl border border-brand-border space-y-2 text-xs">
+            <span class="font-semibold text-brand-text-primary block">Cuentas Corrientes Bancarias:</span>
+            <p class="text-[11px] text-brand-text-secondary leading-relaxed">
               <strong>BCP Soles:</strong> 193-84729104-0-91<br>
               <strong>BBVA Soles:</strong> 0011-0284-0100049281<br>
               <strong>CCI:</strong> 002-193-008472910400-91
@@ -264,92 +260,92 @@
               type="text"
               [(ngModel)]="transferRef"
               name="transferRef"
-              placeholder="Número de operación de transferencia"
-              class="w-full px-3 py-2 text-xs bg-brand-surface border border-brand-border rounded-xl font-mono text-brand-text-primary focus:border-brand-primary"
+              placeholder="Número de comprobante bancario"
+              class="w-full px-3 py-1.5 text-xs bg-brand-surface border border-brand-border rounded-lg font-mono text-brand-text-primary focus:border-brand-primary focus:outline-none"
             />
           </div>
         </div>
 
-        <div class="pt-3 border-t border-brand-border space-y-2">
+        <!-- Resumen de Costos -->
+        <div class="pt-3 border-t border-brand-border space-y-1.5">
           <div class="flex justify-between text-xs text-brand-text-secondary">
             <span>Subtotal ({{ cartService.totalCount() }} platos):</span>
-            <span class="font-mono">S/ {{ cartService.subtotal().toFixed(2) }}</span>
+            <span class="font-mono text-brand-text-primary">S/ {{ cartService.subtotal().toFixed(2) }}</span>
           </div>
           <div class="flex justify-between text-xs text-brand-text-secondary">
             <span>Delivery:</span>
-            <span class="font-mono">S/ {{ cartService.deliveryFee().toFixed(2) }}</span>
+            <span class="font-mono text-brand-text-primary">S/ {{ cartService.deliveryFee().toFixed(2) }}</span>
           </div>
-          <div class="flex justify-between text-sm sm:text-base font-bold text-brand-text-primary pt-1 border-t border-brand-border">
+          <div class="flex justify-between text-sm font-bold text-brand-text-primary pt-2 border-t border-brand-border">
             <span>Total a Pagar:</span>
-            <span class="font-mono text-brand-primary text-lg">S/ {{ cartService.total().toFixed(2) }}</span>
+            <span class="font-mono text-brand-primary text-base">S/ {{ cartService.total().toFixed(2) }}</span>
           </div>
         </div>
 
         <button
           type="submit"
           [disabled]="!deliveryAddress || !deliveryPhone"
-          class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-card transition-all active:scale-95 flex items-center justify-center gap-2"
+          class="w-full py-2.5 px-4 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
         >
-          <app-icon name="check" [size]="18"></app-icon>
-          <span>Pagar y Confirmar Pedido • S/ {{ cartService.total().toFixed(2) }}</span>
+          <app-icon name="check" [size]="16"></app-icon>
+          <span>Pagar y Confirmar Pedido</span>
         </button>
       </form>
     </ng-container>
 
-    <div *ngIf="step === 'processing'" class="p-12 text-center space-y-4">
-      <div class="w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary mx-auto flex items-center justify-center animate-spin">
-        <app-icon name="flame" [size]="32"></app-icon>
-      </div>
+    <!-- Estado de procesamiento -->
+    <div *ngIf="step === 'processing'" class="p-12 text-center space-y-3">
+      <div class="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
       <div class="space-y-1">
         <h4 class="text-base font-bold text-brand-text-primary">Procesando tu pedido</h4>
         <p class="text-xs text-brand-text-secondary">
-          Conectando con cocina y validando pago simulado...
+          Confirmando detalles y conectando con el sistema...
         </p>
       </div>
     </div>
 
-    <div *ngIf="step === 'success'" class="p-6 sm:p-8 text-center space-y-6 animate-in fade-in duration-300">
-      <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center border border-emerald-500/20 shadow-subtle">
-        <app-icon name="check" [size]="32"></app-icon>
+    <!-- Estado de éxito -->
+    <div *ngIf="step === 'success'" class="p-6 sm:p-8 text-center space-y-6">
+      <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center border border-emerald-200">
+        <app-icon name="check" [size]="24"></app-icon>
       </div>
 
       <div class="space-y-1">
-        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 block">
-          ¡Pago y Pedido Confirmados!
+        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-700 block">
+          ¡Pedido Confirmado!
         </span>
-        <h3 class="text-xl sm:text-2xl font-black text-brand-text-primary font-sans">
-          Orden #BW-{{ confirmedOrderNumber }}
+        <h3 class="text-xl font-bold text-brand-text-primary">
+          Ticket #BW-{{ confirmedOrderNumber }}
         </h3>
         <p class="text-xs text-brand-text-secondary max-w-sm mx-auto leading-relaxed">
-          La cocina ha recibido tu comanda. Tus platos serán preparados al momento con fuego vivo.
+          Tu comanda ingresó a cocina. Puedes rastrear el estado en Mis Pedidos.
         </p>
       </div>
 
-      <div class="p-4 bg-brand-surface-alt rounded-2xl border border-brand-border text-xs text-left space-y-2.5">
+      <div class="p-4 bg-stone-50 rounded-xl border border-brand-border text-xs text-left space-y-2">
         <div class="flex items-center justify-between pb-2 border-b border-brand-border">
-          <span class="text-brand-text-muted">Estado Actual:</span>
-          <span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold flex items-center gap-1">
-            <app-icon name="flame" [size]="12"></app-icon>
-            <span>En Cola de Cocina</span>
+          <span class="text-brand-text-muted">Estado Inicial:</span>
+          <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-semibold">
+            Confirmado
           </span>
         </div>
 
         <div class="flex items-center justify-between">
           <span class="text-brand-text-muted">Tiempo Estimado:</span>
-          <span class="font-bold text-brand-text-primary">30 - 45 minutos</span>
+          <span class="font-semibold text-brand-text-primary">30 - 45 minutos</span>
         </div>
 
         <div class="flex items-center justify-between">
           <span class="text-brand-text-muted">Destino:</span>
-          <span class="font-medium text-brand-text-primary truncate max-w-[200px]">{{ deliveryAddress }}</span>
+          <span class="text-brand-text-primary truncate max-w-[200px]">{{ deliveryAddress }}</span>
         </div>
 
         <div class="flex items-center justify-between">
           <span class="text-brand-text-muted">Método de Pago:</span>
-          <span class="font-semibold text-brand-primary">{{ selectedMethod }}</span>
+          <span class="font-medium text-brand-text-primary">{{ selectedMethod }}</span>
         </div>
 
-        <div class="flex items-center justify-between pt-2 border-t border-brand-border text-sm font-bold">
+        <div class="flex items-center justify-between pt-2 border-t border-brand-border font-bold">
           <span>Total Pagado:</span>
           <span class="font-mono text-brand-primary">S/ {{ confirmedTotal.toFixed(2) }}</span>
         </div>
@@ -358,15 +354,16 @@
       <button
         type="button"
         (click)="finish()"
-        class="w-full py-3.5 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-card transition-all active:scale-95"
+        class="w-full py-2.5 px-4 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors shadow-sm"
       >
         Listo, volver a la Carta
       </button>
     </div>
 
-    <div *ngIf="step === 'error'" class="p-8 text-center space-y-4 animate-in fade-in duration-200">
-      <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-500 mx-auto flex items-center justify-center border border-rose-500/20 shadow-subtle">
-        <app-icon name="alert" [size]="32"></app-icon>
+    <!-- Estado de error -->
+    <div *ngIf="step === 'error'" class="p-8 text-center space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-600 mx-auto flex items-center justify-center border border-rose-200">
+        <app-icon name="alert" [size]="24"></app-icon>
       </div>
       <div class="space-y-1">
         <h4 class="text-base font-bold text-brand-text-primary">No se pudo completar el pedido</h4>
@@ -378,14 +375,14 @@
         <button
           type="button"
           (click)="step = 'form'"
-          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all"
+          class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
         >
-          Volver al Formulario
+          Reintentar
         </button>
         <button
           type="button"
           (click)="close()"
-          class="px-4 py-2 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+          class="px-4 py-2 bg-brand-surface hover:bg-stone-50 text-brand-text-primary text-xs font-medium rounded-xl border border-brand-border transition-colors"
         >
           Cerrar
         </button>

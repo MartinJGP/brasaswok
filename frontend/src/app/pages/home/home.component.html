@@ -1,264 +1,204 @@
-<div class="space-y-16 lg:space-y-24 pb-20">
-  <section class="relative bg-brand-secondary text-white py-16 lg:py-24 overflow-hidden">
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="space-y-14 lg:space-y-20 pb-16">
+  <!-- Hero Principal -->
+  <section class="bg-brand-secondary text-white py-14 lg:py-20 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl space-y-5">
+        <span class="inline-block text-xs font-bold tracking-wider uppercase text-brand-accent">
+          Salón & Delivery Express
+        </span>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="max-w-3xl space-y-6">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold tracking-wider uppercase text-brand-accent">
-          <app-icon name="flame" [size]="14" customClass="text-brand-accent"></app-icon>
-          <span>Delivery & Salón • Brasas & Wok</span>
-        </div>
-
-        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-sans leading-tight text-white">
-          El fuego de la brasa.<br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-accent to-amber-400">
-            La energía viva del wok.
-          </span>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-sans text-white leading-tight">
+          El sabor auténtico de la brasa y la fuerza del wok.
         </h1>
 
-        <p class="text-sm sm:text-base lg:text-lg text-white/75 font-normal leading-relaxed max-w-2xl">
-          Pollo a la brasa dorado a carbón con receta secreta, y salteados criollo-orientales preparados al segundo al fuego vivo. Selecciona tus platos y recíbelos calientes en tu domicilio.
+        <p class="text-sm sm:text-base text-white/70 font-normal leading-relaxed">
+          Pollo a la brasa dorado al carbón con receta tradicional y salteados criollos preparados al instante a fuego vivo.
         </p>
 
         <div class="pt-2 flex flex-wrap items-center gap-3">
           <a
             routerLink="/carta"
-            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-sm font-bold rounded-xl shadow-card transition-all transform active:scale-95"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-bold rounded-xl transition-all active:scale-95"
           >
             <span>Explorar la Carta</span>
-            <app-icon name="arrow-right" [size]="18"></app-icon>
-          </a>
-
-          <a
-            routerLink="/horarios"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold rounded-xl border border-white/15 transition-colors"
-          >
-            <app-icon name="clock" [size]="16"></app-icon>
-            <span>Horarios</span>
+            <app-icon name="arrow-right" [size]="16"></app-icon>
           </a>
 
           <a
             routerLink="/sedes"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-white/10 hover:bg-white/15 text-white text-sm font-semibold rounded-xl border border-white/15 transition-colors"
+            class="inline-flex items-center gap-2 px-4 py-3 text-white/80 hover:text-white text-xs sm:text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors"
           >
-            <app-icon name="map-pin" [size]="16"></app-icon>
-            <span>Sedes & Zonas</span>
+            <app-icon name="map-pin" [size]="15"></app-icon>
+            <span>Sedes & Horarios</span>
           </a>
         </div>
       </div>
 
-      <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 pt-10 border-t border-white/10">
-        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-          <div class="w-10 h-10 rounded-lg bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0">
-            <app-icon name="flame" [size]="20"></app-icon>
-          </div>
+      <!-- 3 Pilares Gastronomicos -->
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-white/10 text-xs">
+        <div class="flex items-start gap-3">
+          <app-icon name="flame" [size]="20" customClass="text-brand-primary shrink-0 mt-0.5"></app-icon>
           <div>
-            <h2 class="text-sm font-bold text-white font-sans">100% Carbón & Leña</h2>
-            <p class="text-xs text-white/60 mt-1 leading-relaxed">
-              Maceración tradicional de 24 horas y cocción lenta para lograr piel crocante y carne sumamente jugosa.
-            </p>
+            <h2 class="font-bold text-white text-sm">100% Carbón & Leña</h2>
+            <p class="text-white/60 mt-0.5 leading-relaxed">Maceración de 24 horas para piel dorada y carne jugosa.</p>
           </div>
         </div>
 
-        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-          <div class="w-10 h-10 rounded-lg bg-brand-accent/20 text-brand-accent flex items-center justify-center shrink-0">
-            <app-icon name="menu" [size]="20"></app-icon>
-          </div>
+        <div class="flex items-start gap-3">
+          <app-icon name="menu" [size]="20" customClass="text-brand-accent shrink-0 mt-0.5"></app-icon>
           <div>
-            <h2 class="text-sm font-bold text-white font-sans">Wok Hei al Instante</h2>
-            <p class="text-xs text-white/60 mt-1 leading-relaxed">
-              Salteados a fuego extremo de 300°C que sellan los jugos del lomo y conservan los vegetales crocantes.
-            </p>
+            <h2 class="font-bold text-white text-sm">Wok al Momento</h2>
+            <p class="text-white/60 mt-0.5 leading-relaxed">Salteados criollos al segundo que conservan los jugos y textura.</p>
           </div>
         </div>
 
-        <div class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-          <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <app-icon name="truck" [size]="20"></app-icon>
-          </div>
+        <div class="flex items-start gap-3">
+          <app-icon name="truck" [size]="20" customClass="text-emerald-400 shrink-0 mt-0.5"></app-icon>
           <div>
-            <h2 class="text-sm font-bold text-white font-sans">Delivery Térmico</h2>
-            <p class="text-xs text-white/60 mt-1 leading-relaxed">
-              Empaques térmicos herméticos que garantizan frescura y temperatura ideal en tu domicilio.
-            </p>
+            <h2 class="font-bold text-white text-sm">Delivery Rápido y Caliente</h2>
+            <p class="text-white/60 mt-0.5 leading-relaxed">Empaques herméticos que conservan temperatura y crocancia.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Seccion Platos Estrella -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-2xl mx-auto space-y-2 mb-10">
-      <span class="text-xs font-bold uppercase tracking-wider text-brand-primary">Selección del Chef</span>
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary tracking-tight font-sans">
-        Platos Estrella de Brasas a Wok
-      </h2>
-      <p class="text-xs sm:text-sm text-brand-text-secondary">
-        Los favoritos más solicitados por nuestros comensales tanto en salón como en delivery.
-      </p>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary tracking-tight font-sans">
+          Platos Estrella
+        </h2>
+        <p class="text-xs sm:text-sm text-brand-text-secondary mt-0.5">
+          Los favoritos más pedidos de nuestra carta.
+        </p>
+      </div>
+
+      <a
+        routerLink="/carta"
+        class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-primary hover:text-brand-primary-hover transition-colors"
+      >
+        <span>Ver toda la carta</span>
+        <app-icon name="arrow-right" [size]="14"></app-icon>
+      </a>
     </div>
 
+    <!-- Skeletons de Carga -->
     <div *ngIf="menuService.isLoading()" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div *ngFor="let item of [1, 2, 3]" class="bg-brand-surface rounded-2xl border border-brand-border p-5 space-y-4 animate-pulse">
-        <div class="h-44 bg-brand-surface-alt rounded-xl"></div>
+      <div *ngFor="let item of [1, 2, 3]" class="bg-brand-surface rounded-xl border border-brand-border p-4 space-y-3 animate-pulse">
+        <div class="h-40 bg-brand-surface-alt rounded-lg"></div>
         <div class="h-4 bg-brand-surface-alt rounded w-3/4"></div>
         <div class="h-3 bg-brand-surface-alt rounded w-full"></div>
-        <div class="h-8 bg-brand-surface-alt rounded"></div>
       </div>
     </div>
 
+    <!-- Lista de Platos Estrella -->
     <div *ngIf="!menuService.isLoading()" class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <article
         *ngFor="let dish of starDishes()"
         (click)="openDishModal(dish)"
-        class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card hover:border-brand-primary/40 hover:shadow-dropdown transition-all flex flex-col justify-between cursor-pointer group"
+        class="bg-brand-surface rounded-xl border border-brand-border overflow-hidden hover:border-brand-primary/40 transition-colors flex flex-col justify-between cursor-pointer group"
       >
-        <div class="relative h-48 w-full bg-brand-surface-alt overflow-hidden">
+        <div class="relative h-44 w-full bg-brand-surface-alt overflow-hidden">
           <img
             [src]="dish.imageUrl"
             [alt]="dish.name"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-brand-secondary/80 backdrop-blur-sm text-white">
-              {{ dish.category }}
-            </span>
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-brand-accent text-white flex items-center gap-1">
-              <app-icon name="flame" [size]="10"></app-icon>
-              Estrella
-            </span>
-          </div>
+          <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-brand-secondary/80 text-white">
+            {{ dish.category }}
+          </span>
         </div>
 
-        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-          <div class="space-y-2">
-            <h3 class="text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans">
+        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-brand-text-primary group-hover:text-brand-primary transition-colors font-sans">
               {{ dish.name }}
             </h3>
-            <p class="text-xs text-brand-text-secondary leading-relaxed line-clamp-2">
+            <p class="text-xs text-brand-text-secondary mt-1 line-clamp-2">
               {{ dish.description }}
             </p>
           </div>
 
           <div class="pt-3 border-t border-brand-border flex items-center justify-between">
-            <span class="text-lg font-bold text-brand-primary font-mono">
+            <span class="text-base font-bold text-brand-primary font-mono">
               S/ {{ dish.price.toFixed(2) }}
             </span>
 
             <button
               type="button"
               (click)="quickAdd(dish, $event)"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-subtle active:scale-95"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95"
               [ngClass]="
                 getQuantityInCart(dish.id) > 0
-                  ? 'bg-brand-secondary text-white hover:bg-brand-secondary-hover'
-                  : 'bg-brand-primary hover:bg-brand-primary-hover text-white shadow-card'
+                  ? 'bg-brand-secondary text-white'
+                  : 'bg-brand-primary hover:bg-brand-primary-hover text-white'
               "
             >
-              <app-icon [name]="getQuantityInCart(dish.id) > 0 ? 'check' : 'plus'" [size]="14"></app-icon>
-              <span>
-                {{ getQuantityInCart(dish.id) > 0 ? getQuantityInCart(dish.id) + ' añadido' : 'Pedir' }}
-              </span>
+              <app-icon [name]="getQuantityInCart(dish.id) > 0 ? 'check' : 'plus'" [size]="13"></app-icon>
+              <span>{{ getQuantityInCart(dish.id) > 0 ? getQuantityInCart(dish.id) : 'Pedir' }}</span>
             </button>
           </div>
         </div>
       </article>
     </div>
-
-    <div class="mt-12 text-center">
-      <a
-        routerLink="/carta"
-        class="inline-flex items-center gap-2.5 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-bold rounded-2xl shadow-card transition-all active:scale-95"
-      >
-        <span>Ver Carta Completa con Filtros y Buscador</span>
-        <app-icon name="arrow-right" [size]="16"></app-icon>
-      </a>
-    </div>
   </section>
 
+  <!-- Informacion Rapida: Horarios y Sedes -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 sm:p-8 shadow-card flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-primary-light text-brand-primary flex items-center justify-center">
-            <app-icon name="clock" [size]="20"></app-icon>
-          </div>
-          <h3 class="text-base sm:text-lg font-bold text-brand-text-primary font-sans">
-            Horarios de Atención
-          </h3>
-          <p class="text-xs text-brand-text-secondary leading-relaxed">
-            Atendemos de lunes a domingo para consumo en salón y delivery a domicilio en horario continuo.
-          </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-5 space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm text-brand-text-primary font-sans">Horarios de Atención</h3>
+          <span class="text-[11px] font-semibold text-emerald-600">Abierto Hoy</span>
         </div>
-
-        <div class="pt-4 border-t border-brand-border flex items-center justify-between">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Abierto Hoy
-          </span>
-
-          <a
-            routerLink="/horarios"
-            class="text-xs font-bold text-brand-primary hover:text-brand-primary-hover transition-colors"
-          >
-            Consultar turnos →
+        <p class="text-brand-text-secondary leading-relaxed">
+          Atención en salón y delivery continuo de lunes a domingo.
+        </p>
+        <div class="pt-1">
+          <a routerLink="/horarios" class="text-brand-primary font-semibold hover:underline">
+            Ver detalle de turnos →
           </a>
         </div>
       </div>
 
-      <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 sm:p-8 shadow-card flex flex-col justify-between space-y-4">
-        <div class="space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-accent-light text-brand-accent flex items-center justify-center">
-            <app-icon name="map-pin" [size]="20"></app-icon>
-          </div>
-          <h3 class="text-base sm:text-lg font-bold text-brand-text-primary font-sans">
-            Sede San Borja & Delivery
-          </h3>
-          <p class="text-xs text-brand-text-secondary leading-relaxed">
-            Av. Javier Prado Este 1234, San Borja. Cobertura en Surco, San Isidro, Miraflores y La Victoria.
-          </p>
+      <div class="bg-brand-surface rounded-xl border border-brand-border p-5 space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm text-brand-text-primary font-sans">Sede San Borja</h3>
+          <span class="text-[11px] text-brand-text-muted">Lima, Perú</span>
         </div>
-
-        <div class="pt-4 border-t border-brand-border flex items-center justify-between">
-          <span class="text-xs text-brand-text-muted">
-            Salón climatizado & Estacionamiento
-          </span>
-
-          <a
-            routerLink="/sedes"
-            class="text-xs font-bold text-brand-primary hover:text-brand-primary-hover transition-colors"
-          >
-            Ver mapa y zonas →
+        <p class="text-brand-text-secondary leading-relaxed">
+          Av. Javier Prado Este 1234. Cobertura delivery en distritos aledaños.
+        </p>
+        <div class="pt-1">
+          <a routerLink="/sedes" class="text-brand-primary font-semibold hover:underline">
+            Ver cobertura y contacto →
           </a>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Barra Flotante de Pedido para Clientes -->
   <aside
     *ngIf="cartService.totalCount() > 0 && !authService.isAdmin()"
-    class="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 max-w-md w-full"
+    class="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 max-w-sm w-full"
     aria-label="Resumen de pedido"
   >
-    <div class="bg-brand-secondary text-white p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white shrink-0 font-bold">
-          {{ cartService.totalCount() }}
-        </div>
-        <div>
-          <span class="text-xs text-white/70 block">Total del pedido:</span>
-          <span class="text-base font-bold text-white font-mono">S/ {{ cartService.total().toFixed(2) }}</span>
-        </div>
+    <div class="bg-brand-secondary text-white p-3.5 rounded-xl shadow-dropdown border border-white/10 flex items-center justify-between gap-3">
+      <div>
+        <span class="text-[11px] text-white/60 block">Tu pedido ({{ cartService.totalCount() }} platos)</span>
+        <span class="text-sm font-bold text-white font-mono">S/ {{ cartService.total().toFixed(2) }}</span>
       </div>
 
       <button
         type="button"
         (click)="cartService.openDrawer()"
-        class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+        class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg transition-all active:scale-95"
       >
         <span>Ver Pedido</span>
-        <app-icon name="arrow-right" [size]="16"></app-icon>
+        <app-icon name="arrow-right" [size]="14"></app-icon>
       </button>
     </div>
   </aside>

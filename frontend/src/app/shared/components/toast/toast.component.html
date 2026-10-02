@@ -3,12 +3,7 @@
   class="fixed bottom-5 right-4 left-4 sm:left-auto sm:right-5 sm:max-w-sm z-50 pointer-events-auto transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
 >
   <div
-    class="flex items-center gap-3 p-3.5 rounded-2xl shadow-floating border bg-brand-surface text-brand-text-primary backdrop-blur-md"
-    [ngClass]="{
-      'border-emerald-500/30 shadow-emerald-500/10': currentToast.type === 'success',
-      'border-sky-500/30 shadow-sky-500/10': currentToast.type === 'info',
-      'border-rose-500/30 shadow-rose-500/10': currentToast.type === 'error'
-    }"
+    class="flex items-center gap-3 p-3.5 rounded-2xl shadow-lg border border-brand-border bg-brand-surface text-brand-text-primary"
   >
     <div
       class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"

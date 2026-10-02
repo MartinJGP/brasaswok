@@ -1,25 +1,27 @@
 <div class="space-y-6">
+  <!-- Encabezado de la página -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-4">
     <div>
-      <h1 class="text-xl sm:text-2xl font-extrabold text-brand-text-primary font-sans">
-        Gestión de Pedidos & Comandas
+      <h1 class="text-xl sm:text-2xl font-bold text-brand-text-primary">
+        Gestión de Pedidos
       </h1>
       <p class="text-xs text-brand-text-secondary mt-0.5">
-        Seguimiento de pedidos, estados de entrega y auditoría de cambios.
+        Control de comandas, seguimiento de estados y auditoría operativa.
       </p>
     </div>
 
     <button
       type="button"
       (click)="loadOrders()"
-      class="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-surface border border-brand-border text-brand-text-primary text-xs font-semibold rounded-xl hover:bg-brand-surface-alt transition-colors shadow-subtle self-start sm:self-auto"
+      class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-surface border border-brand-border text-brand-text-primary text-xs font-semibold rounded-xl hover:bg-stone-50 transition-colors self-start sm:self-auto"
     >
       <app-icon name="dashboard" [size]="14"></app-icon>
       <span>Actualizar</span>
     </button>
   </div>
 
-  <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+  <!-- Pestañas de Filtrado por Estado -->
+  <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
     <button
       *ngFor="let tab of statusTabs"
       type="button"
@@ -29,34 +31,38 @@
       [class.border-brand-primary]="selectedStatus() === tab"
       [class.bg-brand-surface]="selectedStatus() !== tab"
       [class.text-brand-text-secondary]="selectedStatus() !== tab"
-      class="px-3.5 py-2 rounded-xl text-xs font-bold border border-brand-border transition-all whitespace-nowrap shadow-subtle active:scale-95"
+      class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-brand-border transition-colors whitespace-nowrap"
     >
       {{ getTabLabel(tab) }}
     </button>
   </div>
 
+  <!-- Estado de carga -->
   <div *ngIf="isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
-    <div class="inline-block w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
-    <p>Cargando comandas desde el servidor...</p>
+    <div class="inline-block w-5 h-5 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+    <p>Cargando comandas...</p>
   </div>
 
+  <!-- Estado vacío -->
   <div *ngIf="!isLoading() && orders().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-2">
-    <div class="w-12 h-12 rounded-xl bg-brand-surface-alt text-brand-text-muted flex items-center justify-center mx-auto">
-      <app-icon name="orders" [size]="24"></app-icon>
+    <div class="w-10 h-10 rounded-xl bg-stone-100 text-brand-text-muted flex items-center justify-center mx-auto">
+      <app-icon name="orders" [size]="20"></app-icon>
     </div>
-    <h3 class="text-sm font-bold text-brand-text-primary">No hay comandas en este estado</h3>
+    <h3 class="text-sm font-bold text-brand-text-primary">No hay pedidos en este estado</h3>
     <p class="text-xs text-brand-text-secondary">Selecciona otra pestaña o actualiza la lista.</p>
   </div>
 
+  <!-- Listado de tarjetas de comandas -->
   <div *ngIf="!isLoading() && orders().length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
     <article
       *ngFor="let order of orders()"
-      class="bg-brand-surface rounded-2xl border border-brand-border p-5 shadow-card hover:border-brand-primary/40 transition-all flex flex-col justify-between space-y-4"
+      class="bg-brand-surface rounded-2xl border border-brand-border p-5 flex flex-col justify-between space-y-4 hover:border-brand-border/90 transition-colors"
     >
       <div class="space-y-3">
+        <!-- Cabecera de la tarjeta: Ticket, método de pago y badge -->
         <div class="flex items-center justify-between pb-3 border-b border-brand-border">
           <div>
-            <span class="text-base font-extrabold font-mono text-brand-text-primary block">
+            <span class="text-base font-bold font-mono text-brand-text-primary block">
               #{{ order.orderNumber }}
             </span>
             <span class="text-[11px] text-brand-text-muted">
@@ -65,41 +71,42 @@
           </div>
 
           <span
-            class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1"
+            class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1"
             [ngClass]="{
-              'bg-amber-500/10 text-amber-500 border border-amber-500/30': order.status === 'PENDIENTE',
-              'bg-brand-primary/10 text-brand-primary border border-brand-primary/30': order.status === 'EN_COCINA',
-              'bg-sky-500/10 text-sky-400 border border-sky-500/30': order.status === 'EN_CAMINO',
-              'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30': order.status === 'ENTREGADO',
-              'bg-rose-500/10 text-rose-400 border border-rose-500/30': order.status === 'CANCELADO'
+              'bg-amber-100 text-amber-800 border border-amber-200': order.status === 'PENDIENTE',
+              'bg-brand-primary/10 text-brand-primary border border-brand-primary/20': order.status === 'EN_COCINA',
+              'bg-sky-100 text-sky-800 border border-sky-200': order.status === 'EN_CAMINO',
+              'bg-emerald-100 text-emerald-800 border border-emerald-200': order.status === 'ENTREGADO',
+              'bg-rose-100 text-rose-800 border border-rose-200': order.status === 'CANCELADO'
             }"
           >
-            <app-icon name="flame" [size]="12"></app-icon>
             <span>{{ order.status }}</span>
           </span>
         </div>
 
+        <!-- Datos del cliente y entrega -->
         <div class="space-y-1 text-xs">
           <div class="flex justify-between text-brand-text-secondary">
             <span>Cliente:</span>
-            <strong class="text-brand-text-primary">{{ order.customerName }}</strong>
+            <strong class="text-brand-text-primary font-medium">{{ order.customerName }}</strong>
           </div>
           <div class="flex justify-between text-brand-text-secondary">
             <span>Teléfono:</span>
             <span class="font-mono text-brand-text-primary">{{ order.deliveryPhone }}</span>
           </div>
-          <div class="text-brand-text-secondary pt-1">
+          <div class="text-brand-text-secondary pt-0.5">
             <span class="block text-brand-text-muted text-[10px] uppercase font-semibold">Dirección:</span>
-            <span class="text-brand-text-primary">{{ order.deliveryAddress }}</span>
+            <span class="text-brand-text-primary truncate block">{{ order.deliveryAddress }}</span>
           </div>
-          <div *ngIf="order.deliveryNotes" class="p-2 bg-brand-surface-alt rounded-lg text-brand-accent text-[11px] italic">
-            "{{ order.deliveryNotes }}"
+          <div *ngIf="order.deliveryNotes" class="p-2 bg-stone-50 border border-brand-border rounded-lg text-brand-text-secondary text-[11px] italic">
+            Nota: "{{ order.deliveryNotes }}"
           </div>
         </div>
 
+        <!-- Platos de la comanda -->
         <div class="pt-2 border-t border-brand-border/60">
-          <span class="text-[10px] uppercase tracking-wider font-bold text-brand-text-muted block mb-1.5">
-            Platos de la Comanda
+          <span class="text-[10px] uppercase tracking-wider font-semibold text-brand-text-muted block mb-1">
+            Platos solicitados
           </span>
           <ul class="space-y-1 text-xs text-brand-text-primary">
             <li *ngFor="let item of order.items" class="flex justify-between">
@@ -110,57 +117,62 @@
         </div>
       </div>
 
+      <!-- Acciones de cambio de estado -->
       <div class="pt-3 border-t border-brand-border flex items-center justify-between gap-2">
         <button
           type="button"
           (click)="viewLogs(order)"
-          class="px-2.5 py-1.5 text-brand-text-muted hover:text-brand-text-primary text-[11px] font-semibold rounded-lg hover:bg-brand-surface-alt transition-colors"
+          class="px-2 py-1 text-brand-text-muted hover:text-brand-text-primary text-[11px] font-medium rounded-lg hover:bg-stone-50 transition-colors"
         >
           Auditoría
         </button>
 
         <div class="flex items-center gap-1.5">
+          <!-- PENDIENTE -> EN_COCINA -->
           <button
             *ngIf="order.status === 'PENDIENTE'"
             type="button"
             (click)="changeStatus(order, 'EN_COCINA')"
-            class="px-3 py-1.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+            class="px-3 py-1.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
           >
             A Cocina →
           </button>
 
+          <!-- EN_COCINA -> EN_CAMINO -->
           <button
             *ngIf="order.status === 'EN_COCINA'"
             type="button"
             (click)="changeStatus(order, 'EN_CAMINO')"
-            class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+            class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
           >
             Despachar →
           </button>
 
+          <!-- EN_CAMINO -> REVERTIR o ENTREGADO -->
           <div *ngIf="order.status === 'EN_CAMINO'" class="flex items-center gap-1.5">
             <button
               type="button"
               (click)="changeStatus(order, 'EN_COCINA', 'Corrección: retornado a cocina por error de despacho')"
-              class="px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 border border-amber-500/30 text-xs font-semibold rounded-lg transition-all active:scale-95"
+              class="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-medium rounded-lg transition-colors"
               title="Corregir error y retornar la comanda a cocina"
             >
-              ← Revertir a Cocina
+              ← Revertir
             </button>
             <button
               type="button"
               (click)="changeStatus(order, 'ENTREGADO')"
-              class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-card transition-all active:scale-95"
+              class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
             >
               Entregado ✓
             </button>
           </div>
 
+          <!-- Cancelar si está en etapas tempranas -->
           <button
             *ngIf="order.status === 'PENDIENTE' || order.status === 'EN_COCINA'"
             type="button"
             (click)="changeStatus(order, 'CANCELADO')"
-            class="px-2 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg text-xs font-semibold transition-colors"
+            class="px-2 py-1 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-medium transition-colors"
           >
             Cancelar
           </button>
@@ -169,24 +181,25 @@
     </article>
   </div>
 
-  <div *ngIf="selectedOrderForLogs()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/70 backdrop-blur-sm">
-    <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 max-w-md w-full shadow-dropdown space-y-4">
+  <!-- Modal de Auditoría -->
+  <div *ngIf="selectedOrderForLogs()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-secondary/60 backdrop-blur-sm">
+    <div class="bg-brand-surface rounded-2xl border border-brand-border p-5 max-w-md w-full shadow-xl space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-brand-border">
         <h3 class="text-sm font-bold text-brand-text-primary">
-          Historial de Auditoría • #{{ selectedOrderForLogs()!.orderNumber }}
+          Auditoría • #{{ selectedOrderForLogs()!.orderNumber }}
         </h3>
         <button (click)="selectedOrderForLogs.set(null)" class="text-brand-text-muted hover:text-brand-text-primary">
-          <app-icon name="x" [size]="18"></app-icon>
+          <app-icon name="x" [size]="16"></app-icon>
         </button>
       </div>
 
       <div *ngIf="orderLogs().length === 0" class="text-xs text-brand-text-secondary py-4 text-center">
-        Sin registros adicionales.
+        Sin cambios registrados en el pedido.
       </div>
 
-      <ul *ngIf="orderLogs().length > 0" class="space-y-3 text-xs">
-        <li *ngFor="let log of orderLogs()" class="p-2.5 rounded-xl bg-brand-surface-alt border border-brand-border space-y-1">
-          <div class="flex justify-between font-bold text-brand-text-primary">
+      <ul *ngIf="orderLogs().length > 0" class="space-y-2 text-xs">
+        <li *ngFor="let log of orderLogs()" class="p-2.5 rounded-xl bg-stone-50 border border-brand-border space-y-1">
+          <div class="flex justify-between font-semibold text-brand-text-primary">
             <span>{{ log.previousStatus || 'INICIO' }} → {{ log.newStatus }}</span>
             <span class="text-[10px] text-brand-text-muted font-normal">{{ log.createdAt | date:'shortTime' }}</span>
           </div>

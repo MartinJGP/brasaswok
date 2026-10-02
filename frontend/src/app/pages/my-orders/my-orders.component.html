@@ -1,28 +1,25 @@
 <div class="min-h-screen bg-brand-bg text-brand-text-primary py-8 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-5xl mx-auto space-y-8">
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-brand-border/60 pb-6">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Encabezado y buscador de ticket -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-brand-border">
       <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-wider mb-2">
-          <app-icon name="flame" [size]="14"></app-icon>
-          <span>Seguimiento en Vivo</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-brand-text-primary">
-          Mis Pedidos & Comandas
+        <h1 class="text-2xl font-bold tracking-tight text-brand-text-primary">
+          Mis Pedidos
         </h1>
-        <p class="text-xs sm:text-sm text-brand-text-secondary mt-1">
-          Rastrea en tiempo real la cocción de tus platos al wok y el despacho a tu puerta.
+        <p class="text-sm text-brand-text-secondary mt-1">
+          Rastrea en tiempo real el estado de tus pedidos y consulta tickets anteriores.
         </p>
       </div>
 
-      <div class="w-full md:w-auto">
+      <div class="w-full sm:w-auto">
         <form (ngSubmit)="handleSearchTicket()" class="flex items-center gap-2">
-          <div class="relative flex-1 md:w-64">
+          <div class="relative flex-1 sm:w-64">
             <input
               type="text"
               [(ngModel)]="searchQuery"
               name="searchQuery"
               placeholder="Buscar ticket (ej: BW-9421)"
-              class="w-full pl-9 pr-3 py-2 bg-brand-surface border border-brand-border rounded-xl text-xs text-brand-text-primary placeholder-brand-text-muted focus:border-brand-primary focus:outline-none uppercase font-semibold"
+              class="w-full pl-9 pr-3 py-2 bg-brand-surface border border-brand-border rounded-xl text-xs text-brand-text-primary placeholder-brand-text-muted focus:border-brand-primary focus:outline-none uppercase font-semibold transition-colors"
             />
             <div class="absolute left-3 top-2.5 text-brand-text-muted pointer-events-none">
               <app-icon name="search" [size]="14"></app-icon>
@@ -31,7 +28,7 @@
           <button
             type="submit"
             [disabled]="isSearching() || !searchQuery.trim()"
-            class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all shadow-card flex items-center gap-1.5"
+            class="px-4 py-2 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-colors shrink-0"
           >
             <span *ngIf="!isSearching()">Rastrear</span>
             <span *ngIf="isSearching()">Buscando...</span>
@@ -40,7 +37,7 @@
             *ngIf="searchResult() || searchError()"
             type="button"
             (click)="clearSearch()"
-            class="p-2 text-brand-text-secondary hover:text-brand-text-primary rounded-xl bg-brand-surface border border-brand-border"
+            class="p-2 text-brand-text-secondary hover:text-brand-text-primary rounded-xl bg-brand-surface border border-brand-border transition-colors"
             title="Limpiar búsqueda"
           >
             <app-icon name="x" [size]="14"></app-icon>
@@ -49,91 +46,81 @@
       </div>
     </div>
 
-    <div *ngIf="searchError()" class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-600 flex items-center justify-between">
+    <!-- Error de búsqueda de ticket -->
+    <div *ngIf="searchError()" class="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <app-icon name="alert" [size]="16"></app-icon>
+        <app-icon name="alert" [size]="15"></app-icon>
         <span>{{ searchError() }}</span>
       </div>
-      <button (click)="clearSearch()" class="underline hover:text-rose-700">Cerrar</button>
+      <button (click)="clearSearch()" class="font-semibold underline hover:text-rose-900">Cerrar</button>
     </div>
 
-    <div *ngIf="searchResult()" class="bg-brand-surface rounded-2xl border-2 border-brand-primary/50 overflow-hidden shadow-card">
-      <div class="px-6 py-4 bg-brand-surface-alt/70 border-b border-brand-border flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 font-bold">
-            #
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-base font-extrabold text-brand-text-primary">{{ searchResult()!.orderNumber }}</span>
-              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase" [ngClass]="getStatusBadgeClass(searchResult()!.status)">
-                {{ getStatusLabel(searchResult()!.status) }}
-              </span>
-            </div>
-            <p class="text-[11px] text-brand-text-secondary mt-0.5">
-              Ticket consultado mediante rastreador público en vivo
-            </p>
-          </div>
+    <!-- Resultado de búsqueda de ticket puntual -->
+    <div *ngIf="searchResult()" class="bg-brand-surface rounded-2xl border border-brand-primary/30 overflow-hidden shadow-sm">
+      <div class="px-5 py-3.5 bg-brand-surface border-b border-brand-border flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="font-mono text-base font-bold text-brand-text-primary">{{ searchResult()!.orderNumber }}</span>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase" [ngClass]="getStatusBadgeClass(searchResult()!.status)">
+            {{ getStatusLabel(searchResult()!.status) }}
+          </span>
         </div>
 
-        <button (click)="clearSearch()" class="text-xs text-brand-text-muted hover:text-brand-text-primary flex items-center gap-1">
+        <button (click)="clearSearch()" class="text-xs text-brand-text-muted hover:text-brand-text-primary flex items-center gap-1 transition-colors">
           <app-icon name="x" [size]="14"></app-icon>
-          <span>Cerrar resultado</span>
+          <span>Cerrar</span>
         </button>
       </div>
 
-      <div class="p-6 space-y-6">
-        <div *ngIf="searchResult()!.status !== 'CANCELADO'" class="py-2">
+      <div class="p-5 space-y-6">
+        <!-- Progreso del pedido -->
+        <div *ngIf="searchResult()!.status !== 'CANCELADO'" class="pt-1">
           <div class="relative">
-            <div class="overflow-hidden h-2 mb-6 text-xs flex rounded-full bg-brand-surface-alt border border-brand-border">
+            <div class="overflow-hidden h-1.5 mb-4 rounded-full bg-stone-100 border border-brand-border">
               <div
                 [style.width]="(getOrderStep(searchResult()!.status) * 25) + '%'"
-                class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-amber-500 via-brand-primary to-emerald-500 transition-all duration-500"
+                class="h-full bg-brand-primary transition-all duration-500 rounded-full"
               ></div>
             </div>
-            <div class="grid grid-cols-4 text-center text-[11px] font-semibold">
+            <div class="grid grid-cols-4 text-center text-xs">
               <div [ngClass]="getOrderStep(searchResult()!.status) >= 1 ? 'text-brand-primary font-bold' : 'text-brand-text-muted'">
-                <div class="mb-1">1. Confirmado</div>
-                <div class="text-[9px] text-brand-text-muted font-normal">Ticket ingresado</div>
+                <span>1. Confirmado</span>
               </div>
               <div [ngClass]="getOrderStep(searchResult()!.status) >= 2 ? 'text-brand-primary font-bold' : 'text-brand-text-muted'">
-                <div class="mb-1">2. Al Fuego</div>
-                <div class="text-[9px] text-brand-text-muted font-normal">Wok & Brasas</div>
+                <span>2. Al Fuego</span>
               </div>
               <div [ngClass]="getOrderStep(searchResult()!.status) >= 3 ? 'text-sky-600 font-bold' : 'text-brand-text-muted'">
-                <div class="mb-1">3. En Camino</div>
-                <div class="text-[9px] text-brand-text-muted font-normal">Delivery motorizado</div>
+                <span>3. En Camino</span>
               </div>
               <div [ngClass]="getOrderStep(searchResult()!.status) >= 4 ? 'text-emerald-600 font-bold' : 'text-brand-text-muted'">
-                <div class="mb-1">4. Entregado</div>
-                <div class="text-[9px] text-brand-text-muted font-normal">En tu mesa</div>
+                <span>4. Entregado</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div *ngIf="searchResult()!.status === 'CANCELADO'" class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600 flex items-center gap-2">
-          <app-icon name="alert" [size]="16"></app-icon>
-          <span>Este pedido fue cancelado. Comunícate con atención si requieres asistencia.</span>
+        <div *ngIf="searchResult()!.status === 'CANCELADO'" class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
+          <app-icon name="alert" [size]="15"></app-icon>
+          <span>Este pedido fue cancelado. Si tienes dudas, contáctanos a soporte.</span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-brand-border/60">
+        <!-- Detalles del pedido -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-brand-border">
           <div>
-            <h4 class="text-xs font-bold text-brand-text-secondary uppercase tracking-wider mb-3">Detalle del Menú</h4>
-            <div class="space-y-2">
-              <div *ngFor="let item of searchResult()!.items" class="flex items-center justify-between text-xs py-1.5 border-b border-brand-border/40">
+            <h4 class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2">Platos ordenados</h4>
+            <div class="space-y-1.5">
+              <div *ngFor="let item of searchResult()!.items" class="flex items-center justify-between text-xs py-1 border-b border-brand-border/40 last:border-0">
                 <div>
                   <span class="font-bold text-brand-text-primary">{{ item.quantity }}x</span>
                   <span class="text-brand-text-primary ml-1.5">{{ item.productName }}</span>
-                  <p *ngIf="item.notes" class="text-[10px] text-brand-text-muted italic ml-5">Nota: {{ item.notes }}</p>
+                  <p *ngIf="item.notes" class="text-[11px] text-brand-text-muted italic ml-5">Nota: {{ item.notes }}</p>
                 </div>
-                <span class="font-mono text-brand-text-secondary">S/ {{ item.subtotal.toFixed(2) }}</span>
+                <span class="font-mono text-brand-text-secondary font-medium">S/ {{ item.subtotal.toFixed(2) }}</span>
               </div>
             </div>
           </div>
 
-          <div>
-            <h4 class="text-xs font-bold text-brand-text-secondary uppercase tracking-wider mb-3">Datos de Entrega & Cobro</h4>
+          <div class="space-y-3">
+            <h4 class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2">Entrega y Total</h4>
             <div class="space-y-2 text-xs text-brand-text-secondary">
               <div class="flex items-start gap-2">
                 <app-icon name="map-pin" [size]="14" customClass="text-brand-primary shrink-0 mt-0.5"></app-icon>
@@ -143,18 +130,18 @@
                 <app-icon name="phone" [size]="14" customClass="text-brand-primary shrink-0"></app-icon>
                 <span>{{ searchResult()!.deliveryPhone }}</span>
               </div>
-              <div class="flex items-center justify-between pt-2 border-t border-brand-border/40 font-mono">
-                <span class="text-brand-text-muted">Total abonado:</span>
-                <span class="text-base font-extrabold text-brand-primary">S/ {{ searchResult()!.totalAmount.toFixed(2) }}</span>
+              <div class="flex items-center justify-between pt-2 border-t border-brand-border font-mono">
+                <span class="text-brand-text-muted">Total pagado:</span>
+                <span class="text-base font-bold text-brand-primary">S/ {{ searchResult()!.totalAmount.toFixed(2) }}</span>
               </div>
             </div>
 
-            <div *ngIf="searchResult()!.status === 'PENDIENTE'" class="mt-4 pt-2">
+            <div *ngIf="searchResult()!.status === 'PENDIENTE'" class="pt-2">
               <button
                 type="button"
                 (click)="handleCancelOrder(searchResult()!)"
                 [disabled]="cancellingOrderId() === searchResult()!.id"
-                class="w-full px-3 py-2 border border-rose-500/40 text-rose-600 hover:bg-rose-500/10 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                class="w-full px-3 py-2 border border-rose-300 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-colors disabled:opacity-50"
               >
                 {{ cancellingOrderId() === searchResult()!.id ? 'Cancelando...' : 'Cancelar Pedido' }}
               </button>
@@ -164,135 +151,127 @@
       </div>
     </div>
 
+    <!-- Sección de Historial de pedidos -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-bold text-brand-text-primary font-sans">
+        <h2 class="text-lg font-bold text-brand-text-primary">
           Historial de Compras
         </h2>
         <button
           *ngIf="authService.isLoggedIn() && !authService.isAdmin()"
           (click)="loadOrders()"
-          class="text-xs text-brand-primary hover:text-brand-primary-hover font-semibold flex items-center gap-1"
+          class="text-xs text-brand-primary hover:text-brand-primary-hover font-semibold transition-colors flex items-center gap-1"
         >
           <span>Actualizar</span>
         </button>
       </div>
 
-      <div *ngIf="!authService.isLoggedIn()" class="p-8 bg-brand-surface rounded-2xl border border-brand-border text-center space-y-4 shadow-card">
-        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary mx-auto flex items-center justify-center">
-          <app-icon name="lock" [size]="24"></app-icon>
+      <!-- Usuario no logueado -->
+      <div *ngIf="!authService.isLoggedIn()" class="p-8 bg-brand-surface rounded-2xl border border-brand-border text-center space-y-4">
+        <div class="w-12 h-12 rounded-xl bg-brand-primary/10 text-brand-primary mx-auto flex items-center justify-center">
+          <app-icon name="lock" [size]="22"></app-icon>
         </div>
         <div class="space-y-1">
-          <h3 class="text-base font-bold text-brand-text-primary">Inicia sesión como cliente</h3>
+          <h3 class="text-base font-bold text-brand-text-primary">Inicia sesión para ver tu historial</h3>
           <p class="text-xs text-brand-text-secondary max-w-md mx-auto">
-            Para consultar tus compras anteriores, estado de cocción en vivo y comprobantes, debes identificarte con tu cuenta de cliente.
+            Accede a tu cuenta de cliente para consultar tus pedidos anteriores y dar seguimiento en vivo.
           </p>
         </div>
-        <div class="pt-1 flex flex-wrap justify-center gap-3">
+        <div class="pt-2 flex flex-wrap justify-center gap-3">
           <button
             type="button"
             (click)="showAuthModal.set(true)"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+            class="px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
           >
-            <app-icon name="user" [size]="15"></app-icon>
-            <span>Iniciar Sesión como Cliente</span>
+            Iniciar Sesión
           </button>
           <a
             routerLink="/carta"
-            class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+            class="px-4 py-2.5 bg-brand-surface hover:bg-stone-50 text-brand-text-primary text-xs font-medium rounded-xl border border-brand-border transition-colors"
           >
             Ver Carta
           </a>
         </div>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && authService.isAdmin()" class="p-8 bg-brand-surface rounded-2xl border border-amber-500/30 text-center space-y-4 shadow-card">
-        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 mx-auto flex items-center justify-center border border-amber-500/20">
-          <app-icon name="dashboard" [size]="24"></app-icon>
+      <!-- Sesión como admin en página de clientes -->
+      <div *ngIf="authService.isLoggedIn() && authService.isAdmin()" class="p-8 bg-brand-surface rounded-2xl border border-brand-border text-center space-y-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 mx-auto flex items-center justify-center">
+          <app-icon name="dashboard" [size]="22"></app-icon>
         </div>
-        <div class="space-y-1.5">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold uppercase tracking-wider">
-            Sesión de Administrador
-          </div>
-          <h3 class="text-base font-bold text-brand-text-primary">Esta sección requiere rol de cliente</h3>
-          <p class="text-xs text-brand-text-secondary max-w-lg mx-auto">
-            El área de 'Mis Pedidos' está destinada al seguimiento personal de comensales. Como administrador, puedes gestionar todas las comandas del restaurante en cocina o acceder al panel general.
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-brand-text-primary">Sesión de Administrador activa</h3>
+          <p class="text-xs text-brand-text-secondary max-w-md mx-auto">
+            Esta vista está pensada para clientes. Para gestionar las comandas del restaurante, dirígete a Cocina o al Panel Admin.
           </p>
         </div>
         <div class="pt-2 flex flex-wrap justify-center gap-3">
           <a
             routerLink="/admin/kitchen"
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+            class="px-4 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
           >
-            <app-icon name="flame" [size]="15"></app-icon>
-            <span>Ver Comandas en Cocina</span>
+            Ver Cocina (KDS)
           </a>
           <a
             routerLink="/admin/dashboard"
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-primary text-xs font-semibold rounded-xl border border-brand-border transition-all"
+            class="px-4 py-2.5 bg-brand-surface hover:bg-stone-50 text-brand-text-primary text-xs font-medium rounded-xl border border-brand-border transition-colors"
           >
-            <app-icon name="dashboard" [size]="15"></app-icon>
-            <span>Panel Admin</span>
+            Panel Admin
           </a>
-          <button
-            type="button"
-            (click)="showAuthModal.set(true)"
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface-alt hover:bg-brand-border/60 text-brand-text-secondary text-xs font-semibold rounded-xl border border-brand-border transition-all"
-          >
-            <app-icon name="user" [size]="15"></app-icon>
-            <span>Iniciar como Cliente</span>
-          </button>
         </div>
       </div>
 
-      <div *ngIf="errorMessage()" class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-600 flex items-center justify-between">
+      <!-- Error de carga -->
+      <div *ngIf="errorMessage()" class="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <app-icon name="alert" [size]="16"></app-icon>
+          <app-icon name="alert" [size]="15"></app-icon>
           <span>{{ errorMessage() }}</span>
         </div>
-        <button (click)="loadOrders()" class="underline hover:text-rose-700">Reintentar</button>
+        <button (click)="loadOrders()" class="font-semibold underline hover:text-rose-900">Reintentar</button>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && isLoading()" class="p-12 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
-        <div class="inline-block w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
-        <p>Cargando tus pedidos desde el servidor...</p>
+      <!-- Spinner de carga -->
+      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && isLoading()" class="p-10 text-center text-xs text-brand-text-secondary bg-brand-surface rounded-2xl border border-brand-border">
+        <div class="inline-block w-5 h-5 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+        <p>Cargando pedidos...</p>
       </div>
 
-      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && !isLoading() && orders().length === 0" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-4">
-        <div class="w-16 h-16 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary mx-auto">
-          <app-icon name="shopping-bag" [size]="28"></app-icon>
+      <!-- Sin pedidos aún -->
+      <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && !isLoading() && orders().length === 0" class="p-10 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-4">
+        <div class="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center text-brand-text-muted mx-auto">
+          <app-icon name="shopping-bag" [size]="24"></app-icon>
         </div>
         <div>
-          <h3 class="text-base font-bold text-brand-text-primary">Aún no has realizado pedidos</h3>
-          <p class="text-xs text-brand-text-secondary mt-1 max-w-md mx-auto">
-            Disfruta de nuestros pollos al carbón, lomo al wok o tequeños artesanales con entrega a domicilio.
+          <h3 class="text-base font-bold text-brand-text-primary">Aún no tienes pedidos registrados</h3>
+          <p class="text-xs text-brand-text-secondary mt-1 max-w-sm mx-auto">
+            Explora nuestra carta gastronómica y pide tus platos favoritos con entrega a domicilio.
           </p>
         </div>
         <div>
           <a
             routerLink="/carta"
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-bold rounded-xl shadow-card transition-all active:scale-95"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
           >
-            <app-icon name="flame" [size]="14"></app-icon>
-            <span>Explorar la Carta</span>
+            <span>Ver Carta</span>
           </a>
         </div>
       </div>
 
+      <!-- Listado de pedidos -->
       <div *ngIf="authService.isLoggedIn() && !authService.isAdmin() && !isLoading() && orders().length > 0" class="space-y-4">
         <div
           *ngFor="let order of orders()"
-          class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-card transition-all hover:border-brand-border/80"
+          class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden transition-colors hover:border-brand-border/90"
         >
-          <div class="px-5 py-4 bg-brand-surface-alt/50 border-b border-brand-border flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <span class="font-mono text-sm font-extrabold text-brand-text-primary">Ticket {{ order.orderNumber }}</span>
+          <div class="px-5 py-3.5 bg-stone-50/60 border-b border-brand-border flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <span class="font-mono text-sm font-bold text-brand-text-primary">Ticket {{ order.orderNumber }}</span>
               <span class="text-xs text-brand-text-muted">·</span>
-              <span class="text-xs text-brand-text-secondary">{{ order.createdAt | date:'medium' }}</span>
+              <span class="text-xs text-brand-text-secondary">{{ order.createdAt | date:'short' }}</span>
             </div>
 
-            <div class="flex items-center gap-3">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" [ngClass]="getStatusBadgeClass(order.status)">
+            <div class="flex items-center gap-2.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider" [ngClass]="getStatusBadgeClass(order.status)">
                 {{ getStatusLabel(order.status) }}
               </span>
 
@@ -301,7 +280,7 @@
                 type="button"
                 (click)="handleCancelOrder(order)"
                 [disabled]="cancellingOrderId() === order.id"
-                class="px-2.5 py-1 text-[11px] font-bold rounded-lg border border-rose-500/40 text-rose-600 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+                class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-rose-300 text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50"
               >
                 {{ cancellingOrderId() === order.id ? 'Cancelando...' : 'Cancelar' }}
               </button>
@@ -309,15 +288,16 @@
           </div>
 
           <div class="p-5 space-y-4">
-            <div *ngIf="order.status !== 'CANCELADO'" class="py-1">
+            <!-- Barra de progreso -->
+            <div *ngIf="order.status !== 'CANCELADO'" class="pt-1">
               <div class="relative">
-                <div class="overflow-hidden h-1.5 mb-4 text-xs flex rounded-full bg-brand-surface-alt border border-brand-border">
+                <div class="overflow-hidden h-1.5 mb-3 rounded-full bg-stone-100 border border-brand-border">
                   <div
                     [style.width]="(getOrderStep(order.status) * 25) + '%'"
-                    class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-brand-primary transition-all duration-500"
+                    class="h-full bg-brand-primary transition-all duration-500 rounded-full"
                   ></div>
                 </div>
-                <div class="grid grid-cols-4 text-center text-[10px] font-semibold">
+                <div class="grid grid-cols-4 text-center text-[11px] font-medium">
                   <span [ngClass]="getOrderStep(order.status) >= 1 ? 'text-brand-primary font-bold' : 'text-brand-text-muted'">1. Recibido</span>
                   <span [ngClass]="getOrderStep(order.status) >= 2 ? 'text-brand-primary font-bold' : 'text-brand-text-muted'">2. En Cocina</span>
                   <span [ngClass]="getOrderStep(order.status) >= 3 ? 'text-sky-600 font-bold' : 'text-brand-text-muted'">3. En Camino</span>
@@ -326,28 +306,29 @@
               </div>
             </div>
 
-            <div *ngIf="order.status === 'CANCELADO'" class="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600">
+            <div *ngIf="order.status === 'CANCELADO'" class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
               Pedido cancelado.
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-brand-border/40">
+            <!-- Resumen de items y entrega -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-brand-border/60">
               <div class="space-y-1.5">
-                <h5 class="text-[11px] font-bold text-brand-text-muted uppercase tracking-wider">Productos</h5>
-                <div *ngFor="let item of order.items" class="flex items-center justify-between text-xs py-1 border-b border-brand-border/30 last:border-0">
+                <h5 class="text-[11px] font-semibold text-brand-text-muted uppercase tracking-wider">Productos</h5>
+                <div *ngFor="let item of order.items" class="flex items-center justify-between text-xs py-1 border-b border-brand-border/40 last:border-0">
                   <span class="text-brand-text-primary">
-                    <strong class="text-brand-text-primary">{{ item.quantity }}x</strong> {{ item.productName }}
+                    <strong class="font-bold text-brand-text-primary">{{ item.quantity }}x</strong> {{ item.productName }}
                   </span>
-                  <span class="font-mono text-brand-text-secondary text-[11px]">S/ {{ item.subtotal.toFixed(2) }}</span>
+                  <span class="font-mono text-brand-text-secondary text-xs">S/ {{ item.subtotal.toFixed(2) }}</span>
                 </div>
               </div>
 
-              <div class="space-y-2 text-xs text-brand-text-secondary md:border-l md:border-brand-border/40 md:pl-4">
-                <h5 class="text-[11px] font-bold text-brand-text-muted uppercase tracking-wider">Envío & Pago</h5>
-                <p class="truncate"><strong class="text-brand-text-primary">Destino:</strong> {{ order.deliveryAddress }}</p>
-                <p><strong class="text-brand-text-primary">Teléfono:</strong> {{ order.deliveryPhone }}</p>
-                <p><strong class="text-brand-text-primary">Método:</strong> {{ order.paymentMethod }}</p>
-                <div class="pt-1 flex items-center justify-between border-t border-brand-border/40 font-mono">
-                  <span class="text-brand-text-muted">Total pagado:</span>
+              <div class="space-y-1.5 text-xs text-brand-text-secondary md:border-l md:border-brand-border md:pl-4">
+                <h5 class="text-[11px] font-semibold text-brand-text-muted uppercase tracking-wider">Entrega & Pago</h5>
+                <p class="truncate"><span class="text-brand-text-muted">Destino:</span> {{ order.deliveryAddress }}</p>
+                <p><span class="text-brand-text-muted">Teléfono:</span> {{ order.deliveryPhone }}</p>
+                <p><span class="text-brand-text-muted">Método:</span> {{ order.paymentMethod }}</p>
+                <div class="pt-2 flex items-center justify-between border-t border-brand-border/60 font-mono">
+                  <span class="text-brand-text-muted">Total:</span>
                   <span class="font-bold text-brand-primary text-sm">S/ {{ order.totalAmount.toFixed(2) }}</span>
                 </div>
               </div>
