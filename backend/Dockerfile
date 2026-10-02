@@ -19,15 +19,19 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre-jammy AS runtime
 WORKDIR /app
 
-# Crear usuario y grupo sin privilegios root por seguridad
-RUN addgroup --system spring && adduser --system --ingroup spring spring
+# Crear usuario y grupo sin privilegios root por seguridad,
+# y crear el directorio uploads asignándole permisos completos al usuario spring
+RUN addgroup --system spring && adduser --system --ingroup spring spring && \
+    mkdir -p /app/uploads && \
+    chown -R spring:spring /app
+
 USER spring:spring
 
-# Copiar el ejecutable generado
-COPY --from=build /app/target/*.jar app.jar
+# Copiar el ejecutable generado con permisos de spring
+COPY --from=build --chown=spring:spring /app/target/*.jar app.jar
 
-# Variables de entorno y puerto por defecto
 ENV PORT=8080
-EXPOSE 8080
+EXPOSE ${PORT}
 
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+# Soporte para puerto dinámico de Render y control de memoria para contenedor
+ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar app.jar"]

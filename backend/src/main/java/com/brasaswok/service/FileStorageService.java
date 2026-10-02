@@ -31,8 +31,8 @@ public class FileStorageService {
             if (!Files.exists(uploadLocation)) {
                 Files.createDirectories(uploadLocation);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Could not initialize upload folder", e);
+        } catch (Exception e) {
+            System.err.println("WARN: No se pudo inicializar carpeta uploads al inicio: " + e.getMessage());
         }
     }
 
@@ -55,6 +55,9 @@ public class FileStorageService {
         String uniqueFilename = UUID.randomUUID() + extension;
 
         try {
+            if (!Files.exists(this.uploadLocation)) {
+                Files.createDirectories(this.uploadLocation);
+            }
             Path destinationFile = this.uploadLocation.resolve(uniqueFilename).normalize().toAbsolutePath();
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
