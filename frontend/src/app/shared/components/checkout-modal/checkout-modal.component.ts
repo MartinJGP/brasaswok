@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { IconComponent } from '../icon/icon.component';
 import { CartService } from '../../../core/services/cart.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 export type PaymentMethodType = 'TARJETA' | 'YAPE_PLIN' | 'EFECTIVO' | 'TRANSFERENCIA';
 
@@ -93,7 +94,7 @@ export class CheckoutModalComponent {
       }))
     };
 
-    this.http.post<any>('http://localhost:8080/api/orders', orderPayload).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/orders`, orderPayload).subscribe({
       next: (createdOrder) => {
         if (createdOrder?.orderNumber) {
           this.confirmedOrderNumber = createdOrder.orderNumber;
@@ -106,7 +107,7 @@ export class CheckoutModalComponent {
           transactionReference: this.getTransactionReference()
         };
 
-        this.http.post<any>('http://localhost:8080/api/payments/process', paymentPayload).subscribe({
+        this.http.post<any>(`${environment.apiUrl}/payments/process`, paymentPayload).subscribe({
           next: () => {
             this.handleSuccess();
           },

@@ -39,12 +39,14 @@ export interface CustomerOrder {
   statusLogs?: CustomerOrderStatusLog[];
 }
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api/orders';
+  private readonly baseUrl = `${environment.apiUrl}/orders`;
 
   // obtiene historial de comandas del cliente autenticado
   getMyOrders(): Observable<CustomerOrder[]> {

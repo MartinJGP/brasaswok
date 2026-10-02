@@ -61,12 +61,14 @@ export interface DashboardStatsResponse {
   }>;
 }
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = environment.apiUrl;
 
   // obtiene comandas para gestion administrativa
   getOrders(status?: string): Observable<AdminOrder[]> {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { AdminService, AdminProduct, AdminCategory } from '../../../core/services/admin.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-admin-menu',
@@ -118,7 +119,7 @@ export class AdminMenuComponent implements OnInit {
       this.isUploadingImage.set(true);
       this.adminService.uploadImage(file).subscribe({
         next: (res) => {
-          this.productForm.imageUrl = 'http://localhost:8080' + res.url;
+          this.productForm.imageUrl = res.url.startsWith('http') ? res.url : (environment.backendUrl + res.url);
           this.isUploadingImage.set(false);
         },
         error: (err) => {

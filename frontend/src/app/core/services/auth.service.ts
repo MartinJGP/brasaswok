@@ -4,11 +4,13 @@ import { Observable, tap, catchError, throwError, of } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/user.model';
 import { ToastService } from './toast.service';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8080/api/auth';
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'brasas_token';
   private readonly USER_KEY = 'brasas_user';
   private readonly toastService = inject(ToastService);
