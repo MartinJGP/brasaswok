@@ -23,6 +23,7 @@
 - **Repositorio Oficial:** `https://github.com/MartinJGP/brasaswok`
 - **Frontend Desplegado (Vercel):** `https://brasaswok.vercel.app`
 - **Backend API Desplegado (Render):** `https://brasaswok-backend.onrender.com`
+- **Documentación Swagger UI (OpenAPI):** `https://brasaswok-backend.onrender.com/swagger-ui/index.html`
 - **Base de Datos Cloud (Aiven MySQL):** `mysql-utp-utp-gonzales.h.aivencloud.com:21487/brasas_wok_db`
 
 ---
