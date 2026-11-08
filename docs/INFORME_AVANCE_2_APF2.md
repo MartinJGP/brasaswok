@@ -85,7 +85,7 @@ Motivados por este escenario, el presente proyecto concibe y materializa **"Bras
 - **Para el Administrador y Gerencia:** Panel integral con métricas en vivo (ventas brutas, ticket promedio, distribución por método de pago, stock activo), control de inventario de platos/categorías y auditoría histórica completa de usuarios y órdenes.
 
 ### Estructura del documento
-Este informe académico documenta el estado del arte del proyecto para el hito **APF2 (Semana 14)**. Se encuentra dividido en tres grandes bloques:
+Este informe académico documenta la arquitectura, diseño e implementación de la solución. Se encuentra dividido en tres grandes bloques:
 1. **Aspectos Generales:** Definición del problema, justificación, objetivos, alcance, reglas de negocio y KPIs.
 2. **Marco Teórico:** Arquitecturas de software empleadas, fundamentos de seguridad web y justificación tecnológica comparativa.
 3. **Desarrollo de la Solución:** Requerimientos (RF y RNF), casos de uso, diagrama entidad-relación, arquitectura C4, contratos de API, autenticación profunda basada en JSON Web Tokens (JWT), front-end reactivo con Angular Signals, backend modular en Spring Boot, WebSockets STOMP, infraestructura multi-nube con Docker, pruebas unitarias automatizadas y el estado de la gestión ágil mediante gráficos Burndown.
@@ -267,57 +267,57 @@ graph LR
 
 ### 3.1.1 Requerimientos funcionales (RF)
 
-Los requerimientos funcionales definen las capacidades operativas del sistema. Para el presente hito **APF2 (Semana 14)**, todos los requerimientos que en el primer avance figuraban en estado *Parcial* han sido completados e integrados satisfactoriamente:
+Los requerimientos funcionales definen las capacidades operativas del sistema. Todos los requerimientos funcionales definidos para el sistema se encuentran completados e integrados satisfactoriamente:
 
 **Tabla 3**  
-*Matriz de Requerimientos Funcionales y Estado de Implementación al Hito APF2*
+*Matriz de Requerimientos Funcionales y Estado de Implementación*
 
-| ID | Requerimiento Funcional | Actor | Estado APF1 (Semana 8) | Estado APF2 (Semana 14) | Módulo / Evidencia Técnica |
+| ID | Requerimiento Funcional | Actor | Prioridad MoSCoW | Estado | Módulo / Evidencia Técnica |
 | :--- | :--- | :--- | :---: | :---: | :--- |
-| **RF-01** | Registrar cliente | Visitante | Parcial | **Implementado** | `AuthController.register()` / BCrypt / Modal de Registro |
-| **RF-02** | Iniciar sesión y emitir JWT | Cliente / Admin | Parcial | **Implementado** | `AuthController.login()` / `JwtUtils` HMAC-SHA256 |
-| **RF-03** | Consultar catálogo público | Visitante / Cliente | Implementado | **Implementado** | `CategoryController` y `ProductController` (Público) |
-| **RF-04** | Filtrar productos por categoría | Visitante / Cliente | Implementado | **Implementado** | Filtro dinámico en Angular y query params en API |
-| **RF-05** | Administrar categorías | Administrador | Parcial | **Implementado** | CRUD completo protegido por `@PreAuthorize("ROLE_ADMIN")` |
-| **RF-06** | Administrar productos | Administrador | Implementado | **Implementado** | Panel Admin con carga de fotos, precios y stock |
-| **RF-07** | Mantener carrito de compras | Cliente | Parcial | **Implementado** | Gestión reactiva de estado con *Angular Signals* |
-| **RF-08** | Realizar checkout y crear pedido | Cliente | Parcial | **Implementado** | `OrderController.createOrder()` y Checkout Modal |
-| **RF-09** | Guardar líneas con precio histórico | Backend | Implementado | **Implementado** | Entidad `OrderItem` con snapshot inmutable de precios |
-| **RF-10** | Consultar historial propio | Cliente | Implementado | **Implementado** | `GET /api/orders/my-orders` filtrado por JWT |
-| **RF-11** | Consultar pedido propio por ID | Cliente | Implementado | **Implementado** | `GET /api/orders/{id}` con validación de propiedad |
-| **RF-12** | Seguir pedido por código de comanda | Público | Parcial | **Implementado** | `GET /api/orders/track/{orderNumber}` (Público) |
-| **RF-13** | Cancelar pedido propio | Cliente | Implementado | **Implementado** | `PUT /api/orders/{id}/cancel` (Solo si está PENDIENTE) |
-| **RF-14** | Listar y filtrar pedidos | Administrador | Implementado | **Implementado** | `AdminOrderController` con filtros por estado |
-| **RF-15** | Cambiar estado y registrar log | Administrador | Implementado | **Implementado** | `PATCH /api/admin/orders/{id}/status` y bitácora |
-| **RF-16** | Actualizar estado en vivo (WebSockets) | Cliente / Admin | Parcial | **Implementado** | Broker STOMP en `/topic/orders/{id}` y `/topic/admin` |
-| **RF-17** | Registrar y consultar pago | Cliente / Admin | Parcial | **Implementado** | `PaymentController` (Simulación Tarjeta/Yape/Efectivo) |
-| **RF-18** | Ver estadísticas del Dashboard | Administrador | Implementado | **Implementado** | `AdminDashboardController` (Ventas, tickets, gráficos) |
-| **RF-19** | Subir imagen de platos | Administrador | Implementado | **Implementado** | `FileUploadController` multipart y directorio uploads |
-| **RF-20** | Gestionar usuarios mediante API | Administrador | Parcial | **Implementado** | `UserController` y cambio de estado de cuentas |
-| **RF-21** | Gestión asociativa de ítems N:M | Administrador | Parcial | **Implementado** | Control relacional íntegro en JPA (`order_items`) |
-| **RF-22** | Documentar API con Swagger/OpenAPI | Equipo | Parcial | **Implementado** | **SpringDoc OpenAPI 2.8.5** con Swagger UI interactivo |
-| **RF-23** | Paginar y filtrar listados de API | Equipo | Parcial | **Implementado** | Soporte de filtrado por categoría, estado y orden |
-| **RF-24** | Desplegar con Docker en Cloud | Equipo | Parcial | **Implementado** | Dockerfiles multi-stage, Render, Vercel y Aiven Cloud |
+| **RF-01** | Registrar cliente | Visitante | Alta | **Implementado** | `AuthController.register()` / BCrypt / Modal de Registro |
+| **RF-02** | Iniciar sesión y emitir JWT | Cliente / Admin | Alta | **Implementado** | `AuthController.login()` / `JwtUtils` HMAC-SHA256 |
+| **RF-03** | Consultar catálogo público | Visitante / Cliente | Alta | **Implementado** | `CategoryController` y `ProductController` (Público) |
+| **RF-04** | Filtrar productos por categoría | Visitante / Cliente | Alta | **Implementado** | Filtro dinámico en Angular y query params en API |
+| **RF-05** | Administrar categorías | Administrador | Alta | **Implementado** | CRUD completo protegido por `@PreAuthorize("ROLE_ADMIN")` |
+| **RF-06** | Administrar productos | Administrador | Alta | **Implementado** | Panel Admin con carga de fotos, precios y stock |
+| **RF-07** | Mantener carrito de compras | Cliente | Alta | **Implementado** | Gestión reactiva de estado con *Angular Signals* |
+| **RF-08** | Realizar checkout y crear pedido | Cliente | Alta | **Implementado** | `OrderController.createOrder()` y Checkout Modal |
+| **RF-09** | Guardar líneas con precio histórico | Backend | Alta | **Implementado** | Entidad `OrderItem` con snapshot inmutable de precios |
+| **RF-10** | Consultar historial propio | Cliente | Alta | **Implementado** | `GET /api/orders/my-orders` filtrado por JWT |
+| **RF-11** | Consultar pedido propio por ID | Cliente | Alta | **Implementado** | `GET /api/orders/{id}` con validación de propiedad |
+| **RF-12** | Seguir pedido por código de comanda | Público | Alta | **Implementado** | `GET /api/orders/track/{orderNumber}` (Público) |
+| **RF-13** | Cancelar pedido propio | Cliente | Alta | **Implementado** | `PUT /api/orders/{id}/cancel` (Solo si está PENDIENTE) |
+| **RF-14** | Listar y filtrar pedidos | Administrador | Alta | **Implementado** | `AdminOrderController` con filtros por estado |
+| **RF-15** | Cambiar estado y registrar log | Administrador | Alta | **Implementado** | `PATCH /api/admin/orders/{id}/status` y bitácora |
+| **RF-16** | Actualizar estado en vivo (WebSockets) | Cliente / Admin | Alta | **Implementado** | Broker STOMP en `/topic/orders/{id}` y `/topic/admin` |
+| **RF-17** | Registrar y consultar pago | Cliente / Admin | Alta | **Implementado** | `PaymentController` (Simulación Tarjeta/Yape/Efectivo) |
+| **RF-18** | Ver estadísticas del Dashboard | Administrador | Alta | **Implementado** | `AdminDashboardController` (Ventas, tickets, gráficos) |
+| **RF-19** | Subir imagen de platos | Administrador | Alta | **Implementado** | `FileUploadController` multipart y directorio uploads |
+| **RF-20** | Gestionar usuarios mediante API | Administrador | Alta | **Implementado** | `UserController` y cambio de estado de cuentas |
+| **RF-21** | Gestión asociativa de ítems N:M | Administrador | Alta | **Implementado** | Control relacional íntegro en JPA (`order_items`) |
+| **RF-22** | Documentar API con Swagger/OpenAPI | Equipo | Alta | **Implementado** | **SpringDoc OpenAPI 2.8.5** con Swagger UI interactivo |
+| **RF-23** | Paginar y filtrar listados de API | Equipo | Alta | **Implementado** | Soporte de filtrado por categoría, estado y orden |
+| **RF-24** | Desplegar con Docker en Cloud | Equipo | Alta | **Implementado** | Dockerfiles multi-stage, Render, Vercel y Aiven Cloud |
 
 *Nota.* Elaboración propia. Todos los requerimientos del ciclo del pedido se encuentran 100% operativos.
 
 ### 3.1.2 Requerimientos no funcionales (RNF)
 
 **Tabla 4**  
-*Matriz de Requerimientos No Funcionales y Criterios de Verificación al Hito APF2*
+*Matriz de Requerimientos No Funcionales y Criterios de Verificación*
 
-| ID | Requisito No Funcional | Criterio de Verificación | Estado APF1 | Estado APF2 |
+| ID | Requisito No Funcional | Criterio de Verificación | Categoría | Estado |
 | :--- | :--- | :--- | :---: | :---: |
-| **RNF-01** | **Seguridad** | Cifrado HTTPS (TLS 1.3), contraseñas en BCrypt, validación estricta de JWT en cada petición y restricción de roles con `@PreAuthorize`. | Parcial | **Implementado / Verificado** |
-| **RNF-02** | **Rendimiento** | Tiempo de respuesta promedio en endpoints de catálogo y órdenes inferior a 350 ms medido con pruebas y métricas locales y cloud. | Parcial | **Implementado / Verificado** |
-| **RNF-03** | **Usabilidad** | Notificaciones flotantes tipo Toastr para confirmación o error de operaciones, Steppers visuales intuitivos y modales reactivos. | Parcial | **Implementado / Verificado** |
-| **RNF-04** | **Diseño Responsivo** | Interfaz adaptada con Tailwind CSS para dispositivos móviles (smartphones), tabletas (iPad Mini) y pantallas de escritorio. | Parcial | **Implementado / Verificado** |
-| **RNF-05** | **Integridad de Datos** | Validación rigurosa con Jakarta Validation (`@Valid`, `@NotNull`, `@Min(1)`) y transacciones ACID en Spring Data JPA. | Implementado | **Implementado / Verificado** |
-| **RNF-06** | **Mantenibilidad** | Arquitectura desacoplada en 3 capas (Controller-Service-Repository), componentes standalone en Angular y principios SOLID. | Implementado | **Implementado / Verificado** |
-| **RNF-07** | **Accesibilidad** | Estándares de contraste WCAG 2.1, tipografía legible (Inter/Sans), navegación por teclado y etiquetas semánticas ARIA en modales. | Parcial | **Implementado / Verificado** |
-| **RNF-08** | **Trazabilidad** | Bitácora persistente (`order_status_logs`) que almacena el usuario responsable, timestamp exacto y estado de cada transición. | Implementado | **Implementado / Verificado** |
-| **RNF-09** | **Compatibilidad** | Soporte verificado en navegadores modernos basados en Chromium (Google Chrome, Microsoft Edge) y Mozilla Firefox. | Parcial | **Implementado / Verificado** |
-| **RNF-10** | **Disponibilidad** | Hosting cloud 24/7 con frontend en Vercel Edge Network, backend en Render PaaS y base de datos con SSL en Aiven Cloud. | Parcial | **Implementado / Verificado** |
+| **RNF-01** | **Seguridad** | Cifrado HTTPS (TLS 1.3), contraseñas en BCrypt, validación estricta de JWT en cada petición y restricción de roles con `@PreAuthorize`. | Crítica | **Implementado / Verificado** |
+| **RNF-02** | **Rendimiento** | Tiempo de respuesta promedio en endpoints de catálogo y órdenes inferior a 350 ms medido con pruebas y métricas locales y cloud. | Crítica | **Implementado / Verificado** |
+| **RNF-03** | **Usabilidad** | Notificaciones flotantes tipo Toastr para confirmación o error de operaciones, Steppers visuales intuitivos y modales reactivos. | Crítica | **Implementado / Verificado** |
+| **RNF-04** | **Diseño Responsivo** | Interfaz adaptada con Tailwind CSS para dispositivos móviles (smartphones), tabletas (iPad Mini) y pantallas de escritorio. | Crítica | **Implementado / Verificado** |
+| **RNF-05** | **Integridad de Datos** | Validación rigurosa con Jakarta Validation (`@Valid`, `@NotNull`, `@Min(1)`) y transacciones ACID en Spring Data JPA. | Crítica | **Implementado / Verificado** |
+| **RNF-06** | **Mantenibilidad** | Arquitectura desacoplada en 3 capas (Controller-Service-Repository), componentes standalone en Angular y principios SOLID. | Crítica | **Implementado / Verificado** |
+| **RNF-07** | **Accesibilidad** | Estándares de contraste WCAG 2.1, tipografía legible (Inter/Sans), navegación por teclado y etiquetas semánticas ARIA en modales. | Crítica | **Implementado / Verificado** |
+| **RNF-08** | **Trazabilidad** | Bitácora persistente (`order_status_logs`) que almacena el usuario responsable, timestamp exacto y estado de cada transición. | Crítica | **Implementado / Verificado** |
+| **RNF-09** | **Compatibilidad** | Soporte verificado en navegadores modernos basados en Chromium (Google Chrome, Microsoft Edge) y Mozilla Firefox. | Crítica | **Implementado / Verificado** |
+| **RNF-10** | **Disponibilidad** | Hosting cloud 24/7 con frontend en Vercel Edge Network, backend en Render PaaS y base de datos con SSL en Aiven Cloud. | Crítica | **Implementado / Verificado** |
 
 *Nota.* Elaboración propia. La verificación técnica se sustenta en la suite de 44 pruebas unitarias automatizadas y la inspección en entorno de producción.
 
