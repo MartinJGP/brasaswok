@@ -325,6 +325,19 @@ flowchart TD
 
 ### Especificación de casos de uso críticos
 
+#### Caso de Uso CU-01: Iniciar Sesión y Emisión de Token JWT
+- **Actor Principal:** Comensal o Administrador.
+- **Precondiciones:** El usuario debe estar registrado en la base de datos con contraseña hasheada en BCrypt.
+- **Flujo Principal:**
+  1. El usuario presiona "Iniciar Sesión" en la barra de navegación.
+  2. Completa su nombre de usuario y contraseña en el modal reactivo (`AuthModalComponent`).
+  3. Angular despacha `POST /api/auth/login` vía canal seguro HTTPS.
+  4. Spring Security valida las credenciales contra la base de datos MySQL en Aiven Cloud (`BCryptPasswordEncoder`).
+  5. `JwtUtils` emite un token firmado con HMAC-SHA256 con validez de 24 horas y los roles correspondientes.
+  6. Angular almacena el token en `localStorage`, actualiza los Signals reactivos de sesión y la Navbar refleja el estado logueado.
+- **Flujo Alterno:** Si la contraseña no coincide, Spring Security lanza `BadCredentialsException` y responde `HTTP 401 Unauthorized`.
+- **Postcondiciones:** El usuario dispone de un Bearer token para transaccionar en endpoints protegidos.
+
 #### Caso de Uso CU-04: Realizar Pedido y Simular Pago
 - **Actor Principal:** Cliente autenticado (`ROLE_CUSTOMER`).
 - **Precondiciones:**
@@ -345,6 +358,16 @@ flowchart TD
   - *4a. Token expirado (HTTP 401):* El interceptor de Angular captura el error, cierra la sesión local y abre el modal de login informando la expiración.
   - *4b. Usuario con rol Administrador (RN-01):* El sistema bloquea el checkout e informa que los administradores no pueden generar comandas de delivery.
 - **Postcondiciones:** La orden queda almacenada en la base de datos `brasas_wok_db`, el personal de cocina visualiza el ticket en su monitor y el stock se actualiza.
+
+#### Caso de Uso CU-05: Rastrear Pedido en Tiempo Real
+- **Actor Principal:** Cliente Comensal.
+- **Precondiciones:** La comanda debe estar registrada y poseer un código identificador (ej. `ORD-849201`).
+- **Flujo Principal:**
+  1. El cliente accede a "Mis Pedidos" o ingresa su código en la vista de seguimiento.
+  2. El frontend consulta `GET /api/orders/track/{orderNumber}`.
+  3. El cliente se suscribe al broker STOMP en `/topic/orders/{orderId}/status`.
+  4. Cuando la cocina actualiza la orden, el broker despacha la notificación y el Stepper avanza automáticamente en pantalla sin recargar.
+- **Postcondiciones:** El cliente visualiza en tiempo real el ciclo de su pedido (`PENDIENTE` -> `EN_COCINA` -> `EN_CAMINO` -> `ENTREGADO`).
 
 #### Caso de Uso CU-08: Actualizar Estado de Comanda en Cocina (KDS)
 - **Actor Principal:** Personal de Cocina / Administrador (`ROLE_ADMIN`).
@@ -516,7 +539,10 @@ flowchart TD
 
 ## 3.5 Contratos de API
 
-El backend sigue las directrices OpenAPI 3.0 / REST. Todos los cuerpos de solicitud y respuesta utilizan formato JSON con codificación UTF-8.
+El backend sigue las directrices **OpenAPI 3.0 / REST** y cuenta con documentación viva generada mediante **SpringDoc OpenAPI v2.8.5**:
+- **Interfaz Interactiva Swagger UI:** `https://brasaswok-backend.onrender.com/swagger-ui/index.html`
+- **Especificación JSON OpenAPI:** `https://brasaswok-backend.onrender.com/v3/api-docs`
+- **Autenticación en Swagger:** Configurada con esquema de seguridad `BearerAuth` (JWT HTTP Bearer) que permite autenticar peticiones de prueba con un clic en el botón "Authorize". Todos los cuerpos de solicitud y respuesta utilizan formato JSON con codificación UTF-8.
 
 ### Convención estándar de errores (`ErrorResponse`)
 Cuando una petición falla, el servidor captura la excepción en `GlobalExceptionHandler` y retorna un payload homogéneo:
