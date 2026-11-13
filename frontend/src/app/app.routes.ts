@@ -90,6 +90,11 @@ export const routes: Routes = [
         title: 'Categorías | Brasas a Wok'
       },
       {
+        path: 'users',
+        loadComponent: () => import('./pages/admin/users/users.component').then(m => m.AdminUsersComponent),
+        title: 'Gestión de Usuarios | Brasas a Wok'
+      },
+      {
         path: '**',
         redirectTo: 'dashboard'
       }

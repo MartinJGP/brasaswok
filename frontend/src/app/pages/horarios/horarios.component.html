@@ -1,49 +1,40 @@
-<div class="min-h-screen bg-brand-bg text-brand-text-primary py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-3xl mx-auto space-y-8">
-    <div class="text-center space-y-2">
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-sans tracking-tight">
+<div class="min-h-screen bg-brand-bg text-brand-text-primary py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto space-y-10">
+    <div class="text-center space-y-3">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary font-sans tracking-tight">
         Horarios de Atención
       </h1>
-      <p class="text-xs sm:text-sm text-brand-text-secondary max-w-md mx-auto">
-        Disfruta de nuestros pollos al carbón y salteados al wok en salón o delivery.
+      <p class="text-sm sm:text-base text-brand-text-secondary max-w-lg mx-auto">
+        Conoce los turnos de atención continua para consumo en salón y despacho de delivery.
       </p>
-
-      <div class="pt-2">
-        <span
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
-          [ngClass]="isOpenNow() ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-700 border border-amber-500/20'"
-        >
-          <span class="w-2 h-2 rounded-full" [ngClass]="isOpenNow() ? 'bg-emerald-500' : 'bg-amber-500'"></span>
-          <span>{{ isOpenNow() ? 'Abierto Ahora' : 'Cerrado en este Momento' }}</span>
-        </span>
-      </div>
     </div>
 
     <!-- Tabla Limpia de Horarios -->
-    <div class="bg-brand-surface rounded-xl border border-brand-border overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-brand-border bg-brand-surface-alt/40">
-        <h2 class="text-sm font-bold text-brand-text-primary font-sans">Turnos de Salón y Despacho</h2>
+    <div class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-sm">
+      <div class="p-5 border-b border-brand-border bg-brand-surface-alt/40 flex items-center justify-between">
+        <h2 class="text-base font-bold text-brand-text-primary font-sans">Turnos de Salón y Despacho</h2>
+        <span class="text-xs text-brand-text-secondary font-medium">Lunes a Domingo</span>
       </div>
 
       <div class="divide-y divide-brand-border/60">
-        <div *ngFor="let s of schedules" class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div *ngFor="let s of schedules" class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm">
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-sm text-brand-text-primary">{{ s.dayGroup }}</span>
-              <span *ngIf="s.isPeak" class="px-1.5 py-0.5 rounded bg-brand-accent/10 text-brand-accent text-[10px] font-semibold">
+              <span class="font-bold text-base text-brand-text-primary">{{ s.dayGroup }}</span>
+              <span *ngIf="s.isPeak" class="px-2 py-0.5 rounded-full bg-brand-accent/10 text-brand-accent text-xs font-semibold">
                 Mayor afluencia
               </span>
             </div>
-            <p class="text-brand-text-secondary mt-0.5">Atención continua sin interrupciones.</p>
+            <p class="text-xs text-brand-text-secondary mt-1">Atención continua sin interrupciones en salón y cocina.</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 sm:text-right font-mono text-xs">
+          <div class="grid grid-cols-2 gap-6 sm:text-right font-mono text-sm">
             <div>
-              <span class="text-[10px] uppercase font-bold text-brand-text-muted block font-sans">Salón</span>
+              <span class="text-xs uppercase font-bold text-brand-text-muted block font-sans">Salón</span>
               <span class="text-brand-text-primary font-semibold">{{ s.dineInHours }}</span>
             </div>
             <div>
-              <span class="text-[10px] uppercase font-bold text-brand-text-muted block font-sans">Delivery</span>
+              <span class="text-xs uppercase font-bold text-brand-text-muted block font-sans">Delivery</span>
               <span class="text-brand-primary font-bold">{{ s.deliveryHours }}</span>
             </div>
           </div>

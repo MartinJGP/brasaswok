@@ -1,203 +1,217 @@
-<div class="space-y-6 max-w-7xl mx-auto">
-  <!-- Encabezado del Dashboard -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-brand-border pb-5">
+<div class="space-y-8 max-w-7xl mx-auto">
+  <!-- Encabezado del Dashboard Limpio y Proporcionado -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-brand-border pb-6">
     <div>
-      <h2 class="text-xl sm:text-2xl font-bold text-brand-text-primary">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-700 text-xs font-bold uppercase tracking-wider mb-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Operaciones en Tiempo Real</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-sans tracking-tight">
         Tablero de Operaciones
       </h2>
-      <p class="text-xs sm:text-sm text-brand-text-secondary mt-0.5">
-        Métricas del turno actual y control de comandas en tiempo real.
+      <p class="text-sm text-brand-text-secondary mt-1">
+        Métricas clave del turno de cocina, facturación y flujo de pedidos.
       </p>
     </div>
 
-    <div class="flex items-center gap-2.5">
-      <a
-        routerLink="/admin/kitchen"
-        class="inline-flex items-center gap-2 px-3.5 py-2 border border-brand-border hover:bg-brand-surface text-brand-text-primary text-xs font-semibold rounded-xl transition-colors"
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="loadDashboardData()"
+        class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface hover:bg-stone-50 border border-brand-border text-brand-text-primary text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm active:scale-95"
       >
-        <app-icon name="flame" [size]="15" customClass="text-brand-accent"></app-icon>
-        <span>Cocina (KDS)</span>
-      </a>
+        <app-icon name="trending-up" [size]="16" customClass="text-brand-text-secondary"></app-icon>
+        <span>Actualizar Datos</span>
+      </button>
 
       <a
         routerLink="/admin/orders"
-        class="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-brand-primary/25 active:scale-95"
       >
-        <app-icon name="orders" [size]="15"></app-icon>
-        <span>Ver Comandas</span>
+        <app-icon name="orders" [size]="16"></app-icon>
+        <span>Ver Todas las Comandas</span>
       </a>
     </div>
   </div>
 
   <!-- Estado de carga -->
-  <div *ngIf="isLoading()" class="p-12 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-3">
-    <div class="w-6 h-6 mx-auto rounded-full border-2 border-brand-primary border-t-transparent animate-spin"></div>
-    <p class="text-xs text-brand-text-secondary">Cargando métricas del sistema...</p>
+  <div *ngIf="isLoading()" class="p-16 text-center bg-brand-surface rounded-2xl border border-brand-border space-y-4">
+    <div class="w-8 h-8 mx-auto rounded-full border-3 border-brand-primary border-t-transparent animate-spin"></div>
+    <p class="text-sm text-brand-text-secondary font-medium">Sincronizando métricas del restaurante...</p>
   </div>
 
   <!-- Estado de error -->
-  <div *ngIf="errorMessage()" class="p-5 bg-rose-50 border border-rose-200 rounded-xl text-center space-y-2">
-    <p class="text-xs font-semibold text-rose-700">{{ errorMessage() }}</p>
+  <div *ngIf="errorMessage()" class="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center space-y-3">
+    <p class="text-sm font-semibold text-rose-700">{{ errorMessage() }}</p>
     <button
       type="button"
       (click)="loadDashboardData()"
-      class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition-colors"
+      class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors shadow-sm"
     >
-      Reintentar
+      Reintentar Conexión
     </button>
   </div>
 
   <!-- Contenido Principal -->
-  <div *ngIf="!isLoading() && !errorMessage()" class="space-y-6">
-    <!-- Métricas del Turno -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-brand-surface rounded-xl p-4 sm:p-5 border border-brand-border">
+  <div *ngIf="!isLoading() && !errorMessage()" class="space-y-8">
+    <!-- Tarjetas de Métricas de Mayor Tamaño y Legibilidad -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-brand-surface rounded-2xl p-6 border border-brand-border shadow-sm hover:border-brand-primary/30 transition-all flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+          <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider">
             Ventas de Hoy
           </span>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-primary/10">
-            <app-icon name="dollar" [size]="16" customClass="text-brand-primary"></app-icon>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-600">
+            <app-icon name="dollar" [size]="20"></app-icon>
           </div>
         </div>
-        <p class="text-2xl font-bold text-brand-text-primary tracking-tight font-mono mt-3">
-          S/ {{ (stats()?.todaySales || 0).toFixed(2) }}
-        </p>
-        <p class="text-[11px] text-brand-text-secondary mt-1">
-          Facturación acumulada
-        </p>
+        <div class="mt-4">
+          <p class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary tracking-tight font-mono">
+            S/ {{ (stats()?.todaySales || 0).toFixed(2) }}
+          </p>
+          <p class="text-xs text-brand-text-secondary mt-1 font-medium">
+            Facturación acumulada del turno
+          </p>
+        </div>
       </div>
 
-      <div class="bg-brand-surface rounded-xl p-4 sm:p-5 border border-brand-border">
+      <div class="bg-brand-surface rounded-2xl p-6 border border-brand-border shadow-sm hover:border-amber-400/40 transition-all flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+          <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider">
             Comandas Activas
           </span>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50">
-            <app-icon name="flame" [size]="16" customClass="text-brand-accent"></app-icon>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500/10 text-brand-accent">
+            <app-icon name="flame" [size]="20"></app-icon>
           </div>
         </div>
-        <p class="text-2xl font-bold text-brand-text-primary tracking-tight mt-3">
-          {{ stats()?.activeOrders || 0 }} en cocina
-        </p>
-        <p class="text-[11px] text-brand-text-secondary mt-1">
-          En preparación o en camino
-        </p>
+        <div class="mt-4">
+          <p class="text-3xl sm:text-4xl font-extrabold text-brand-primary tracking-tight">
+            {{ stats()?.activeOrders || 0 }} <span class="text-lg font-bold text-brand-text-primary">en cocina</span>
+          </p>
+          <p class="text-xs text-brand-text-secondary mt-1 font-medium">
+            En preparación o en camino
+          </p>
+        </div>
       </div>
 
-      <div class="bg-brand-surface rounded-xl p-4 sm:p-5 border border-brand-border">
+      <div class="bg-brand-surface rounded-2xl p-6 border border-brand-border shadow-sm hover:border-blue-400/30 transition-all flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+          <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider">
             Total Pedidos Hoy
           </span>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-50">
-            <app-icon name="check" [size]="16" customClass="text-emerald-600"></app-icon>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/10 text-blue-600">
+            <app-icon name="check" [size]="20"></app-icon>
           </div>
         </div>
-        <p class="text-2xl font-bold text-brand-text-primary tracking-tight mt-3">
-          {{ stats()?.totalOrdersToday || 0 }} pedidos
-        </p>
-        <p class="text-[11px] text-brand-text-secondary mt-1">
-          Turno registrado
-        </p>
+        <div class="mt-4">
+          <p class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary tracking-tight">
+            {{ stats()?.totalOrdersToday || 0 }} <span class="text-lg font-bold text-brand-text-secondary">pedidos</span>
+          </p>
+          <p class="text-xs text-brand-text-secondary mt-1 font-medium">
+            Comandas despachadas y registradas
+          </p>
+        </div>
       </div>
 
-      <div class="bg-brand-surface rounded-xl p-4 sm:p-5 border border-brand-border">
+      <div class="bg-brand-surface rounded-2xl p-6 border border-brand-border shadow-sm hover:border-purple-400/30 transition-all flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-brand-text-muted uppercase tracking-wider">
+          <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider">
             Ticket Promedio
           </span>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-stone-100">
-            <app-icon name="trending-up" [size]="16" customClass="text-stone-700"></app-icon>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-stone-100 text-stone-700">
+            <app-icon name="trending-up" [size]="20"></app-icon>
           </div>
         </div>
-        <p class="text-2xl font-bold text-brand-text-primary tracking-tight font-mono mt-3">
-          S/ {{ (stats()?.averageTicket || 0).toFixed(2) }}
-        </p>
-        <p class="text-[11px] text-brand-text-secondary mt-1">
-          Promedio por pedido
-        </p>
+        <div class="mt-4">
+          <p class="text-3xl sm:text-4xl font-extrabold text-brand-text-primary tracking-tight font-mono">
+            S/ {{ (stats()?.averageTicket || 0).toFixed(2) }}
+          </p>
+          <p class="text-xs text-brand-text-secondary mt-1 font-medium">
+            Consumo promedio por comanda
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- Comandas Recientes y Platos Estrella -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-      <div class="xl:col-span-2 bg-brand-surface rounded-xl border border-brand-border overflow-hidden">
-        <div class="p-4 sm:p-5 border-b border-brand-border flex items-center justify-between">
+    <!-- Comandas Recientes y Platos Estrella Centrados y Proporcionados -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div class="xl:col-span-2 bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-sm">
+        <div class="p-6 border-b border-brand-border flex items-center justify-between">
           <div>
-            <h3 class="text-sm sm:text-base font-bold text-brand-text-primary">
+            <h3 class="text-base sm:text-lg font-bold text-brand-text-primary font-sans">
               Comandas Recientes
             </h3>
-            <p class="text-xs text-brand-text-secondary">
-              Últimos pedidos registrados en el sistema
+            <p class="text-xs sm:text-sm text-brand-text-secondary mt-0.5">
+              Últimos pedidos registrados en el sistema en tiempo real
             </p>
           </div>
 
           <a
             routerLink="/admin/orders"
-            class="text-xs font-semibold text-brand-primary hover:text-brand-primary-hover transition-colors"
+            class="text-xs sm:text-sm font-bold text-brand-primary hover:text-brand-primary-hover transition-colors inline-flex items-center gap-1"
           >
-            Ver todas →
+            <span>Ver historial completo</span>
+            <app-icon name="arrow-right" [size]="14"></app-icon>
           </a>
         </div>
 
-        <div *ngIf="recentOrders().length === 0" class="p-10 text-center text-xs text-brand-text-secondary">
+        <div *ngIf="recentOrders().length === 0" class="p-16 text-center text-sm text-brand-text-secondary">
           No hay comandas registradas en el turno actual.
         </div>
 
         <div *ngIf="recentOrders().length > 0" class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <table class="w-full text-left border-collapse text-sm">
             <thead>
-              <tr class="bg-stone-50/70 text-brand-text-muted text-[11px] uppercase tracking-wider font-semibold border-b border-brand-border">
-                <th scope="col" class="py-2.5 px-4">Ticket</th>
-                <th scope="col" class="py-2.5 px-4">Cliente</th>
-                <th scope="col" class="py-2.5 px-4">Platos</th>
-                <th scope="col" class="py-2.5 px-4">Total</th>
-                <th scope="col" class="py-2.5 px-4">Estado</th>
-                <th scope="col" class="py-2.5 px-4 text-right">Acción</th>
+              <tr class="bg-stone-50/80 text-brand-text-muted text-xs uppercase tracking-wider font-bold border-b border-brand-border">
+                <th scope="col" class="py-3 px-5">Ticket</th>
+                <th scope="col" class="py-3 px-5">Cliente</th>
+                <th scope="col" class="py-3 px-5">Platos Solicitados</th>
+                <th scope="col" class="py-3 px-5">Monto Total</th>
+                <th scope="col" class="py-3 px-5">Estado</th>
+                <th scope="col" class="py-3 px-5 text-right">Acción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-brand-border/60">
               <tr
                 *ngFor="let order of recentOrders()"
-                class="hover:bg-stone-50/50 transition-colors"
+                class="hover:bg-stone-50/75 transition-colors"
               >
-                <td class="py-3 px-4">
-                  <span class="font-bold text-brand-text-primary font-mono block">{{ order.orderNumber }}</span>
-                  <span class="text-[11px] text-brand-text-muted block">
+                <td class="py-4 px-5">
+                  <span class="font-extrabold text-brand-text-primary font-mono text-sm block">{{ order.orderNumber }}</span>
+                  <span class="text-xs text-brand-text-muted block mt-0.5">
                     {{ order.createdAt ? (order.createdAt | date:'shortTime') : 'Reciente' }}
                   </span>
                 </td>
 
-                <td class="py-3 px-4">
-                  <span class="font-medium text-brand-text-primary block">{{ order.customerName || 'Cliente' }}</span>
-                  <span class="text-[11px] text-brand-text-secondary truncate max-w-[130px] block">
-                    {{ order.deliveryAddress || 'Salón / Recojo' }}
+                <td class="py-4 px-5">
+                  <span class="font-bold text-brand-text-primary block">{{ order.customerName || 'Cliente' }}</span>
+                  <span class="text-xs text-brand-text-secondary truncate max-w-[150px] block mt-0.5">
+                    {{ order.deliveryAddress || 'Salón / Mesa' }}
                   </span>
                 </td>
 
-                <td class="py-3 px-4 text-xs text-brand-text-secondary">
-                  <span class="line-clamp-1 font-medium text-brand-text-primary">{{ getItemsSummary(order) }}</span>
-                  <span class="text-[11px] text-brand-text-muted">{{ order.items?.length || 0 }} items</span>
+                <td class="py-4 px-5 text-xs text-brand-text-secondary">
+                  <span class="line-clamp-1 font-semibold text-brand-text-primary text-xs">{{ getItemsSummary(order) }}</span>
+                  <span class="text-[11px] text-brand-text-muted block mt-0.5">{{ order.items?.length || 0 }} items</span>
                 </td>
 
-                <td class="py-3 px-4">
-                  <span class="font-bold text-brand-text-primary block font-mono">S/ {{ order.totalAmount.toFixed(2) }}</span>
-                  <span class="text-[10px] uppercase font-semibold text-brand-text-muted">
+                <td class="py-4 px-5">
+                  <span class="font-bold text-brand-text-primary block font-mono text-sm">S/ {{ order.totalAmount.toFixed(2) }}</span>
+                  <span class="text-[11px] uppercase font-bold text-brand-text-muted block">
                     {{ order.paymentMethod }}
                   </span>
                 </td>
 
-                <td class="py-3 px-4">
+                <td class="py-4 px-5">
                   <app-badge [variant]="getStatusVariant(order.status)">
                     {{ getStatusLabel(order.status) }}
                   </app-badge>
                 </td>
 
-                <td class="py-3 px-4 text-right">
+                <td class="py-4 px-5 text-right">
                   <a
                     routerLink="/admin/orders"
-                    class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-brand-border bg-brand-surface hover:bg-stone-50 text-brand-text-primary transition-colors inline-block"
+                    class="px-3 py-1.5 text-xs font-bold rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-primary hover:text-white hover:border-brand-primary text-brand-text-primary transition-all inline-block shadow-sm"
                   >
                     Gestionar
                   </a>
@@ -208,34 +222,39 @@
         </div>
       </div>
 
-      <!-- Barra Lateral del Dashboard: Platos y Acceso Rápido -->
+      <!-- Barra Lateral del Dashboard: Platos Más Pedidos y Accesos Rápidos -->
       <div class="space-y-6">
-        <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-brand-border">
+        <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5 pb-3 border-b border-brand-border">
             <div>
-              <h3 class="text-sm font-bold text-brand-text-primary">
-                Platos Más Pedidos
+              <h3 class="text-base font-bold text-brand-text-primary font-sans">
+                Platos Más Solicitados
               </h3>
-              <p class="text-xs text-brand-text-secondary">Demanda durante el turno</p>
+              <p class="text-xs text-brand-text-secondary">Demanda acumulada del turno</p>
             </div>
-            <span class="text-[11px] font-semibold text-brand-accent uppercase">Hoy</span>
+            <span class="text-xs font-bold text-brand-primary uppercase">Hoy</span>
           </div>
 
-          <div *ngIf="topDishes().length === 0" class="py-6 text-center text-xs text-brand-text-muted">
+          <div *ngIf="topDishes().length === 0" class="py-8 text-center text-xs text-brand-text-muted">
             Aún no hay platos pedidos registrados hoy.
           </div>
 
-          <ul *ngIf="topDishes().length > 0" class="space-y-3.5">
-            <li *ngFor="let dish of topDishes()" class="space-y-1.5">
-              <div class="flex items-center justify-between text-xs font-medium">
-                <span class="text-brand-text-primary font-medium truncate max-w-[180px]">
-                  {{ dish.name }}
-                </span>
-                <span class="text-brand-text-secondary font-mono">{{ dish.count }} ped.</span>
+          <ul *ngIf="topDishes().length > 0" class="space-y-4">
+            <li *ngFor="let dish of topDishes(); let i = index" class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <div class="flex items-center gap-2 truncate max-w-[190px]">
+                  <span class="w-5 h-5 rounded-md bg-stone-100 text-brand-text-secondary flex items-center justify-center text-[10px] font-bold">
+                    {{ i + 1 }}
+                  </span>
+                  <span class="text-brand-text-primary truncate">
+                    {{ dish.name }}
+                  </span>
+                </div>
+                <span class="text-brand-primary font-mono font-bold">{{ dish.count }} ped.</span>
               </div>
-              <div class="w-full bg-stone-100 rounded-full h-1.5 overflow-hidden">
+              <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
                 <div
-                  class="h-1.5 rounded-full transition-all duration-500 bg-brand-primary"
+                  class="h-2 rounded-full transition-all duration-500 bg-gradient-to-r from-brand-primary to-brand-accent"
                   [style.width.%]="dish.percentage"
                 ></div>
               </div>
@@ -243,31 +262,57 @@
           </ul>
         </div>
 
-        <div class="bg-brand-surface rounded-xl border border-brand-border p-5 space-y-3">
-          <h3 class="text-sm font-bold text-brand-text-primary">
-            Accesos Directos
+        <div class="bg-brand-surface rounded-2xl border border-brand-border p-6 space-y-4 shadow-sm">
+          <h3 class="text-base font-bold text-brand-text-primary font-sans">
+            Módulos Rápidos
           </h3>
-          <div class="space-y-2">
+          <div class="space-y-2.5">
             <a
               routerLink="/admin/kitchen"
-              class="flex items-center justify-between p-3 rounded-xl border border-brand-border hover:bg-stone-50 transition-colors text-xs"
+              class="flex items-center justify-between p-3.5 rounded-xl border border-brand-border hover:border-brand-primary/40 hover:bg-stone-50 transition-all text-xs group"
             >
-              <div class="flex items-center gap-2.5">
-                <app-icon name="flame" [size]="16" customClass="text-brand-accent"></app-icon>
-                <span class="font-semibold text-brand-text-primary">Cocina en Vivo (KDS)</span>
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-brand-accent">
+                  <app-icon name="flame" [size]="18"></app-icon>
+                </div>
+                <div>
+                  <span class="font-bold text-brand-text-primary block text-sm group-hover:text-brand-primary transition-colors">Cocina en Vivo</span>
+                  <span class="text-[11px] text-brand-text-secondary">Control de preparación en tiempo real</span>
+                </div>
               </div>
-              <span class="text-brand-primary font-semibold">Abrir →</span>
+              <span class="text-brand-primary font-bold text-xs">Abrir →</span>
             </a>
 
             <a
               routerLink="/admin/menu"
-              class="flex items-center justify-between p-3 rounded-xl border border-brand-border hover:bg-stone-50 transition-colors text-xs"
+              class="flex items-center justify-between p-3.5 rounded-xl border border-brand-border hover:border-brand-primary/40 hover:bg-stone-50 transition-all text-xs group"
             >
-              <div class="flex items-center gap-2.5">
-                <app-icon name="menu" [size]="16" customClass="text-brand-primary"></app-icon>
-                <span class="font-semibold text-brand-text-primary">Catálogo y Precios</span>
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+                  <app-icon name="menu" [size]="18"></app-icon>
+                </div>
+                <div>
+                  <span class="font-bold text-brand-text-primary block text-sm group-hover:text-brand-primary transition-colors">Catálogo de Platos</span>
+                  <span class="text-[11px] text-brand-text-secondary">Precios y disponibilidad en carta</span>
+                </div>
               </div>
-              <span class="text-brand-primary font-semibold">Gestionar →</span>
+              <span class="text-brand-primary font-bold text-xs">Gestionar →</span>
+            </a>
+
+            <a
+              routerLink="/admin/users"
+              class="flex items-center justify-between p-3.5 rounded-xl border border-brand-border hover:border-brand-primary/40 hover:bg-stone-50 transition-all text-xs group"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600">
+                  <app-icon name="user" [size]="18"></app-icon>
+                </div>
+                <div>
+                  <span class="font-bold text-brand-text-primary block text-sm group-hover:text-brand-primary transition-colors">Usuarios & Clientes</span>
+                  <span class="text-[11px] text-brand-text-secondary">Cuentas registradas y accesos</span>
+                </div>
+              </div>
+              <span class="text-brand-primary font-bold text-xs">Ver →</span>
             </a>
           </div>
         </div>

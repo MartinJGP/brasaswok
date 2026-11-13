@@ -47,6 +47,18 @@ export interface AdminCategory {
   isActive: boolean;
 }
 
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  fullName: string;
+  phone?: string;
+  address?: string;
+  role: 'ROLE_ADMIN' | 'ROLE_CUSTOMER' | string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface DashboardStatsResponse {
   todaySales: number;
   activeOrders: number;
@@ -159,6 +171,21 @@ export class AdminService {
     return this.http.post<AdminCategory>(`${this.baseUrl}/categories`, payload);
   }
 
+  // actualiza datos de categoria existente
+  updateCategory(categoryId: number, category: Partial<AdminCategory>): Observable<AdminCategory> {
+    const slug = (category as any).slug || category.name?.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `categoria-${categoryId}`;
+    const payload = {
+      name: category.name,
+      slug: slug,
+      description: category.description || '',
+      imageUrl: '',
+      displayOrder: 0,
+      isActive: category.isActive ?? true
+    };
+
+    return this.http.put<AdminCategory>(`${this.baseUrl}/categories/${categoryId}`, payload);
+  }
+
   // alterna estado de categoria
   toggleCategoryStatus(categoryId: number): Observable<AdminCategory> {
     return this.http.patch<AdminCategory>(`${this.baseUrl}/categories/${categoryId}/toggle-status`, {});
@@ -167,6 +194,16 @@ export class AdminService {
   // elimina categoria
   deleteCategory(categoryId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/categories/${categoryId}`);
+  }
+
+  // lista todos los usuarios registrados (solo admin)
+  getUsers(): Observable<AdminUser[]> {
+    return this.http.get<AdminUser[]>(`${this.baseUrl}/admin/users`);
+  }
+
+  // alterna estado activo/inactivo de una cuenta de usuario
+  toggleUserStatus(userId: number): Observable<AdminUser> {
+    return this.http.patch<AdminUser>(`${this.baseUrl}/admin/users/${userId}/toggle-status`, {});
   }
 
   // obtiene metricas para dashboard general

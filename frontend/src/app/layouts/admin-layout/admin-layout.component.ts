@@ -27,7 +27,7 @@ export class AdminLayoutComponent {
       section: 'Operaciones',
       items: [
         { label: 'Panel General', path: '/admin/dashboard', icon: 'dashboard' },
-        { label: 'Cocina en Vivo', path: '/admin/kitchen', icon: 'flame', badge: 'KDS', badgeVariant: 'warning' },
+        { label: 'Cocina en Vivo', path: '/admin/kitchen', icon: 'flame' },
         { label: 'Pedidos & Comandas', path: '/admin/orders', icon: 'orders' }
       ]
     },
@@ -36,6 +36,12 @@ export class AdminLayoutComponent {
       items: [
         { label: 'Platos & Menú', path: '/admin/menu', icon: 'menu' },
         { label: 'Categorías', path: '/admin/categories', icon: 'categories' }
+      ]
+    },
+    {
+      section: 'Usuarios & Seguridad',
+      items: [
+        { label: 'Gestión de Usuarios', path: '/admin/users', icon: 'user' }
       ]
     }
   ];

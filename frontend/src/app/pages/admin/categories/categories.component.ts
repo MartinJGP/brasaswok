@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
@@ -16,13 +16,33 @@ export class AdminCategoriesComponent implements OnInit {
   readonly categories = signal<AdminCategory[]>([]);
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
-  readonly showCreateModal = signal<boolean>(false);
+  readonly showModal = signal<boolean>(false);
+  readonly modalMode = signal<'create' | 'edit'>('create');
+  readonly editingCategoryId = signal<number | null>(null);
+  readonly searchTerm = signal<string>('');
 
-  newCategory: Partial<AdminCategory> = {
+  categoryForm: Partial<AdminCategory> = {
     name: '',
     description: '',
     isActive: true
   };
+
+  readonly filteredCategories = computed<AdminCategory[]>(() => {
+    const search = this.searchTerm().trim().toLowerCase();
+    if (!search) return this.categories();
+    return this.categories().filter(c =>
+      c.name.toLowerCase().includes(search) ||
+      (c.description && c.description.toLowerCase().includes(search))
+    );
+  });
+
+  readonly totalActive = computed<number>(() => {
+    return this.categories().filter(c => c.isActive).length;
+  });
+
+  readonly totalInactive = computed<number>(() => {
+    return this.categories().filter(c => !c.isActive).length;
+  });
 
   ngOnInit(): void {
     this.loadCategories();
@@ -44,11 +64,29 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   openCreateModal(): void {
-    this.showCreateModal.set(true);
+    this.modalMode.set('create');
+    this.editingCategoryId.set(null);
+    this.categoryForm = {
+      name: '',
+      description: '',
+      isActive: true
+    };
+    this.showModal.set(true);
   }
 
-  closeCreateModal(): void {
-    this.showCreateModal.set(false);
+  openEditModal(category: AdminCategory): void {
+    this.modalMode.set('edit');
+    this.editingCategoryId.set(category.id);
+    this.categoryForm = {
+      name: category.name,
+      description: category.description,
+      isActive: category.isActive
+    };
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
   }
 
   toggleStatus(category: AdminCategory): void {
@@ -64,25 +102,34 @@ export class AdminCategoriesComponent implements OnInit {
     });
   }
 
-  handleCreateCategory(): void {
-    this.adminService.createCategory(this.newCategory).subscribe({
-      next: (created) => {
-        this.categories.update(list => [...list, created]);
-        this.showCreateModal.set(false);
-        this.newCategory = {
-          name: '',
-          description: '',
-          isActive: true
-        };
-      },
-      error: (err) => {
-        alert(err?.error?.message || 'No se pudo crear la categoría');
-      }
-    });
+  handleSaveCategory(): void {
+    if (this.modalMode() === 'create') {
+      this.adminService.createCategory(this.categoryForm).subscribe({
+        next: (created) => {
+          this.categories.update(list => [...list, created]);
+          this.closeModal();
+        },
+        error: (err) => {
+          alert(err?.error?.message || 'No se pudo registrar la categoría');
+        }
+      });
+    } else {
+      const id = this.editingCategoryId();
+      if (!id) return;
+      this.adminService.updateCategory(id, this.categoryForm).subscribe({
+        next: (updated) => {
+          this.categories.update(list => list.map(c => c.id === updated.id ? updated : c));
+          this.closeModal();
+        },
+        error: (err) => {
+          alert(err?.error?.message || 'No se pudo actualizar la categoría');
+        }
+      });
+    }
   }
 
   handleDeleteCategory(category: AdminCategory): void {
-    if (!confirm(`¿Estás seguro de eliminar la categoría "${category.name}"?`)) {
+    if (!confirm(`¿Estás seguro de eliminar la sección "${category.name}"? Los platos asociados podrían verse afectados.`)) {
       return;
     }
     this.adminService.deleteCategory(category.id).subscribe({

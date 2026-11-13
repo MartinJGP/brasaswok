@@ -1,0 +1,218 @@
+<div class="space-y-8 max-w-7xl mx-auto">
+  <!-- Encabezado del Módulo -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-6">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-sans tracking-tight">
+        Gestión de Usuarios & Cuentas
+      </h1>
+      <p class="text-sm text-brand-text-secondary mt-1">
+        Supervisión de clientes registrados, roles de acceso y estado de cuentas en el sistema.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="loadUsers()"
+      class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-surface hover:bg-stone-50 border border-brand-border text-brand-text-primary text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm active:scale-95 self-start sm:self-auto"
+    >
+      <app-icon name="trending-up" [size]="16" customClass="text-brand-text-secondary"></app-icon>
+      <span>Actualizar Lista</span>
+    </button>
+  </div>
+
+  <!-- Métricas Rápidas de Usuarios -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-sm flex items-center justify-between">
+      <div>
+        <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider block">Total Cuentas</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-brand-text-primary font-mono mt-1 block">
+          {{ users().length }}
+        </span>
+      </div>
+      <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
+        <app-icon name="users" [size]="20"></app-icon>
+      </div>
+    </div>
+
+    <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-sm flex items-center justify-between">
+      <div>
+        <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider block">Clientes Registrados</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono mt-1 block">
+          {{ totalCustomers() }}
+        </span>
+      </div>
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+        <app-icon name="user" [size]="20"></app-icon>
+      </div>
+    </div>
+
+    <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-sm flex items-center justify-between">
+      <div>
+        <span class="text-xs font-bold text-brand-text-muted uppercase tracking-wider block">Administradores</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-purple-600 font-mono mt-1 block">
+          {{ totalAdmins() }}
+        </span>
+      </div>
+      <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-600">
+        <app-icon name="lock" [size]="20"></app-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra de Búsqueda y Filtros de Rol / Estado -->
+  <div class="bg-brand-surface p-4 rounded-2xl border border-brand-border shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="relative w-full md:w-96">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-brand-text-muted pointer-events-none">
+        <app-icon name="search" [size]="18"></app-icon>
+      </span>
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Buscar por nombre, usuario, correo o teléfono..."
+        class="w-full pl-10 pr-4 py-2.5 text-sm bg-stone-50 border border-brand-border rounded-xl text-brand-text-primary placeholder-brand-text-muted focus:bg-white focus:border-brand-primary focus:outline-none transition-all"
+      />
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-bold text-brand-text-secondary whitespace-nowrap">Rol:</label>
+        <select
+          [ngModel]="selectedRole()"
+          (ngModelChange)="selectedRole.set($event)"
+          class="px-3.5 py-2 text-xs sm:text-sm bg-stone-50 border border-brand-border rounded-xl text-brand-text-primary focus:bg-white focus:border-brand-primary focus:outline-none transition-all"
+        >
+          <option value="ALL">Todos los Roles</option>
+          <option value="ROLE_CUSTOMER">Clientes</option>
+          <option value="ROLE_ADMIN">Administradores</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-bold text-brand-text-secondary whitespace-nowrap">Estado:</label>
+        <select
+          [ngModel]="selectedStatus()"
+          (ngModelChange)="selectedStatus.set($event)"
+          class="px-3.5 py-2 text-xs sm:text-sm bg-stone-50 border border-brand-border rounded-xl text-brand-text-primary focus:bg-white focus:border-brand-primary focus:outline-none transition-all"
+        >
+          <option value="ALL">Todos los Estados</option>
+          <option value="ACTIVE">Activos</option>
+          <option value="INACTIVE">Inactivos</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading()" class="p-16 text-center text-sm text-brand-text-secondary bg-brand-surface rounded-3xl border border-brand-border space-y-3">
+    <div class="w-8 h-8 mx-auto rounded-full border-3 border-brand-primary border-t-transparent animate-spin"></div>
+    <span>Cargando cuentas de usuario...</span>
+  </div>
+
+  <!-- Estado de Error -->
+  <div *ngIf="errorMessage()" class="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center space-y-3">
+    <p class="text-sm font-semibold text-rose-700">{{ errorMessage() }}</p>
+    <button
+      type="button"
+      (click)="loadUsers()"
+      class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors shadow-sm"
+    >
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Estado Vacío -->
+  <div *ngIf="!isLoading() && !errorMessage() && filteredUsers().length === 0" class="p-16 text-center bg-brand-surface rounded-3xl border border-brand-border space-y-3 shadow-sm">
+    <div class="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center text-stone-500 mx-auto">
+      <app-icon name="user" [size]="24"></app-icon>
+    </div>
+    <p class="text-base font-bold text-brand-text-primary">No se encontraron usuarios</p>
+    <p class="text-xs sm:text-sm text-brand-text-secondary max-w-sm mx-auto">
+      Prueba modificando los términos de búsqueda o filtros seleccionados.
+    </p>
+  </div>
+
+  <!-- Tabla de Usuarios Registrados -->
+  <div *ngIf="!isLoading() && !errorMessage() && filteredUsers().length > 0" class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-stone-50/80 text-brand-text-muted border-b border-brand-border uppercase font-bold text-xs tracking-wider">
+          <tr>
+            <th class="px-6 py-4">Usuario / Cliente</th>
+            <th class="px-6 py-4">Contacto & Despacho</th>
+            <th class="px-6 py-4">Rol de Acceso</th>
+            <th class="px-6 py-4">Estado Cuenta</th>
+            <th class="px-6 py-4">Fecha Registro</th>
+            <th class="px-6 py-4 text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-brand-border/60 text-brand-text-primary">
+          <tr *ngFor="let user of filteredUsers()" class="hover:bg-stone-50/75 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3.5">
+                <div
+                  class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-xs shadow-sm"
+                  [ngClass]="isRoleAdmin(user.role) ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'"
+                >
+                  {{ getInitials(user.fullName) }}
+                </div>
+                <div>
+                  <span class="font-bold text-sm sm:text-base text-brand-text-primary block leading-tight">
+                    {{ user.fullName }}
+                  </span>
+                  <div class="flex items-center gap-2 mt-0.5 text-xs text-brand-text-secondary">
+                    <span class="font-mono text-brand-text-muted">&#64;{{ user.username }}</span>
+                    <span>•</span>
+                    <span>{{ user.email }}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-6 py-4 text-xs sm:text-sm text-brand-text-secondary">
+              <span class="block text-brand-text-primary font-medium">{{ user.phone || 'Sin celular' }}</span>
+              <span class="text-xs text-brand-text-muted truncate max-w-xs block mt-0.5">
+                {{ user.address || 'Sin dirección de entrega' }}
+              </span>
+            </td>
+
+            <td class="px-6 py-4">
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                [ngClass]="isRoleAdmin(user.role) ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-blue-50 text-blue-700 border border-blue-200'"
+              >
+                <app-icon [name]="isRoleAdmin(user.role) ? 'lock' : 'user'" [size]="13"></app-icon>
+                <span>{{ isRoleAdmin(user.role) ? 'Administrador' : 'Cliente' }}</span>
+              </span>
+            </td>
+
+            <td class="px-6 py-4">
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                [ngClass]="user.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'"
+              >
+                <span class="w-2 h-2 rounded-full" [ngClass]="user.isActive ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                {{ user.isActive ? 'Activo' : 'Suspendido' }}
+              </span>
+            </td>
+
+            <td class="px-6 py-4 text-xs text-brand-text-muted font-mono">
+              {{ user.createdAt ? (user.createdAt | date:'mediumDate') : 'Preexistente' }}
+            </td>
+
+            <td class="px-6 py-4 text-right">
+              <button
+                type="button"
+                (click)="toggleStatus(user)"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all active:scale-95 shadow-sm"
+                [ngClass]="user.isActive ? 'border-brand-border bg-brand-surface text-brand-text-secondary hover:text-rose-700 hover:border-rose-300 hover:bg-rose-50' : 'border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'"
+              >
+                {{ user.isActive ? 'Suspender' : 'Reactivar' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

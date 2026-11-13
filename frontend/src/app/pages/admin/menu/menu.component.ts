@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -23,6 +23,37 @@ export class AdminMenuComponent implements OnInit {
   readonly modalMode = signal<'create' | 'edit'>('create');
   readonly editingProductId = signal<number | null>(null);
   readonly isUploadingImage = signal<boolean>(false);
+
+  readonly searchTerm = signal<string>('');
+  readonly selectedCategoryId = signal<number | 'ALL'>('ALL');
+
+  readonly filteredProducts = computed<AdminProduct[]>(() => {
+    let list = this.products();
+    const search = this.searchTerm().trim().toLowerCase();
+    const catId = this.selectedCategoryId();
+
+    if (catId !== 'ALL') {
+      list = list.filter(p => p.categoryId === catId);
+    }
+
+    if (search) {
+      list = list.filter(p =>
+        p.name.toLowerCase().includes(search) ||
+        (p.description && p.description.toLowerCase().includes(search)) ||
+        (p.categoryName && p.categoryName.toLowerCase().includes(search))
+      );
+    }
+
+    return list;
+  });
+
+  readonly totalAvailable = computed<number>(() => {
+    return this.products().filter(p => p.isAvailable).length;
+  });
+
+  readonly totalUnavailable = computed<number>(() => {
+    return this.products().filter(p => !p.isAvailable).length;
+  });
 
   productForm: Partial<AdminProduct> = {
     name: '',

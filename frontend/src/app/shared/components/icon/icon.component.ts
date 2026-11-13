@@ -34,7 +34,9 @@ export type IconName =
   | 'user'
   | 'log-out'
   | 'lock'
-  | 'mail';
+  | 'mail'
+  | 'eye'
+  | 'eye-off';
 
 @Component({
   selector: 'app-icon',
