@@ -19,10 +19,11 @@
 .project
 .settings/
 
-# OS files
+# OS and Office temp files
 .DS_Store
 Thumbs.db
 desktop.ini
+~$*
 
 # Logs and environment
 *.log

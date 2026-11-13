@@ -39,26 +39,26 @@ jobs:
         run: ls -la backend/target/*.jar
 
   frontend-ci:
-    name: Frontend CI (Node 20 / Angular 19 & Build)
+    name: Frontend CI (Node 24 / Angular & Build)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Código Fuente
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js 20
+      - name: Configurar Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
       - name: Instalar Dependencias Frontend
         run: |
           cd frontend
-          npm ci --legacy-peer-deps || npm install
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
-      - name: Compilar Bundle de Producción (Angular 19)
+      - name: Compilar Bundle de Producción (Angular)
         run: |
           cd frontend
           npm run build
