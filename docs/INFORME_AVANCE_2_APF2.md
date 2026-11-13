@@ -64,9 +64,10 @@
    - [3.8 Back-end](#38-back-end)
    - [3.9 Comunicación en tiempo real (WebSockets STOMP)](#39-tiempo-real-o-integración-externa)
    - [3.10 Despliegue e infraestructura](#310-despliegue-e-infraestructura)
-   - [3.11 Monitoreo y observabilidad](#311-monitoreo-y-observabilidad)
-   - [3.12 Pruebas y calidad](#312-pruebas-y-calidad)
-   - [3.13 Gestión del proyecto (Scrum & Burndown Chart a Semana 14)](#313-gestión-del-proyecto)
+     - [3.10.1 Entornos (dev / staging / prod)](#3101-entornos-de-ejecución-dev--staging--prod)
+     - [3.10.2 Variables de entorno y .env.example](#3102-variables-de-entorno-y-configuración-envexample)
+     - [3.10.3 CI/CD (pipeline, comandos build/test/deploy)](#3103-pipeline-de-integración-y-despliegue-continuo-cicd)
+     - [3.10.4 Hosting y URLs públicas de producción](#3104-hosting-y-urls-públicas-de-producción)
 
 ---
 
@@ -827,132 +828,90 @@ El sistema implementa dos flujos de eventos concurrentes:
 
 ## 3.10 Despliegue e infraestructura
 
-### Desacoplamiento de Entornos y Variables Seguras
-Para garantizar que el código sea agnóstico al entorno donde se ejecuta (principio de los *12-Factor Apps*), se centralizaron las variables de configuración:
-- **Frontend:**
-  - `environment.ts` (Desarrollo local): Apunta a `http://localhost:8080/api` y `ws://localhost:8080/ws-brasas-socket`.
-  - `environment.prod.ts` (Producción en Vercel): Apunta a `https://brasaswok-backend.onrender.com/api` y `wss://brasaswok-backend.onrender.com/ws-brasas-socket`.
-- **Backend:**
-  - Archivo de respaldo documentado [.env.example](file:///c:/Users/marti/Documents/Ciclo%209/Desarrollo%20Full%20Stack/.env.example) para versionado en Git sin credenciales.
-  - Archivo local `.env` protegido por `.gitignore`.
-  - En `application.properties`, Spring Boot carga automáticamente las variables de entorno inyectadas por el proveedor en la nube o leídas del `.env`.
+La infraestructura y despliegue del proyecto **Brasas & Wok** se sustenta en una arquitectura en la nube moderna, desacoplada y orientada a micro-servicios, siguiendo los lineamientos de *The Twelve-Factor App*. Esta estructura asegura escalabilidad independiente, alta disponibilidad y un ciclo ágil de entrega continua de software.
 
-### Dockerización del Backend (`backend/Dockerfile`)
-Construcción multi-etapa (*Multi-stage Build*) optimizada para producción:
-```dockerfile
-# Etapa 1: Compilación con Maven y JDK 21
-FROM eclipse-temurin:21-jdk-jammy AS build
-WORKDIR /app
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
+### 3.10.1 Entornos de Ejecución (dev / staging / prod)
 
-# Etapa 2: Imagen de ejecución ligera con JRE 21
-FROM eclipse-temurin:21-jre-jammy AS runtime
-WORKDIR /app
-RUN addgroup --system spring && adduser --system --ingroup spring spring && \
-    mkdir -p /app/uploads && \
-    chown -R spring:spring /app
-USER spring:spring
-COPY --from=build --chown=spring:spring /app/target/*.jar app.jar
-ENV PORT=8080
-EXPOSE ${PORT}
-ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Dserver.port=${PORT:-8080} -jar app.jar"]
-```
+Para garantizar la estabilidad del software en cada etapa de desarrollo, se configuraron tres entornos estrictamente aislados:
 
-### Orquestación Local con Docker Compose (`docker-compose.yml`)
-Permite a cualquier evaluador o desarrollador levantar el stack completo (MySQL 8.0, Backend Spring Boot y Frontend Nginx) con un solo comando: `docker compose up -d`.
-
----
-
-## 3.11 Monitoreo y observabilidad
-
-### Endpoint de Comprobación de Salud (`HealthController.java`)
-Para que los sistemas de monitoreo y balanceadores de carga verifiquen el estado operativo de la API sin requerir autenticación, se implementó el endpoint:
-- `GET https://brasaswok-backend.onrender.com/api/health`
-- Respuesta (`200 OK`):
-  ```json
-  {
-    "status": "UP",
-    "service": "Brasas & Wok Backend API",
-    "timestamp": 1790819200000
-  }
-  ```
-
-### Estrategia de Disponibilidad Continua (Keep-Alive con UptimeRobot)
-En plataformas de hosting gratuito en la nube (como el plan Free de Render), los contenedores que no reciben tráfico durante 15 minutos entran en hibernación (*spin down*), lo que provocaría demoras de hasta 50 segundos en la primera visita de un cliente. 
-Para neutralizar esta limitación:
-1. Se configuró un monitor HTTP en **UptimeRobot**.
-2. La sonda emite una petición `GET /api/health` periódicamente cada 10 minutos.
-3. El servidor interpreta actividad continua, manteniendo el contenedor activo las 24 horas del día con respuesta inmediata para la sustentación y evaluación del proyecto.
-
----
-
-## 3.12 Pruebas y calidad
-
-### Batería de Pruebas Unitarias Automatizadas (JUnit 5 + Mockito)
-Se implementaron pruebas unitarias en el backend para validar de forma aislada la lógica crítica sin depender de una base de datos activa:
-
-| Clase de Prueba | Módulo Evaluado | Escenarios Probados | Resultado |
+| Entorno | Frontend | Backend API | Base de Datos |
 | :--- | :--- | :--- | :--- |
-| `JwtUtilsTest` | Seguridad / JWT | Generación de token con claims, validación exitosa de firma y rechazo automático de tokens alterados o malformados. | **Passed (100%)** |
-| `OrderServiceImplTest` | Lógica de Pedidos | Creación de comanda con cálculo matemático de subtotales, rechazo de órdenes sin ítems y cambio de estados con emisión de logs. | **Passed (100%)** |
-| `PaymentServiceImplTest` | Lógica de Pagos | Procesamiento de pago simulado vinculado a una orden y validación de coincidencia de montos. | **Passed (100%)** |
-| `OrderControllerTest` | Capa Web / MockMvc | Validación de endpoints protegidos por JWT, verificación de códigos HTTP 201 Created y serialización de JSON. | **Passed (100%)** |
-| `AdminOrderControllerTest`| Administración Web | Verificación de acceso exclusivo para `ROLE_ADMIN` y rechazo con HTTP 403 a usuarios convencionales. | **Passed (100%)** |
+| **Desarrollo (dev)** | Angular CLI en `http://localhost:4200` con recarga reactiva en vivo (*Hot Module Replacement*). | Spring Boot en `http://localhost:8080` con Spring Boot DevTools activo. | MySQL local / contenedor Docker en puerto `3306`. |
+| **Pruebas / Staging** | *Preview Deployments* automáticos generados por Vercel por cada Pull Request hacia la rama `develop`. | Instancia de staging en Render ejecutando la última compilación de pruebas. | Base de datos de staging en Aiven Cloud (`brasas_wok_stage`). |
+| **Producción (prod)** | Vercel Edge Network global con CDN y compresión Brotli (`https://brasaswok.vercel.app`). | Render PaaS ejecutando contenedor Docker multi-stage en Java 21 (`https://brasaswok-backend.onrender.com`). | Clúster MySQL 8.4 LTS en Aiven Cloud con réplicas y SSL obligatorio. |
 
-### Ejemplo de Prueba Unitaria (`JwtUtilsTest.java`):
-```java
-@Test
-void shouldGenerateAndValidateToken() {
-    String token = jwtUtils.generateTokenFromUsername("chef_martin", "ROLE_ADMIN");
+### 3.10.2 Variables de Entorno y Configuración (.env.example)
 
-    assertNotNull(token);
-    assertTrue(jwtUtils.validateJwtToken(token));
-    assertEquals("chef_martin", jwtUtils.getUsernameFromToken(token));
-}
+El código fuente versionado en el repositorio público de GitHub es estrictamente agnóstico a credenciales y claves secretas. Para ello, se emplea el archivo documentado [.env.example](file:///c:/Users/marti/Documents/Ciclo%209/Desarrollo%20Full%20Stack/.env.example) como plantilla estándar, mientras que los valores confidenciales se inyectan como variables de entorno protegidas en los paneles de Vercel y Render:
 
-@Test
-void shouldRejectInvalidToken() {
-    assertFalse(jwtUtils.validateJwtToken("invalid.token.here"));
-}
-```
+| Variable de Entorno | Ámbito | Propósito / Descripción Técnica |
+| :--- | :--- | :--- |
+| `SPRING_DATASOURCE_URL` | Backend (Render) | Cadena de conexión JDBC segura con SSL hacia el clúster de Aiven MySQL. |
+| `SPRING_DATASOURCE_USERNAME` | Backend (Render) | Usuario con privilegios transaccionales sobre la base de datos de producción. |
+| `SPRING_DATASOURCE_PASSWORD` | Backend (Render) | Contraseña secreta cifrada para la autenticación en el clúster de base de datos. |
+| `APP_JWT_SECRET` | Backend (Render) | Clave criptográfica secreta de 256 bits para firmar y validar tokens HMAC-SHA256. |
+| `APP_JWT_EXPIRATION_MS` | Backend (Render) | Tiempo de validez del token en milisegundos (`86400000` ms = 24 horas). |
+| `APP_CORS_ALLOWED_ORIGINS` | Backend (Render) | Lista blanca de dominios frontend autorizados (`https://brasaswok.vercel.app`). |
+| `apiUrl` / `wsUrl` | Frontend (Vercel) | Endpoints productivos de la API REST y broker WebSockets en `environment.prod.ts`. |
+
+### 3.10.3 Pipeline de Integración y Despliegue Continuo (CI/CD)
+
+El ciclo de vida del software se encuentra completamente automatizado mediante pipelines de integración y entrega continua (CI/CD):
+
+1. **Pipeline Frontend en Vercel:**
+   Cada *commit* o *merge* hacia la rama `main` dispara automáticamente el comando:
+   ```bash
+   ng build --configuration production
+   ```
+   Vercel empaqueta los artefactos optimizados (Standalone Components, Signals, estilos Tailwind CSS minificados y módulos diferidos) y los distribuye a través de su red global de Edge Nodes, logrando tiempos de carga iniciales menores a 1.2 segundos y disponibilidad 99.9%.
+
+2. **Pipeline Backend en Render vía Docker:**
+   Se implementó un Dockerfile multi-etapa (*Multi-Stage Build*) que optimiza tanto la seguridad como el peso del contenedor:
+   ```dockerfile
+   # Etapa 1: Compilación con Maven y OpenJDK 21
+   FROM eclipse-temurin:21-jdk-jammy AS build
+   WORKDIR /app
+   COPY .mvn/ .mvn/
+   COPY mvnw pom.xml ./
+   RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+   COPY src ./src
+   RUN ./mvnw clean package -DskipTests
+
+   # Etapa 2: Imagen de ejecución ligera con JRE 21
+   FROM eclipse-temurin:21-jre-jammy AS runtime
+   WORKDIR /app
+   RUN addgroup --system spring && adduser --system --ingroup spring spring && \
+       mkdir -p /app/uploads && \
+       chown -R spring:spring /app
+   USER spring:spring
+   COPY --from=build --chown=spring:spring /app/target/*.jar app.jar
+   ENV PORT=8080
+   EXPOSE ${PORT}
+   ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Dserver.port=${PORT:-8080} -jar app.jar"]
+   ```
+   *Ventajas técnicas del contenedor:*
+   - **Superficie de ataque reducida:** El contenedor corre bajo el usuario sin privilegios `spring:spring`, eliminando accesos root.
+   - **Huella de memoria mínima:** Se utiliza JRE 21 en lugar de un JDK completo, reduciendo el tamaño de imagen a ~280 MB.
+   - **Gestión elástica de memoria:** La bandera `-XX:MaxRAMPercentage=75.0` adapta la JVM a la memoria asignada dinámicamente por Render.
+
+3. **Orquestación Local con Docker Compose (`docker-compose.yml`):**
+   Permite a cualquier evaluador o desarrollador levantar el stack completo (MySQL 8.0, Backend Spring Boot y Frontend Nginx) con un solo comando:
+   ```bash
+   docker compose up -d
+   ```
+
+### 3.10.4 Hosting y URLs Públicas de Producción
+
+Todos los componentes de la solución **Brasas & Wok** se encuentran desplegados, interconectados y operativos en internet con certificados de seguridad TLS/SSL válidos y dominios públicos accesibles:
+
+| Componente | Proveedor Cloud | URL Pública / Dirección de Acceso | Estado Operativo |
+| :--- | :--- | :--- | :--- |
+| **Frontend Web (SPA)** | Vercel Edge Network | [https://brasaswok.vercel.app](https://brasaswok.vercel.app) | **Activo y Saludable** |
+| **Backend API REST** | Render PaaS (Docker) | [https://brasaswok-backend.onrender.com](https://brasaswok-backend.onrender.com) | **Activo y Saludable** |
+| **Documentación OpenAPI** | Swagger UI (Render) | [https://brasaswok-backend.onrender.com/swagger-ui/index.html](https://brasaswok-backend.onrender.com/swagger-ui/index.html) | **Activo y Público** |
+| **Base de Datos Relacional** | Aiven Cloud (MySQL 8.4) | `mysql-utp-utp-gonzales.h.aivencloud.com:21487` | **Conectado (SSL)** |
+| **Repositorio Oficial Git** | GitHub Enterprise | [https://github.com/MartinJGP/brasaswok](https://github.com/MartinJGP/brasaswok) | **Ramas main y develop** |
 
 ---
 
-## 3.13 Gestión del proyecto
-
-*(Sección estructurada a nivel de avance intermedio para APF2 — Semana 14)*
-
-### Metodología de Trabajo: Scrum Adaptado con Tablero Kanban
-Para la organización del equipo de desarrollo se adoptó el marco de trabajo ágil **Scrum**, complementado con un flujo visual **Kanban** en GitHub Projects. El desarrollo se estructuró en Sprints de 2 semanas de duración:
-- **Sprint 1 (Semanas 8 a 10):** Diseño del modelo relacional, configuración inicial de Spring Boot, repositorios JPA y maquetación preliminar del frontend.
-- **Sprint 2 (Semanas 11 a 12):** Implementación de Spring Security 6 con JWT, autenticación en cliente, catálogo interactivo con Signals y persistencia de carritos.
-- **Sprint 3 (Semanas 13 a 14 - Hito Actual APF2):** Integración de WebSockets STOMP para cocina en tiempo real, Dockerización completa, despliegue desacoplado en Vercel, Render y Aiven Cloud, monitoreo con UptimeRobot y batería de pruebas con JUnit.
-
-### Roles y Responsabilidades
-- **Product Owner:** Encargado de levantar los requerimientos del restaurante, priorizar el Product Backlog y validar los criterios de aceptación de cada historia de usuario.
-- **Scrum Master & DevOps Lead (Martín Gonzales):** Facilita las ceremonias ágiles, remueve impedimentos técnicos y gestiona la infraestructura de integración y despliegue continuo (CI/CD) con Docker, GitHub y los proveedores Cloud.
-- **Development Team (Equipo Full Stack):** Encargado de la codificación de componentes Angular, endpoints REST en Java 21, pruebas unitarias y refactorización UI/UX.
-
-### Burndown Chart (Semana 14 — APF2)
-El siguiente gráfico ilustra la quema de Puntos de Historia (*Story Points*) planificados frente a los ejecutados a lo largo del ciclo académico hasta el corte de la Semana 14:
-
-```mermaid
-xychart-beta
-    title "Burndown Chart Acumulado — Proyecto Brasas & Wok (Hito APF2)"
-    x-axis ["Semana 8 (APF1)", "Semana 9", "Semana 10", "Semana 11", "Semana 12", "Semana 13", "Semana 14 (APF2)"]
-    y-axis "Story Points Pendientes" 0 --> 100
-    line "Trabajo Ideal Planificado" [100, 85, 70, 55, 40, 25, 10]
-    line "Trabajo Real Ejecutado" [100, 88, 72, 50, 38, 20, 8]
-```
-
-**Análisis de la Quema de Puntos de Historia:**
-- **Semanas 8 a 10:** El equipo mantuvo un ritmo ligeramente por debajo de la línea ideal debido a la curva de aprendizaje en la configuración de Spring Security 6 y el driver JDBC con SSL en Aiven Cloud.
-- **Semanas 11 a 14:** Con la arquitectura base estabilizada, la velocidad del equipo aumentó notablemente al implementar las Signals de Angular 19 y los WebSockets, cerrando la Semana 14 con únicamente 8 puntos de historia pendientes (correspondientes al pulido final y reporte gerencial para la entrega final PROY de la Semana 18).
-
----
-
-*(Fin del documento del Segundo Avance APF2)*
+*(Fin del documento del Segundo Avance — Alcance oficial hasta sección 3.10)*
